@@ -1,0 +1,49 @@
+{
+  "name": "kennel",
+  "version": "1.0.0",
+  "description": "A comprehensive, easy-to-use native depiction renderer.",
+  "main": "src/Kennel.js",
+  "dependencies": {
+    "@rollup/pluginutils": "^3.0.10",
+    "@types/node": "^14.0.5",
+    "commondir": "^1.0.1",
+    "estree-walker": "^2.0.1",
+    "find-cache-dir": "^3.3.1",
+    "find-up": "^4.1.0",
+    "fs-extra": "^9.0.0",
+    "graceful-fs": "^4.2.4",
+    "jsonfile": "^6.0.1",
+    "locate-path": "^5.0.0",
+    "make-dir": "^3.1.0",
+    "marked": "^1.1.0",
+    "p-limit": "^2.3.0",
+    "p-locate": "^4.1.0",
+    "p-try": "^2.2.0",
+    "path-exists": "^4.0.0",
+    "path-parse": "^1.0.6",
+    "picomatch": "^2.2.2",
+    "pkg-dir": "^4.2.0",
+    "resolve": "^1.15.1",
+    "rollup-plugin-typescript2": "^0.27.1",
+    "typescript": "^3.9.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node demo/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZenithDevs/Kennel.git"
+  },
+  "keywords": [
+    "sileo",
+    "jailbreak",
+    "depiction"
+  ],
+  "author": "Zenith",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ZenithDevs/Kennel/issues"
+  },
+  "homepage": "https://github.com/ZenithDevs/Kennel#readme"
+}
