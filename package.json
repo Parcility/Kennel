@@ -27,9 +27,9 @@
     "rollup-plugin-typescript2": "^0.27.1",
     "typescript": "^3.9.3"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "node demo/index.js"
+  "devDependencies": {
+    "@lopatnov/rollup-plugin-uglify": "^1.2.1",
+    "terser": "^4.7.0"
   },
   "repository": {
     "type": "git",

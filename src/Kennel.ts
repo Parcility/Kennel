@@ -733,7 +733,7 @@ export default class Kennel {
      */
     // Allow for -_Depiction links to work, too!
     _buttonLinkHandler(url, label) {
-        if (url.indexOf("Depiction-") == 0) {
+        if (url.indexOf("depiction-") == 0) {
             url = url.substring(10);
 
             if (typeof label == "undefined")
