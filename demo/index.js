@@ -551,16 +551,16 @@ const out = `<html lang="en">
     </head>
     <body>${nd_out}</body>
     <script>
-        function changeTab(show, hide) {
+        function ndChangeTab(show, hide) {
             // Hide elements.
             for (let i = 0; i < document.querySelectorAll(\`\${hide}.nd_tab\`).length; i++) {
-                document.querySelectorAll(\`\${hide}.nd_tab\`)[i].classList.add("hidden");
-                document.querySelectorAll(\`\${hide}.nav_btn\`)[i].classList.remove("active");
+                document.querySelectorAll(\`\${hide}.nd_tab\`)[i].classList.add("nd_hidden");
+                document.querySelectorAll(\`\${hide}.nd_nav_btn\`)[i].classList.remove("nd_active");
             }
             // Show elements.
             for (i = 0; i < document.querySelectorAll(\`\${show}.nd_tab\`).length; i++) {
-                document.querySelectorAll(\`\${show}.nd_tab\`)[i].classList.remove("hidden");
-                document.querySelectorAll(\`\${show}.nav_btn\`)[i].classList.add("active");
+                document.querySelectorAll(\`\${show}.nd_tab\`)[i].classList.remove("nd_hidden");
+                document.querySelectorAll(\`\${show}.nd_nav_btn\`)[i].classList.add("nd_active");
             }
         }
 </script>

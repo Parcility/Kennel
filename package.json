@@ -29,6 +29,8 @@
   },
   "devDependencies": {
     "@lopatnov/rollup-plugin-uglify": "^1.2.1",
+    "rollup-plugin-copy": "^3.3.0",
+    "rollup-plugin-css-only": "^2.0.0",
     "terser": "^4.7.0"
   },
   "repository": {

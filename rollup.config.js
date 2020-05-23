@@ -1,5 +1,6 @@
 import TypeScript from 'rollup-plugin-typescript2';
 import uglify from "@lopatnov/rollup-plugin-uglify";
+import copy from 'rollup-plugin-copy';
 
 export default {
     input: 'src/Kennel.ts',
@@ -12,6 +13,7 @@ export default {
     external: ["url", "path", "zlib"],
     plugins: [
         TypeScript(),
-        uglify()
+        uglify(),
+        copy({targets: [{ src: 'src/kennel.css', dest: 'dist/' }]})
     ]
 };

@@ -44,7 +44,7 @@ export default class Kennel {
         const dummyDepiction = {"minVersion": "0.1", "tintColor": "#6264D3", "class": "DepictionLabelView", "text": "(This depiction is empty.)"};
         this.#depiction = (typeof depiction != "undefined") ? depiction : dummyDepiction;
         this.#proxyURL = (typeof proxyURL != "undefined") ? proxyURL : "";
-        this.#tint = (typeof this.#depiction["tintColor"] != "undefined") ? this._sanitizeColor(this.#depiction["tintColor"]) : "#6264d3";
+        this.#tint = (typeof this.#depiction["tintColor"] != "undefined") ? Kennel._sanitizeColor(this.#depiction["tintColor"]) : "#6264d3";
     }
     /**
      * render()
@@ -55,7 +55,7 @@ export default class Kennel {
      */
     render() {
         // This is the string that will contain everything.
-        let buffer = `<div class="native_depiction"><style>a, .tint, .table-btn:after {color: ${this.#tint}} .active {color: ${this.#tint}; border-bottom: 2px solid ${this.#tint};} .btn {background-color: ${this.#tint}}</style>`;
+        let buffer = `<div class="native_depiction"><style>a, .nd_tint, .nd_table-btn:after {color: ${this.#tint}} .nd_active {color: ${this.#tint}; border-bottom: 2px solid ${this.#tint};} .nd_btn {background-color: ${this.#tint}}</style>`;
 4
         buffer += this._DepictionBaseView(this.#depiction);
 
@@ -129,19 +129,19 @@ export default class Kennel {
         let buffer = `<div class="nd_tabView">`;
 
         // Give this TabView a unique ID.
-        let tabViewId = this._makeIdentifier("nd_tabView");
+        let tabViewId = Kennel._makeIdentifier("nd_tabView");
 
         // Render tab selector.
-        buffer += `<div class="nav">`;
+        buffer += `<div class="nd_nav">`;
         for (let i = 0; i < elem["tabs"].length; i++)
-            buffer += `<div class="${tabViewId} ${tabViewId}_tab_${i} nav_btn tweak_info_btn ${(i == 0) ? "active" : ""}" onclick="changeTab('.${tabViewId}_tab_${i}', '.${tabViewId}')">${this._sanitize(elem["tabs"][i].tabname)}</div>`;
+            buffer += `<div class="${tabViewId} ${tabViewId}_tab_${i} nd_nav_btn nd_tweak_info_btn ${(i == 0) ? "nd_active" : ""}" onclick="ndChangeTab('.${tabViewId}_tab_${i}', '.${tabViewId}')">${Kennel._sanitize(elem["tabs"][i].tabname)}</div>`;
         buffer += `</div>`;
 
         // Render the tabs themselves
         buffer += `<div>`;
         for (let i = 0; i < elem["tabs"].length; i++) {
             // Be consistent on our use of random IDs!
-            buffer += `<div class="nd_tab ${tabViewId} ${`${tabViewId}_tab_${i}`} ${i > 0 ? "hidden" : ""}">`;
+            buffer += `<div class="nd_tab ${tabViewId} ${`${tabViewId}_tab_${i}`} ${i > 0 ? "nd_hidden" : ""}">`;
             buffer += this._DepictionBaseView(elem["tabs"][i]);
             buffer += `</div>`
         }
@@ -162,9 +162,9 @@ export default class Kennel {
         let buffer = "";
 
         if (typeof elem["backgroundColor"] != "undefined")
-            buffer += `<div class="nested_stack" style="background: ${this._sanitize(elem["backgroundColor"])}">`;
+            buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitize(elem["backgroundColor"])}">`;
         else
-            buffer += `<div class="nested_stack">`;
+            buffer += `<div class="nd_nested_stack">`;
 
         if (typeof elem["orientation"] == "undefined" || elem["orientation"].toLowerCase() != "landscape") {
             // Standard orientation
@@ -172,7 +172,7 @@ export default class Kennel {
                 buffer += this._DepictionBaseView(elem["views"][i]);
         } else {
             // "Landscape" orientation, or causing StackViews to be next to each other.
-            buffer += `<div class="landscape_stack">`;
+            buffer += `<div class="nd_landscape_stack">`;
             for (let i = 0; i < elem["views"].length; i++)
                 buffer += this._DepictionBaseView(elem["views"][i]);
             buffer += `</div>`;
@@ -191,9 +191,9 @@ export default class Kennel {
     private _DepictionAutoStackView(elem: object) {
         let buffer = "";
         if (typeof elem["backgroundColor"] != "undefined")
-            buffer += `<div class="nested_stack" style="background: ${this._sanitize(elem["backgroundColor"])}; width: ${this._sanitize(elem["horizontalSpacing"] ? `${elem["horizontalSpacing"]}px` : "100%")}">`;
+            buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitize(elem["backgroundColor"])}; width: ${Kennel._sanitize(elem["horizontalSpacing"] ? `${elem["horizontalSpacing"]}px` : "100%")}">`;
         else
-            buffer += `<div class="nested_stack" style="width: ${this._sanitize(elem["horizontalSpacing"] ? `${elem["horizontalSpacing"]}px` : "100%")}">`;
+            buffer += `<div class="nd_nested_stack" style="width: ${Kennel._sanitize(elem["horizontalSpacing"] ? `${elem["horizontalSpacing"]}px` : "100%")}">`;
 
         if (typeof elem["orientation"] == "undefined" || elem["orientation"].toLowerCase() != "landscape") {
             // Standard orientation
@@ -201,7 +201,7 @@ export default class Kennel {
                 buffer += this._DepictionBaseView(elem["views"][i]);
         } else {
             // "Landscape" orientation, or causing StackViews to be next to each other.
-            buffer += `<div class="landscape_stack">`;
+            buffer += `<div class="nd_landscape_stack">`;
             for (let i = 0; i < elem["views"].length; i++)
                 buffer += this._DepictionBaseView(elem["views"][i]);
             buffer += `</div>`;
@@ -218,8 +218,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionTableTextView(elem: object) {
-        return `<div class="table"><div class="cell"><div class="title">${this._sanitize(elem["title"])}\
-        </div><div class="text">${this._sanitize(elem["text"])}</div></div></div>`;
+        return `<div class="nd_table"><div class="nd_cell"><div class="nd_title">${Kennel._sanitize(elem["title"])}</div><div class="nd_text">${Kennel._sanitize(elem["text"])}</div></div></div>`;
     }
     /**
      * _DepictionTableButtonView(elem)
@@ -236,15 +235,15 @@ export default class Kennel {
         if (elem["yPadding"] || elem["tintColor"]) {
             extra_params += ` style="`;
             if (elem["yPadding"])
-                extra_params += `padding-bottom: '${this._sanitize(elem["yPadding"])}';`;
+                extra_params += `padding-bottom: '${Kennel._sanitize(elem["yPadding"])}';`;
             if (elem["tintColor"]) {
                 // !TODO Fix bug where the chevron will stay uncolored.
-                extra_params += `color: ${this._sanitizeColor(elem["tintColor"])};`;
+                extra_params += `color: ${Kennel._sanitizeColor(elem["tintColor"])};`;
             }
             extra_params += `"`;
         }
-        elem["action"] = this._sanitize(this._buttonLinkHandler(elem["action"], elem["title"]));
-        return `<a class="table-btn" href="${elem["action"]}"${extra_params}><div>${elem["title"]}</div></a>`;
+        elem["action"] = Kennel._sanitize(Kennel._buttonLinkHandler(elem["action"], elem["title"]));
+        return `<a class="nd nd_table-btn" href="${elem["action"]}"${extra_params}><div>${elem["title"]}</div></a>`;
     }
     /**
      * _DepictionButtonView(elem)
@@ -261,14 +260,14 @@ export default class Kennel {
         if (elem["yPadding"] || elem["tintColor"]) {
             extra_params += ` style="`;
             if (elem["yPadding"])
-                extra_params += `padding-bottom: '${this._sanitize(elem["yPadding"])}';`;
+                extra_params += `padding-bottom: '${Kennel._sanitize(elem["yPadding"])}';`;
             if (elem["tintColor"]) {
-                extra_params += `background-color: ${this._sanitizeColor(elem["tintColor"])};`;
+                extra_params += `background-color: ${Kennel._sanitizeColor(elem["tintColor"])};`;
             }
             extra_params += `"`;
         }
-        elem["action"] = this._sanitize(this._buttonLinkHandler(elem["action"], elem["text"]));
-        return `<a class="btn" href="${elem["action"]}"${extra_params}>${elem["text"]}</a>`;
+        elem["action"] = Kennel._sanitize(Kennel._buttonLinkHandler(elem["action"], elem["text"]));
+        return `<a class="nd nd_btn" href="${elem["action"]}"${extra_params}>${elem["text"]}</a>`;
     }
     /**
      * _DepictionMarkdownView(elem)
@@ -278,7 +277,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionMarkdownView(elem: object) {
-        let ident = this._makeIdentifier("md");
+        let ident = Kennel._makeIdentifier("md");
         // Is there a tint color passed?
         if (typeof elem["tintColor"] == "undefined" && typeof this.#tint == "undefined")
             elem["tintColor"] = "#6264D3";
@@ -312,7 +311,7 @@ export default class Kennel {
             }
 
         } else {
-            rendered = marked(this._lax_sanitize(elem["markdown"])).replace(/<hr>/g, this._DepictionSeparatorView(elem));
+            rendered = marked(Kennel._lax_sanitize(elem["markdown"])).replace(/<hr>/g, this._DepictionSeparatorView(elem));
         }
         let noJSRender;
 
@@ -334,7 +333,7 @@ export default class Kennel {
         // Return the JavaScript code needed to create the shadow DOM.
         // I know this is a very long line, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programatically isn't worth it.
-        return `<div id="${ident}" class="md_view"><noscript>${noJSRender}</noscript><script>var mdEl = document.createElement("sandboxed-markdown");var shadowRoot = mdEl.attachShadow({mode: 'open'});shadowRoot.innerHTML = \`<style>a {color:${this._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;}</style><root>${rendered}</root>\`;el = document.getElementById("${ident}");el.appendChild(mdEl);el.removeAttribute("id");el.removeChild(el.children[0]);el.removeChild(el.children[0]);</script></div>`;
+        return `<div id="${ident}" class="nd_md_view"><noscript>${noJSRender}</noscript><script>mdEl = document.createElement("sandboxed-markdown");let shadowRoot = mdEl.attachShadow({mode: 'open'});shadowRoot.innerHTML = \`<style>a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;}</style><root>${rendered}</root>\`;el = document.getElementById("${ident}");el.appendChild(mdEl);el.removeAttribute("id");el.removeChild(el.children[0]);el.removeChild(el.children[0]);</script></div>`;
     }
     /**
      * _DepictionLabelView(elem)
@@ -346,18 +345,18 @@ export default class Kennel {
     private _DepictionLabelView(elem: object) {
         let marginStr;
         if (typeof elem["margins"] != "undefined")
-            marginStr = this._marginResolver(elem["margins"]);
+            marginStr = Kennel._marginResolver(elem["margins"]);
         else
             marginStr = "";
 
-        elem["alignment"] = this._alignmentResolver(elem["alignment"]);
-        elem["fontWeight"] = this._weightStringResolver(elem["fontWeight"]);
+        elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
+        elem["fontWeight"] = Kennel._weightStringResolver(elem["fontWeight"]);
         elem["textColor"] = (typeof elem["textColor"] != "undefined")
-            ? `color: ${this._sanitize(elem["textColor"])};` : "";
+            ? `color: ${Kennel._sanitize(elem["textColor"])};` : "";
         elem["fontSize"] = (typeof elem["fontSize"] != "undefined")
-            ? `font-size: ${this._sanitize(elem["fontSize"])}px;` : "";
+            ? `font-size: ${Kennel._sanitize(elem["fontSize"])}px;` : "";
 
-        return `<div class="label" style="font-weight: ${elem["fontWeight"]}; text-align:${elem["alignment"]}; ${elem["textColor"]}${elem["fontSize"]}${marginStr}">${this._sanitize(elem["text"])}</div>`;
+        return `<div class="nd_label" style="font-weight: ${elem["fontWeight"]}; text-align:${elem["alignment"]}; ${elem["textColor"]}${elem["fontSize"]}${marginStr}">${Kennel._sanitize(elem["text"])}</div>`;
     }
     /**
      * _DepictionScreenshotsView(elem)
@@ -368,21 +367,21 @@ export default class Kennel {
      */
     private _DepictionScreenshotsView(elem: object) {
         // Parse itemSize, screenshotObject
-        let ret = `<div class="scroll_view">`
+        let ret = `<div class="nd_scroll_view">`
         let size = elem["itemSize"].substring(1, elem["itemSize"].length-1).split(",");
         let x = Number(size[0]);
         let y = Number(size[1]);
         let sizeStr = "";
 
         if (x > y) {
-            sizeStr = `width: ${this._sanitize(x)}px`;
+            sizeStr = `width: ${Kennel._sanitize(x)}px`;
         } else {
-            sizeStr = `height: ${this._sanitize(y)}px`;
+            sizeStr = `height: ${Kennel._sanitize(y)}px`;
         }
 
         for (let i = 0; i < elem["screenshots"].length; i++) {
-            let ssURL = this._lax_sanitize(`${this.#proxyURL}${elem["screenshots"][i].url}`);
-            ret += `<img style="${this._sanitize(sizeStr)}; border-radius: ${this._sanitize(elem["itemCornerRadius"])}px" class="img_card" alt="${this._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
+            let ssURL = Kennel._lax_sanitize(`${this.#proxyURL}${elem["screenshots"][i].url}`);
+            ret += `<img style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitize(elem["itemCornerRadius"])}px" class="nd_img_card" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
         }
 
         ret += `</div>`;
@@ -396,7 +395,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionSpacerView(elem: object) {
-        return `<div class="br" style="padding-top: ${elem["spacing"]}px"></div>`;
+        return `<div class="nd_br" style="padding-top: ${elem["spacing"]}px"></div>`;
     }
     /**
      * _DepictionSeparatorView(elem)
@@ -406,7 +405,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionSeparatorView(elem: object) {
-        return `<div class="hr_wrap"><hr></div>`;
+        return `<div class="nd_hr_wrap"><hr></div>`;
     }
     /**
      * _DepictionHeaderView(elem)
@@ -420,7 +419,7 @@ export default class Kennel {
         if (typeof elem["useBoldText"] != "undefined") {
             elem["fontWeight"] = elem["useBoldText"] ? "bold" : "normal";
         }
-        return `<h3 style="text-align: ${this._alignmentResolver(elem["alignment"])};font-weight: ${this._sanitize(elem["fontWeight"])}">${this._sanitize(elem["title"])}</h3>`;
+        return `<h3 class="nd_header" style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};font-weight: ${Kennel._sanitize(elem["fontWeight"])}">${Kennel._sanitize(elem["title"])}</h3>`;
     }
     /**
      * _DepictionSubheaderView(elem)
@@ -434,7 +433,7 @@ export default class Kennel {
         if (typeof elem["useBoldText"] != "undefined") {
             elem["fontWeight"] = elem["useBoldText"] ? "bold" : "normal";
         }
-        return `<h4 style="text-align: ${this._alignmentResolver(elem["alignment"])};font-weight: ${this._sanitize(elem["fontWeight"])}">${this._sanitize(elem["title"])}</h4>`;
+        return `<h4 class="nd_header" style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};font-weight: ${Kennel._sanitize(elem["fontWeight"])}">${Kennel._sanitize(elem["title"])}</h4>`;
     }
     /**
      * _DepictionImageView(elem)
@@ -444,10 +443,10 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionImageView(elem: object) {
-        let url = this._lax_sanitize(`${this.#proxyURL}${elem["URL"]}`); // Use proxy server (if set).
-        let padding = (typeof elem["horizontalPadding"] != "undefined" ? `padding-top:${this._sanitize(elem["horizontalPadding"])}px;padding-bottom:${this._sanitize(elem["horizontalPadding"])}px;` :"");
-        elem["alignment"] = this._alignmentResolver(elem["alignment"]);
-        return `<div style="text-align:${elem["alignment"]};"><img src="${url}" style="width:${this._sanitize(elem["width"])}px;height:${this._sanitize(elem["height"])}px;border-radius:${this._sanitize(elem["cornerRadius"])}px;max-width:100%;${padding}" alt="Image from depiction."></div>`;
+        let url = Kennel._lax_sanitize(`${this.#proxyURL}${elem["URL"]}`); // Use proxy server (if set).
+        let padding = (typeof elem["horizontalPadding"] != "undefined" ? `padding-top:${Kennel._sanitize(elem["horizontalPadding"])}px;padding-bottom:${Kennel._sanitize(elem["horizontalPadding"])}px;` :"");
+        elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
+        return `<div style="text-align:${elem["alignment"]};"><img src="${url}" style="width:${Kennel._sanitize(elem["width"])}px;height:${Kennel._sanitize(elem["height"])}px;border-radius:${Kennel._sanitize(elem["cornerRadius"])}px;max-width:100%;${padding}" alt="Image from depiction."></div>`;
     }
     /**
      * _DepictionRatingView(elem)
@@ -457,8 +456,8 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionRatingView(elem: object) {
-        let stars = this._starString(elem["rating"]);
-        elem["alignment"] = this._alignmentResolver(elem["alignment"]);
+        let stars = Kennel._starString(elem["rating"]);
+        elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
         return `<div style="color:#a1a1a1; text-align:${elem["alignment"]};">${stars}</div>`;
     }
     /**
@@ -475,7 +474,7 @@ export default class Kennel {
             ratingStr = this._DepictionRatingView(elem);
         else
             ratingStr = "";
-        return `<div class="review"><div class="review_head"><div class="left"><p>${this._sanitize(elem["title"])}</p><p class="author">by ${this._sanitize(elem["author"])}</p></div><div class="right">${ratingStr}</div></div>${md}</div>`;
+        return `<div class="nd_review"><div class="nd_review_head"><div class="nd_left"><p>${Kennel._sanitize(elem["title"])}</p><p class="nd_author">by ${Kennel._sanitize(elem["author"])}</p></div><div class="nd_right">${ratingStr}</div></div>${md}</div>`;
     }
     /**
      * _DepictionWebView(elem)
@@ -485,11 +484,11 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionWebView(elem: object) {
-        elem["alignment"] = this._alignmentResolver(elem["alignment"]);
+        elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
         // Only work if the website is whitelisted. Use regex.
         if (/(https?\:\/\/(((.*)\.vimeo.com)|(vimeo.com)|((.*)\.youtube.com)|(youtube.com))\/)/g.test(elem["URL"]))
             // Bug: Ignores alignment.
-            return `<div style="text-align: ${elem["alignment"]}"><iframe src="${this._lax_sanitize(elem["URL"])}" style="width: ${this._sanitize(elem["width"])}px; height: ${this._sanitize(elem["height"])}px;"></iframe></div>`;
+            return `<div style="text-align: ${elem["alignment"]}"><iframe class="nd_max_width" src="${Kennel._lax_sanitize(elem["URL"])}" style="width: ${Kennel._sanitize(elem["width"])}px; height: ${Kennel._sanitize(elem["height"])}px;"></iframe></div>`;
         else
             return "";
     }
@@ -501,7 +500,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionVideoView(elem: object) {
-        return `<div style="text-align: ${this._alignmentResolver(elem["alignment"])};"><video controls style="border-radius: ${this._sanitize(elem["cornerRadius"])}px;" src="${this._lax_sanitize(elem["URL"])}" width="${this._sanitize(elem["width"])}" height="${this._sanitize(elem["height"])}"></video></div>`;
+        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" controls style="border-radius: ${Kennel._sanitize(elem["cornerRadius"])}px;" src="${Kennel._lax_sanitize(elem["URL"])}" width="${Kennel._sanitize(elem["width"])}" height="${Kennel._sanitize(elem["height"])}"></video></div>`;
     }
     /**
      * _DepictionAdmobView(elem)
@@ -522,7 +521,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionUnknownView(elem: object) {
-        return `<p style="opacity:0.3">[Could not render: ${this._sanitize(elem["class"])}]</p>`;
+        return `<p style="opacity:0.3">[Could not render: ${Kennel._sanitize(elem["class"])}]</p>`;
     }
     /**
      * _sanitizeAll(str)
@@ -530,11 +529,11 @@ export default class Kennel {
      *
      * @param {string} str A string to sanitize.
      */
-    private _sanitizeAll(str) {
+    private static _sanitizeAll(str) {
         str = String(str);
         let newStr = "";
-        for (var i = 0; i < str.length; i++) {
-            newStr += `&#x${this._zeroPad(str.charCodeAt(i).toString(16))};`;
+        for (let i = 0; i < str.length; i++) {
+            newStr += `&#x${Kennel._zeroPad(str.charCodeAt(i).toString(16))};`;
         }
         return newStr;
     }
@@ -544,15 +543,15 @@ export default class Kennel {
      *
      * @param {string} str A string to sanitize.
      */
-    private _sanitize(str) {
+    private static _sanitize(str) {
         str = String(str);
         let newStr = "";
-        for (var i = 0; i < str.length; i++) {
+        for (let i = 0; i < str.length; i++) {
             let char = str[i];
             if ((char >= "A" && char <= "z") || (char >= "0" && char <= "9"))
                 newStr += char;
             else
-                newStr += `&#x${this._zeroPad(char.charCodeAt(0).toString(16))};`;
+                newStr += `&#x${Kennel._zeroPad(char.charCodeAt(0).toString(16))};`;
         }
         return newStr;
     }
@@ -562,15 +561,15 @@ export default class Kennel {
      *
      * @param {string} str A string to sanitize.
      */
-    private _sanitizeColor(str) {
+    private static _sanitizeColor(str) {
         str = String(str);
         let newStr = "";
-        for (var i = 0; i < str.length; i++) {
+        for (let i = 0; i < str.length; i++) {
             let char = str[i];
             if ((char >= "A" && char <= "z") || (char >= "0" && char <= "9") || (char == "#") || (char == "(") || (char == ")"))
                 newStr += char;
             else
-                newStr += `&#x${this._zeroPad(char.charCodeAt(0).toString(16))};`;
+                newStr += `&#x${Kennel._zeroPad(char.charCodeAt(0).toString(16))};`;
         }
         return newStr;
     }
@@ -580,10 +579,10 @@ export default class Kennel {
      *
      * @param {string} str A string to sanitize.
      */
-    private _lax_sanitize(str) {
+    private static _lax_sanitize(str: string) {
         str = String(str);
         let newStr = "";
-        for (var i = 0; i < str.length; i++) {
+        for (let i = 0; i < str.length; i++) {
             let char = str[i];
             if (
                 char == "&" ||
@@ -595,7 +594,7 @@ export default class Kennel {
                 char == "\\" ||
                 char == "/"
             )
-                newStr += `&#x${this._zeroPad(char.charCodeAt(0).toString(16))};`;
+                newStr += `&#x${Kennel._zeroPad(char.charCodeAt(0).toString(16))};`;
             else
                 newStr += char;
         }
@@ -608,15 +607,15 @@ export default class Kennel {
      *
      * @param {string} str A string to sanitize.
      */
-    private _sanitizeLegal(str) {
+    private static _sanitizeLegal(str: string) {
         str = String(str);
         let newStr = "";
-        for (var i = 0; i < str.length; i++) {
+        for (let i = 0; i < str.length; i++) {
             let char = str[i];
             if ((char >= "A" && char <= "z") || (char >= "0" && char <= "9"))
                 newStr += char;
             else
-                newStr += `_${this._zeroPad(char.charCodeAt(0).toString(16))}`;
+                newStr += `_${Kennel._zeroPad(char.charCodeAt(0).toString(16))}`;
         }
         return newStr;
     }
@@ -626,7 +625,7 @@ export default class Kennel {
      *
      * @param {string} char A single character.
      */
-    private _zeroPad(char) {
+    private static _zeroPad(char: string) {
         let len = String(char).length;
         if (len == 0)
             return "0000";
@@ -645,10 +644,10 @@ export default class Kennel {
      *
      * @param {string} prefix A string to prefix the random identifier with.
      */
-    private _makeIdentifier(prefix) {
+    private static _makeIdentifier(prefix: string) {
         if (typeof prefix == "undefined")
             prefix = "nd";
-        return `${prefix}_${Math.floor(Math.random()*Number.MAX_VALUE).toString(36)}`;
+        return `${prefix}_${Math.floor(Math.random()*Number.MAX_SAFE_INTEGER).toString(36)}`;
     }
     /**
      * _starString(num)
@@ -656,7 +655,7 @@ export default class Kennel {
      *
      * @param {number} num A double of the amount of stars to render.
      */
-    private _starString(num) {
+    private static _starString(num: number) {
         let buffer = "";
         let max = 5;
         let i;
@@ -674,7 +673,7 @@ export default class Kennel {
      *
      * @param {string} str Font weight string from native depiction
      */
-    private _weightStringResolver(str) {
+    private static _weightStringResolver(str: string) {
         if (typeof str == "undefined")
             return "normal";
 
@@ -702,9 +701,9 @@ export default class Kennel {
      * _marginResolver(UIEdgeInsets)
      * Convert a UIEdgeInsets to CSS margins.
      *
-     * @param {string} UIEdgeInsets A margin enum from Sileo.
+     * @param {string} UIEdgeInsets A margins struct from Sileo.
      */
-    private _marginResolver(UIEdgeInsets) {
+    private static _marginResolver(UIEdgeInsets: string) {
         let arr = JSON.parse(UIEdgeInsets.replace("{", "[").replace("}", "]"));
         return `margin: ${arr[0]}px, ${arr[3]}px, ${arr[2]}px, ${arr[1]}px;`
     }
@@ -712,9 +711,9 @@ export default class Kennel {
      * _alignmentResolver(num)
      * Convert a Sileo AlignEnum to a string that can be used with CSS.
      *
-     * @param {num} num A number for horizontal alignment.
+     * @param {number} num A number for horizontal alignment.
      */
-    private _alignmentResolver(num) {
+    private static _alignmentResolver(num: number) {
         if (num == 0)
             return "left";
         else if (num == 1)
@@ -726,13 +725,13 @@ export default class Kennel {
     }
     /**
      * _buttonLinkHandler(url, label)
-     * Use Parcility to render _Depiction- links in Sileo.
+     * Use Parcility to render depiction- links in Sileo.
      *
      * @param {string} url A URL.
-     * @param {string} label A string to set as the tite for a new _Depiction's URL.
+     * @param {string} label A string to set as the title for a new depiction's URL.
      */
     // Allow for -_Depiction links to work, too!
-    _buttonLinkHandler(url, label) {
+    private static _buttonLinkHandler(url: string, label: string) {
         if (url.indexOf("depiction-") == 0) {
             url = url.substring(10);
 
