@@ -104,31 +104,6 @@ p {
     cursor: pointer;
 }
 
-.nd_package {
-    margin-bottom: 40px;
-}
-
-.nd_package > img {
-    border-radius: 20px;
-    width: 75px;
-    height: 75px;
-    float: left;
-}
-
-.nd_package_info {
-    margin-left: 90px;
-}
-
-.nd_package_name {
-    font-weight: bold;
-    font-size: 21px;
-}
-
-.nd_package_caption {
-    margin-top: 7px;
-    color: #999;
-}
-
 .nd_cell > .nd_title {
     color: #999;
 }

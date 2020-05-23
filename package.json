@@ -1,6 +1,6 @@
 {
   "name": "@zenithdevs/kennel",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "A comprehensive, easy-to-use native depiction renderer.",
   "main": "dist/Kennel.js",
   "dependencies": {
@@ -41,7 +41,8 @@
   "keywords": [
     "sileo",
     "jailbreak",
-    "depiction"
+    "depiction",
+    "typescript"
   ],
   "author": "Zenith",
   "license": "MIT",

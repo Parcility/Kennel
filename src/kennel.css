@@ -18,15 +18,7 @@
     }
 }
 
-h1, h2, h3, h4, h5, h6 {
-    margin: 2px;
-    overflow-x: hidden;
-    width: calc(100% - 2px);
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-p {
+p.nd {
     margin: 2px;
 }
 
@@ -159,7 +151,7 @@ h3.nd_header {
 }
 
 .nd_subtle_link:hover, .nd_subtle_link > *:hover {
-    opacity: 0.nd_8;
+    opacity: 0.8;
 }
 
 .nd_green {
