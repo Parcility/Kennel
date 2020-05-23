@@ -4,15 +4,7 @@
     margin-bottom: 20px;
 }
 
-@media only screen and (max-width: 600px) {
-    .nd_scroll_view {
-        width: calc(100vw - 60px);
-    }
-}
 @media only screen and (min-width: 601px) {
-    .nd_scroll_view {
-        width: calc(500px - 40px);
-    }
     .nd_nested_stack {
         border-radius: 8px;
     }
@@ -33,7 +25,7 @@ p.nd {
 }
 
 .nd_scroll_view {
-    overflow-x: scroll;
+    overflow-x: auto;
     overflow-y: hidden;
     margin: 10px;
     white-space: nowrap;
