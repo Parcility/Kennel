@@ -40,11 +40,37 @@ export default class Kennel {
     readonly #proxyURL: string;
     readonly #tint: string;
 
+    #views : Map<String, Function>;
+
     constructor(depiction: object, proxyURL: string) {
         const dummyDepiction = {"minVersion": "0.1", "tintColor": "#6264D3", "class": "DepictionLabelView", "text": "(This depiction is empty.)"};
         this.#depiction = (typeof depiction != "undefined") ? depiction : dummyDepiction;
         this.#proxyURL = (typeof proxyURL != "undefined") ? proxyURL : "";
         this.#tint = (typeof this.#depiction["tintColor"] != "undefined") ? Kennel._sanitizeColor(this.#depiction["tintColor"]) : "#6264d3";
+
+        // Build a map of all the classes Kennel knows about.
+        this.#views = new Map<String, Function>();
+        this.#views.set("DepictionStackView", (elem: object) => this._DepictionStackView(elem));
+        this.#views.set("DepictionAutoStackView", (elem: object) => this._DepictionAutoStackView(elem));
+        this.#views.set("DepictionTabView", (elem: object) => this._DepictionTabView(elem));
+        this.#views.set("DepictionTableTextView", (elem: object) => this._DepictionTableTextView(elem));
+        this.#views.set("DepictionTableButtonView", (elem: object) => this._DepictionTableButtonView(elem));
+        this.#views.set("DepictionMarkdownView", (elem: object) => this._DepictionMarkdownView(elem));
+        this.#views.set("DepictionLabelView", (elem: object) => this._DepictionLabelView(elem));
+        this.#views.set("DepictionScreenshotsView", (elem: object) => this._DepictionScreenshotsView(elem));
+        this.#views.set("DepictionSpacerView", (elem: object) => this._DepictionSpacerView(elem));
+        this.#views.set("DepictionSeparatorView", (elem: object) => this._DepictionSeparatorView(elem));
+        this.#views.set("DepictionHeaderView", (elem: object) => this._DepictionHeaderView(elem));
+        this.#views.set("DepictionSubheaderView", (elem: object) => this._DepictionSubheaderView(elem));
+        this.#views.set("DepictionButtonView", (elem: object) => this._DepictionButtonView(elem));
+        this.#views.set("DepictionImageView", (elem: object) => this._DepictionImageView(elem));
+        this.#views.set("DepictionRatingView", (elem: object) => this._DepictionRatingView(elem));
+        this.#views.set("DepictionReviewView", (elem: object) => this._DepictionReviewView(elem));
+        this.#views.set("DepictionWebView", (elem: object) => this._DepictionWebView(elem));
+        this.#views.set("DepictionVideoView", (elem: object) => this._DepictionVideoView(elem));
+        this.#views.set("DepictionAdmobView", (elem: object) => this._DepictionAdmobView(elem));
+        this.#views.set("DepictionAdmobView", (elem: object) => this._DepictionAdmobView(elem));
+
     }
     /**
      * render()
@@ -73,50 +99,11 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionBaseView(elem: object) {
-        // This is where we see what class an element is and
-        // subsequently call a function to render it.
-        if (elem["class"] == "DepictionStackView")
-            return this._DepictionStackView(elem);
-        else if (elem["class"] == "DepictionAutoStackView")
-            return this._DepictionAutoStackView(elem);
-        else if (elem["class"] == "DepictionTabView")
-            return this._DepictionTabView(elem);
-        else if (elem["class"] == "DepictionTableTextView")
-            return this._DepictionTableTextView(elem);
-        else if (elem["class"] == "DepictionTableButtonView")
-            return this._DepictionTableButtonView(elem);
-        else if (elem["class"] == "DepictionMarkdownView")
-            return this._DepictionMarkdownView(elem);
-        else if (elem["class"] == "DepictionLabelView")
-            return this._DepictionLabelView(elem);
-        else if (elem["class"] == "DepictionScreenshotsView")
-            return this._DepictionScreenshotsView(elem);
-        else if (elem["class"] == "DepictionSpacerView")
-            return this._DepictionSpacerView(elem);
-        else if (elem["class"] == "DepictionSeparatorView")
-            return this._DepictionSeparatorView(elem);
-        else if (elem["class"] == "DepictionHeaderView")
-            return this._DepictionHeaderView(elem);
-        else if (elem["class"] == "DepictionSubheaderView")
-            return this._DepictionSubheaderView(elem);
-        else if (elem["class"] == "DepictionButtonView")
-            return this._DepictionButtonView(elem);
-        else if (elem["class"] == "DepictionImageView")
-            return this._DepictionImageView(elem);
-        else if (elem["class"] == "DepictionRatingView")
-            return this._DepictionRatingView(elem);
-        else if (elem["class"] == "DepictionReviewView")
-            return this._DepictionReviewView(elem);
-        else if (elem["class"] == "DepictionWebView")
-            return this._DepictionWebView(elem);
-        else if (elem["class"] == "DepictionVideoView")
-            return this._DepictionVideoView(elem);
-        else if (elem["class"] == "DepictionAdmobView")
-            return this._DepictionAdmobView(elem);
-        else if (elem["class"].toLowerCase().indexOf("hidden") != -1)
-            return "";
-        else
-            return this._DepictionUnknownView(elem);
+        // This is where we see what class an element is and subsequently call a function to render it.
+        if (elem["class"].toLowerCase().includes("hidden")) return "";
+        let fn: any = this.#views.get(elem["class"]);
+        if (typeof fn != "function") return this._DepictionUnknownView(elem);
+        return fn(elem);
     }
     /**
      * _DepictionTabView(elem)
