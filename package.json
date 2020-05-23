@@ -1,5 +1,5 @@
 {
-  "name": "kennel",
+  "name": "@zenithdevs/kennel",
   "version": "1.0.0",
   "description": "A comprehensive, easy-to-use native depiction renderer.",
   "main": "src/Kennel.js",
