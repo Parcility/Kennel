@@ -47,5 +47,8 @@
   "bugs": {
     "url": "https://github.com/ZenithDevs/Kennel/issues"
   },
-  "homepage": "https://github.com/ZenithDevs/Kennel#readme"
+  "homepage": "https://github.com/ZenithDevs/Kennel#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
 }
