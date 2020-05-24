@@ -81,7 +81,8 @@ export default class Kennel {
      */
     render() {
         // This is the string that will contain everything.
-        let buffer = `<div class="native_depiction"><style>a, .nd_tint, .nd_table-btn:after {color: ${this.#tint}} .nd_active {color: ${this.#tint}; border-bottom: 2px solid ${this.#tint};} .nd_btn {background-color: ${this.#tint}}</style>`;
+        let tint = Kennel._sanitizeColor(this.#tint);
+        let buffer = `<div class="native_depiction"><style>a, .nd_tint, .nd_table-btn:after {color: ${tint}} .nd_active {color: ${tint}; border-bottom: 2px solid ${tint};} .nd_btn {background-color: ${tint}}</style>`;
 4
         buffer += this._DepictionBaseView(this.#depiction);
 
@@ -178,9 +179,9 @@ export default class Kennel {
     private _DepictionAutoStackView(elem: object) {
         let buffer = "";
         if (typeof elem["backgroundColor"] != "undefined")
-            buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitize(elem["backgroundColor"])}; width: ${Kennel._sanitize(elem["horizontalSpacing"] ? `${elem["horizontalSpacing"]}px` : "100%")}">`;
+            buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitizeColor(elem["backgroundColor"])}; width: ${elem["horizontalSpacing"] ? `${Kennel._sanitizeDouble(elem["horizontalSpacing"])}px` : "100%"}">`;
         else
-            buffer += `<div class="nd_nested_stack" style="width: ${Kennel._sanitize(elem["horizontalSpacing"] ? `${elem["horizontalSpacing"]}px` : "100%")}">`;
+            buffer += `<div class="nd_nested_stack" style="width: ${elem["horizontalSpacing"] ? `${Kennel._sanitizeDouble(elem["horizontalSpacing"])}px` : "100%"}">`;
 
         if (typeof elem["orientation"] == "undefined" || elem["orientation"].toLowerCase() != "landscape") {
             // Standard orientation
@@ -361,9 +362,9 @@ export default class Kennel {
         let sizeStr = "";
 
         if (x > y) {
-            sizeStr = `width: ${Kennel._sanitize(x)}px`;
+            sizeStr = `width: ${Kennel._sanitizeDouble(x)}px`;
         } else {
-            sizeStr = `height: ${Kennel._sanitize(y)}px`;
+            sizeStr = `height: ${Kennel._sanitizeDouble(y)}px`;
         }
 
         for (let i = 0; i < elem["screenshots"].length; i++) {
@@ -382,7 +383,8 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionSpacerView(elem: object) {
-        return `<div class="nd_br" style="padding-top: ${elem["spacing"]}px"></div>`;
+        let spacing = Kennel._sanitizeDouble(elem["spacing"]);
+        return `<div class="nd_br" style="padding-top: ${spacing}px"></div>`;
     }
     /**
      * _DepictionSeparatorView(elem)
@@ -431,9 +433,9 @@ export default class Kennel {
      */
     private _DepictionImageView(elem: object) {
         let url = Kennel._lax_sanitize(`${this.#proxyURL}${elem["URL"]}`); // Use proxy server (if set).
-        let padding = (typeof elem["horizontalPadding"] != "undefined" ? `padding-top:${Kennel._sanitize(elem["horizontalPadding"])}px;padding-bottom:${Kennel._sanitize(elem["horizontalPadding"])}px;` :"");
+        let padding = (typeof elem["horizontalPadding"] != "undefined" ? `padding-top:${Kennel._sanitizeDouble(elem["horizontalPadding"])}px;padding-bottom:${Kennel._sanitizeDouble(elem["horizontalPadding"])}px;` :"");
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
-        return `<div style="text-align:${elem["alignment"]};"><img src="${url}" style="width:${Kennel._sanitize(elem["width"])}px;height:${Kennel._sanitize(elem["height"])}px;border-radius:${Kennel._sanitize(elem["cornerRadius"])}px;max-width:100%;${padding}" alt="Image from depiction."></div>`;
+        return `<div style="text-align:${elem["alignment"]};"><img src="${url}" style="width:${Kennel._sanitizeDouble(elem["width"])}px;height:${Kennel._sanitizeDouble(elem["height"])}px;border-radius:${Kennel._sanitizeDouble(elem["cornerRadius"])}px;max-width:100%;${padding}" alt="Image from depiction."></div>`;
     }
     /**
      * _DepictionRatingView(elem)
@@ -475,7 +477,7 @@ export default class Kennel {
         // Only work if the website is whitelisted. Use regex.
         if (/(https?\:\/\/(((.*)\.vimeo.com)|(vimeo.com)|((.*)\.youtube.com)|(youtube.com))\/)/g.test(elem["URL"]))
             // Bug: Ignores alignment.
-            return `<div style="text-align: ${elem["alignment"]}"><iframe class="nd_max_width" src="${Kennel._lax_sanitize(elem["URL"])}" style="width: ${Kennel._sanitize(elem["width"])}px; height: ${Kennel._sanitize(elem["height"])}px;"></iframe></div>`;
+            return `<div style="text-align: ${elem["alignment"]}"><iframe class="nd_max_width" src="${Kennel._lax_sanitize(elem["URL"])}" style="width: ${Kennel._sanitizeDouble(elem["width"])}px; height: ${Kennel._sanitizeDouble(elem["height"])}px;"></iframe></div>`;
         else
             return "";
     }
@@ -487,7 +489,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionVideoView(elem: object) {
-        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" controls style="border-radius: ${Kennel._sanitize(elem["cornerRadius"])}px;" src="${Kennel._lax_sanitize(elem["URL"])}" width="${Kennel._sanitize(elem["width"])}" height="${Kennel._sanitize(elem["height"])}"></video></div>`;
+        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" controls style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" src="${Kennel._lax_sanitize(elem["URL"])}" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"></video></div>`;
     }
     /**
      * _DepictionAdmobView(elem)
@@ -516,11 +518,11 @@ export default class Kennel {
      *
      * @param {string} str A string to sanitize.
      */
-    private static _sanitizeAll(str) {
+    private static _sanitizeAll(str: string) {
         str = String(str);
         let newStr = "";
         for (let i = 0; i < str.length; i++) {
-            newStr += `&#x${Kennel._zeroPad(str.charCodeAt(i).toString(16))};`;
+            newStr += `&#x${str.charCodeAt(i).toString(16).padStart(4, "0")};`;
         }
         return newStr;
     }
@@ -530,7 +532,7 @@ export default class Kennel {
      *
      * @param {string} str A string to sanitize.
      */
-    private static _sanitize(str) {
+    private static _sanitize(str: string) {
         str = String(str);
         let newStr = "";
         for (let i = 0; i < str.length; i++) {
@@ -538,7 +540,25 @@ export default class Kennel {
             if ((char >= "A" && char <= "z") || (char >= "0" && char <= "9"))
                 newStr += char;
             else
-                newStr += `&#x${Kennel._zeroPad(char.charCodeAt(0).toString(16))};`;
+                newStr += `&#x${char.charCodeAt(0).toString(16).padStart(4, "0")};`;
+        }
+        return newStr;
+    }
+    /*
+     * _sanitizeDouble(num)
+     * Converts a number to a string and sanitizes it aggressively.
+     * All non-numerical, non-decimal values will be removed.
+     *
+     * @param {number} num A number to sanitize.
+     * @return {string} A string of the now-sanitized number.
+     */
+    private static _sanitizeDouble(num: number) {
+        let str = String(num);
+        let newStr = "";
+        for (let i = 0; i < str.length; i++) {
+            let char = str[i];
+            if ((char == ".") || (char >= "0" && char <= "9"))
+                newStr += char;
         }
         return newStr;
     }
@@ -548,7 +568,7 @@ export default class Kennel {
      *
      * @param {string} str A string to sanitize.
      */
-    private static _sanitizeColor(str) {
+    private static _sanitizeColor(str: string) {
         str = String(str);
         let newStr = "";
         for (let i = 0; i < str.length; i++) {
@@ -556,7 +576,7 @@ export default class Kennel {
             if ((char >= "A" && char <= "z") || (char >= "0" && char <= "9") || (char == "#") || (char == "(") || (char == ")"))
                 newStr += char;
             else
-                newStr += `&#x${Kennel._zeroPad(char.charCodeAt(0).toString(16))};`;
+                newStr += `&#x${char.charCodeAt(0).toString(16).padStart(4, "0")};`;
         }
         return newStr;
     }
@@ -581,7 +601,7 @@ export default class Kennel {
                 char == "\\" ||
                 char == "/"
             )
-                newStr += `&#x${Kennel._zeroPad(char.charCodeAt(0).toString(16))};`;
+                newStr += `&#x${char.charCodeAt(0).toString(16).padStart(4, "0")};`;
             else
                 newStr += char;
         }
@@ -602,28 +622,9 @@ export default class Kennel {
             if ((char >= "A" && char <= "z") || (char >= "0" && char <= "9"))
                 newStr += char;
             else
-                newStr += `_${Kennel._zeroPad(char.charCodeAt(0).toString(16))}`;
+                newStr += `_${char.charCodeAt(0).toString(16).padStart(4, "0")}`;
         }
         return newStr;
-    }
-    /**
-     * _zeroPad(char)
-     * Pad a number char with, at most, four zeros.
-     *
-     * @param {string} char A single character.
-     */
-    private static _zeroPad(char: string) {
-        let len = String(char).length;
-        if (len == 0)
-            return "0000";
-        if (len == 1)
-            return "000" + char;
-        if (len == 2)
-            return "00" + char;
-        if (len == 3)
-            return "0" + char;
-        else
-            return char;
     }
     /**
      * _makeIdentifier(prefix)
@@ -692,7 +693,7 @@ export default class Kennel {
      */
     private static _marginResolver(UIEdgeInsets: string) {
         let arr = JSON.parse(UIEdgeInsets.replace("{", "[").replace("}", "]"));
-        return `margin: ${arr[0]}px, ${arr[3]}px, ${arr[2]}px, ${arr[1]}px;`
+        return `margin: ${Kennel._sanitizeDouble(arr[0])}px, ${Kennel._sanitizeDouble(arr[3])}px, ${Kennel._sanitizeDouble(arr[2])}px, ${Kennel._sanitizeDouble(arr[1])}px;`
     }
     /**
      * _alignmentResolver(num)
