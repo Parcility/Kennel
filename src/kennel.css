@@ -22,6 +22,10 @@ p.nd {
 .nd_header {
     margin-top: 40px;
     margin-bottom: 25px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
 }
 
 .nd_scroll_view {
@@ -30,6 +34,17 @@ p.nd {
     margin: 10px;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
+    scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
+}
+
+.nd_scroll_view::-webkit-scrollbar {
+    background: transparent;
+    width: 7px;
+    height: 5px;
+}
+
+.nd_scroll_view::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.3);
 }
 
 .nd_scroll_view > .nd_card {
@@ -62,7 +77,7 @@ p.nd {
     left: 15px;
     font-size: 25px;
     position: absolute;
-    text-shadow: 0 0 10px rgba(0,0,0,0.nd_8); 
+    text-shadow: 0 0 10px rgba(0,0,0,0.8);
 }
 
 .nd_center {
@@ -73,7 +88,7 @@ p.nd {
     float: left;
 }
 
-.nd_right_float { 
+.nd_right_float {
     float: right;
 }
 
@@ -84,7 +99,7 @@ p.nd {
 }
 
 .nd_add_sileo:hover, a.nd:hover {
-    opacity: 0.nd_8;
+    opacity: 0.8;
     cursor: pointer;
 }
 
@@ -143,7 +158,6 @@ h3.nd_header {
 .nd_nav {
     display: flex;
     margin: 20px;
-    float: center;
 }
 
 .nd_nav_btn {
@@ -165,8 +179,8 @@ a.nd {
 }
 
 .nd_table-btn, .nd_table-btn > div {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 11px;
+    padding-bottom: 11px;
 }
 
 .nd_table-btn:after {
@@ -235,7 +249,7 @@ a.nd {
 }
 
 .nd_review_head > .nd_left > .nd_author {
-    opacity: 0.nd_5;
+    opacity: 0.5;
 }
 
 .nd_review_head > .nd_right {
@@ -258,7 +272,7 @@ a.nd {
     display: block;
 }
 
-.nd_nested_stack > div > div {
+.nd_nested_stack > div > div:not(.nd_cell) {
     margin-left: 20px;
     margin-right: 20px;
 }

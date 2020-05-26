@@ -82,7 +82,7 @@ export default class Kennel {
     render() {
         // This is the string that will contain everything.
         let tint = Kennel._sanitizeColor(this.#tint);
-        let buffer = `<div class="native_depiction"><style>a, .nd_tint, .nd_table-btn:after {color: ${tint}} .nd_active {color: ${tint}; border-bottom: 2px solid ${tint};} .nd_btn {background-color: ${tint}}</style>`;
+        let buffer = `<div class="native_depiction"><style>a, .nd_tint, .nd_active {color: ${tint}} .nd_active {border-bottom: 2px solid ${tint};} .nd_btn {background-color: ${tint}}</style>`;
 4
         buffer += this._DepictionBaseView(this.#depiction);
 
@@ -299,7 +299,7 @@ export default class Kennel {
             }
 
         } else {
-            rendered = marked(Kennel._lax_sanitize(elem["markdown"])).replace(/<hr>/g, this._DepictionSeparatorView(elem));
+            rendered = marked(Kennel._laxSanitize(elem["markdown"])).replace(/<hr>/g, this._DepictionSeparatorView(elem));
         }
         let noJSRender;
 
@@ -368,7 +368,7 @@ export default class Kennel {
         }
 
         for (let i = 0; i < elem["screenshots"].length; i++) {
-            let ssURL = Kennel._lax_sanitize(`${this.#proxyURL}${elem["screenshots"][i].url}`);
+            let ssURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["screenshots"][i].url}`);
             ret += `<img style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitize(elem["itemCornerRadius"])}px" class="nd_img_card" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
         }
 
@@ -432,7 +432,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionImageView(elem: object) {
-        let url = Kennel._lax_sanitize(`${this.#proxyURL}${elem["URL"]}`); // Use proxy server (if set).
+        let url = Kennel._laxSanitize(`${this.#proxyURL}${elem["URL"]}`); // Use proxy server (if set).
         let padding = (typeof elem["horizontalPadding"] != "undefined" ? `padding-top:${Kennel._sanitizeDouble(elem["horizontalPadding"])}px;padding-bottom:${Kennel._sanitizeDouble(elem["horizontalPadding"])}px;` :"");
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
         return `<div style="text-align:${elem["alignment"]};"><img src="${url}" style="width:${Kennel._sanitizeDouble(elem["width"])}px;height:${Kennel._sanitizeDouble(elem["height"])}px;border-radius:${Kennel._sanitizeDouble(elem["cornerRadius"])}px;max-width:100%;${padding}" alt="Image from depiction."></div>`;
@@ -475,9 +475,9 @@ export default class Kennel {
     private _DepictionWebView(elem: object) {
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
         // Only work if the website is whitelisted. Use regex.
-        if (/(https?\:\/\/(((.*)\.vimeo.com)|(vimeo.com)|((.*)\.youtube.com)|(youtube.com))\/)/g.test(elem["URL"]))
+        if (/(https?:\/\/(((.*)\.vimeo.com)|(vimeo.com)|((.*)\.youtube.com)|(youtube.com))\/)/g.test(elem["URL"]))
             // Bug: Ignores alignment.
-            return `<div style="text-align: ${elem["alignment"]}"><iframe class="nd_max_width" src="${Kennel._lax_sanitize(elem["URL"])}" style="width: ${Kennel._sanitizeDouble(elem["width"])}px; height: ${Kennel._sanitizeDouble(elem["height"])}px;"></iframe></div>`;
+            return `<div style="text-align: ${elem["alignment"]}"><iframe class="nd_max_width" src="${Kennel._laxSanitize(elem["URL"])}" style="width: ${Kennel._sanitizeDouble(elem["width"])}px; height: ${Kennel._sanitizeDouble(elem["height"])}px;"></iframe></div>`;
         else
             return "";
     }
@@ -489,7 +489,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionVideoView(elem: object) {
-        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" controls style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" src="${Kennel._lax_sanitize(elem["URL"])}" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"></video></div>`;
+        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" controls style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" src="${Kennel._laxSanitize(elem["URL"])}" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"></video></div>`;
     }
     /**
      * _DepictionAdmobView(elem)
@@ -512,23 +512,9 @@ export default class Kennel {
     private _DepictionUnknownView(elem: object) {
         return `<p style="opacity:0.3">[Could not render: ${Kennel._sanitize(elem["class"])}]</p>`;
     }
-    /**
-     * _sanitizeAll(str)
-     * Aggressive sanitation. All characters are _sanitized.
-     *
-     * @param {string} str A string to sanitize.
-     */
-    private static _sanitizeAll(str: string) {
-        str = String(str);
-        let newStr = "";
-        for (let i = 0; i < str.length; i++) {
-            newStr += `&#x${str.charCodeAt(i).toString(16).padStart(4, "0")};`;
-        }
-        return newStr;
-    }
     /*
      * _sanitize(str)
-     * Aggressive sanitation. All non-alphanum characters are _sanitized.
+     * Aggressive sanitation. All non-alphanum characters are sanitized.
      *
      * @param {string} str A string to sanitize.
      */
@@ -564,7 +550,7 @@ export default class Kennel {
     }
     /*
      * _sanitizeColor(str)
-     * Aggressive sanitation. All non-alphanum characters are _sanitized, sans stuff used by colors
+     * Aggressive sanitation. All non-alphanum characters are sanitized, sans stuff used by colors
      *
      * @param {string} str A string to sanitize.
      */
@@ -581,12 +567,12 @@ export default class Kennel {
         return newStr;
     }
     /*
-     * _lax_sanitize(str)
+     * _laxSanitize(str)
      * Relaxed sanitation for inside DIVs.
      *
      * @param {string} str A string to sanitize.
      */
-    private static _lax_sanitize(str: string) {
+    private static _laxSanitize(str: string) {
         str = String(str);
         let newStr = "";
         for (let i = 0; i < str.length; i++) {
@@ -604,25 +590,6 @@ export default class Kennel {
                 newStr += `&#x${char.charCodeAt(0).toString(16).padStart(4, "0")};`;
             else
                 newStr += char;
-        }
-        return newStr;
-    }
-    /**
-     * _sanitizeLegal(str)
-     * Aggressive sanitation designed for attributes. All non-legal are rendered as
-     * underscore-padded hex numbers.
-     *
-     * @param {string} str A string to sanitize.
-     */
-    private static _sanitizeLegal(str: string) {
-        str = String(str);
-        let newStr = "";
-        for (let i = 0; i < str.length; i++) {
-            let char = str[i];
-            if ((char >= "A" && char <= "z") || (char >= "0" && char <= "9"))
-                newStr += char;
-            else
-                newStr += `_${char.charCodeAt(0).toString(16).padStart(4, "0")}`;
         }
         return newStr;
     }

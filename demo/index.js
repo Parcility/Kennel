@@ -546,6 +546,7 @@ const nd = new Kennel(depiction);
 const nd_out = nd.render();
 const out = `<html lang="en">
     <head>
+        <meta charset="utf8">
         <link rel="stylesheet" type="text/css" href="../dist/kennel.css">
         <title>Kennel depiction.</title>
     </head>
