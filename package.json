@@ -1,6 +1,6 @@
 {
   "name": "@zenithdevs/kennel",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A comprehensive, easy-to-use native depiction renderer.",
   "main": "dist/Kennel.js",
   "dependencies": {

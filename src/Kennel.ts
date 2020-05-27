@@ -447,7 +447,7 @@ export default class Kennel {
     private _DepictionRatingView(elem: object) {
         let stars = Kennel._starString(elem["rating"]);
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
-        return `<div style="color:#a1a1a1; text-align:${elem["alignment"]};">${stars}</div>`;
+        return `<div title="${Kennel._sanitizeDouble(elem["rating"])}/5 stars." style="color:#a1a1a1; text-align:${elem["alignment"]};">${stars}</div>`;
     }
     /**
      * _DepictionReviewView(elem)
@@ -611,16 +611,9 @@ export default class Kennel {
      * @param {number} num A double of the amount of stars to render.
      */
     private static _starString(num: number) {
-        let buffer = "";
-        let max = 5;
-        let i;
-        for (i = 0; i < Math.floor(num); i++)
-            buffer += "★";
-        if (num % 1 != 0)
-            buffer += "★";
-        for (i = Math.ceil(num); i < max; i++)
-            buffer += "☆";
-        return buffer;
+        const max = 5;
+        num = Math.round(num);
+        return "★".repeat(num).padEnd(max, "☆");
     }
     /**
      * _weightStringResolver(str)
