@@ -82,7 +82,6 @@ export default class Kennel {
         // This is the string that will contain everything.
         let tint = Kennel._sanitizeColor(this.#tint);
         let buffer = `<div class="native_depiction"><style>a, .nd_tint, .nd_active {color: ${tint}} .nd_active {border-bottom: 2px solid ${tint};} .nd_btn {background-color: ${tint}}</style>`;
-4
         buffer += this._DepictionBaseView(this.#depiction);
 
         buffer += "</div>";
@@ -149,7 +148,7 @@ export default class Kennel {
         let buffer = "";
 
         if (typeof elem["backgroundColor"] != "undefined")
-            buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitize(elem["backgroundColor"])}">`;
+            buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitizeColor(elem["backgroundColor"])}">`;
         else
             buffer += `<div class="nd_nested_stack">`;
 
@@ -222,7 +221,7 @@ export default class Kennel {
         if (elem["yPadding"] || elem["tintColor"]) {
             extra_params += ` style="`;
             if (elem["yPadding"])
-                extra_params += `padding-bottom: '${Kennel._sanitize(elem["yPadding"])}';`;
+                extra_params += `padding-bottom: '${Kennel._sanitizeDouble(elem["yPadding"])}';`;
             if (elem["tintColor"]) {
                 // !TODO Fix bug where the chevron will stay uncolored.
                 extra_params += `color: ${Kennel._sanitizeColor(elem["tintColor"])};`;
@@ -247,7 +246,7 @@ export default class Kennel {
         if (elem["yPadding"] || elem["tintColor"]) {
             extra_params += ` style="`;
             if (elem["yPadding"])
-                extra_params += `padding-bottom: '${Kennel._sanitize(elem["yPadding"])}';`;
+                extra_params += `padding-bottom: '${Kennel._sanitizeDouble(elem["yPadding"])}';`;
             if (elem["tintColor"]) {
                 extra_params += `background-color: ${Kennel._sanitizeColor(elem["tintColor"])};`;
             }
@@ -340,9 +339,9 @@ export default class Kennel {
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
         elem["fontWeight"] = Kennel._weightStringResolver(elem["fontWeight"]);
         elem["textColor"] = (typeof elem["textColor"] != "undefined")
-            ? `color: ${Kennel._sanitize(elem["textColor"])};` : "";
+            ? `color: ${Kennel._sanitizeColor(elem["textColor"])};` : "";
         elem["fontSize"] = (typeof elem["fontSize"] != "undefined")
-            ? `font-size: ${Kennel._sanitize(elem["fontSize"])}px;` : "";
+            ? `font-size: ${Kennel._sanitizeDouble(elem["fontSize"])}px;` : "";
 
         return `<div class="nd_label" style="font-weight: ${elem["fontWeight"]}; text-align:${elem["alignment"]}; ${elem["textColor"]}${elem["fontSize"]}${marginStr}">${Kennel._sanitize(elem["text"])}</div>`;
     }
@@ -369,7 +368,7 @@ export default class Kennel {
 
         for (let i = 0; i < elem["screenshots"].length; i++) {
             let ssURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["screenshots"][i].url}`);
-            ret += `<img style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitize(elem["itemCornerRadius"])}px" class="nd_img_card" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
+            ret += `<img style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" class="nd_img_card" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
         }
 
         ret += `</div>`;
@@ -556,10 +555,8 @@ export default class Kennel {
         let newStr = "";
         for (let i = 0; i < str.length; i++) {
             let char = str[i];
-            if ((char >= "A" && char <= "z") || (char >= "0" && char <= "9") || (char == "#") || (char == "(") || (char == ")"))
+            if ((char >= "A" && char <= "z") || (char >= "0" && char <= "9") || (char == "#") || (char == ".") || (char == "-") || (char == ",") || (char == "(") || (char == ")"))
                 newStr += char;
-            else
-                newStr += `&#x${char.charCodeAt(0).toString(16).padStart(4, "0")};`;
         }
         return newStr;
     }
