@@ -69,7 +69,6 @@ export default class Kennel {
         this.#views.set("DepictionWebView", (elem: object) => this._DepictionWebView(elem));
         this.#views.set("DepictionVideoView", (elem: object) => this._DepictionVideoView(elem));
         this.#views.set("DepictionAdmobView", (elem: object) => this._DepictionAdmobView(elem));
-        this.#views.set("DepictionAdmobView", (elem: object) => this._DepictionAdmobView(elem));
 
     }
     /**
@@ -231,7 +230,7 @@ export default class Kennel {
             extra_params += `"`;
         }
         elem["action"] = Kennel._sanitize(Kennel._buttonLinkHandler(elem["action"], elem["title"]));
-        return `<a class="nd nd_table-btn" href="${elem["action"]}"${extra_params}><div>${elem["title"]}</div></a>`;
+        return `<a class="nd nd_table-btn" href="${elem["action"]}"${extra_params}><div>${Kennel._sanitize(elem["title"])}</div></a>`;
     }
     /**
      * _DepictionButtonView(elem)
@@ -255,7 +254,7 @@ export default class Kennel {
             extra_params += `"`;
         }
         elem["action"] = Kennel._sanitize(Kennel._buttonLinkHandler(elem["action"], elem["text"]));
-        return `<a class="nd nd_btn" href="${elem["action"]}"${extra_params}>${elem["text"]}</a>`;
+        return `<a class="nd nd_btn" href="${elem["action"]}"${extra_params}>${Kennel._sanitize(elem["text"])}</a>`;
     }
     /**
      * _DepictionMarkdownView(elem)
@@ -265,6 +264,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionMarkdownView(elem: object) {
+        let didWarnXSS = false;
         let ident = Kennel._makeIdentifier("md");
         // Is there a tint color passed?
         if (typeof elem["tintColor"] == "undefined" && typeof this.#tint == "undefined")
@@ -278,24 +278,24 @@ export default class Kennel {
         if (elem["useRawFormat"]) {
             // ! XSS WARNING ! //
             // Unfortunately, this is a design flaw with the spec.
-            rendered = marked(elem["markdown"]).replace(/<hr>/g, this._DepictionSeparatorView(elem));
+            rendered = marked(elem["markdown"]).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
 
             // Remove all <script> tags.
-            if (rendered.toLowerCase().indexOf("<script>") != -1) {
-                // If <script> is detected,
+            if (rendered.toLowerCase().indexOf("<script>") != -1 || rendered.toLowerCase().indexOf("</script>") != -1) {
+                // If <script> is detected, sanitize it.
+                rendered = rendered.replace(/<script>/im, "&lt;script&gt;").replace(/<\/script>/im, "&lt;/script&gt;")
+
+                didWarnXSS = true;
                 rendered = `${xssWarn}${rendered}`;
-                rendered = rendered.substring(0, rendered.toLowerCase().indexOf("<script>") + 7) + rendered.substring(rendered.toLowerCase().indexOf("</script>"));
             }
-            // Clumbsily remove onerr/onload
-            if (
-                rendered.toLowerCase().indexOf("onload") != -1 ||
-                rendered.toLowerCase().indexOf("onerror") != -1 ||
-                rendered.toLowerCase().indexOf("onhover") != -1 ||
-                rendered.toLowerCase().indexOf("onclick") != -1
-            )
+            // Remove onerror/onload/etc
+            if (/on([^\s]+?)=/im.test(rendered))
             {
-                rendered = `${xssWarn}${rendered}`;
-                rendered = rendered.replace(/onload/i, "").replace(/onerror/i, "").replace(/onhover/i, "").replace(/onclick/i, "")
+                if (!didWarnXSS) {
+                    rendered = `${xssWarn}${rendered}`;
+                    didWarnXSS = true;
+                }
+                rendered = rendered.replace(/on([^\s]+?)=/ig, "onXSSAttempt=");
             }
 
         } else {
@@ -474,12 +474,9 @@ export default class Kennel {
      */
     private _DepictionWebView(elem: object) {
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
-        // Only work if the website is whitelisted. Use regex.
-        if (/(https?:\/\/(((.*)\.vimeo.com)|(vimeo.com)|((.*)\.youtube.com)|(youtube.com))\/)/g.test(elem["URL"]))
-            // Bug: Ignores alignment.
-            return `<div style="text-align: ${elem["alignment"]}"><iframe class="nd_max_width" src="${Kennel._laxSanitize(elem["URL"])}" style="width: ${Kennel._sanitizeDouble(elem["width"])}px; height: ${Kennel._sanitizeDouble(elem["height"])}px;"></iframe></div>`;
-        else
-            return "";
+        // Implementation details: Discussions with repos show a disdain for Sileo's whitelist approach.
+        // As a result, all URLs are supported.
+        return `<div style="text-align: ${elem["alignment"]}"><iframe class="nd_max_width" src="${Kennel._laxSanitize(elem["URL"])}" style="width: ${Kennel._sanitizeDouble(elem["width"])}px; height: ${Kennel._sanitizeDouble(elem["height"])}px;"></iframe></div>`;
     }
     /**
      * _DepictionVideoView(elem)
@@ -584,6 +581,9 @@ export default class Kennel {
                 char == "\"" ||
                 char == "\'" ||
                 char == "\`" ||
+                char == "{" ||
+                char == "}" ||
+                char == "$" ||
                 char == "\\" ||
                 char == "/"
             )
@@ -680,13 +680,18 @@ export default class Kennel {
      */
     // Allow for -_Depiction links to work, too!
     private static _buttonLinkHandler(url: string, label: string) {
-        if (url.indexOf("depiction-") == 0) {
+        // javascript: links should do nothing.
+        const jsXssIndex = url.indexOf("javascript:");
+        if (jsXssIndex != -1) {
+            return url.substring(0, jsXssIndex) + encodeURIComponent(url.substring(jsXssIndex));
+        // depiction- links should link to a depiction. Use Parcility's API for this.
+        } else if (url.indexOf("depiction-") == 0) {
             url = url.substring(10);
 
             if (typeof label == "undefined")
                 label = "Depiction";
 
-            return `https://api.parcility.co/render/headerless?url=${url}&name=${label}`
+            return `https://api.parcility.co/render/headerless?url=${encodeURIComponent(url)}&name=${label}`
         } else if (url.indexOf("form-") == 0) {
             return url.substring(4);
         } else {
