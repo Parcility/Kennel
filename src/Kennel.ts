@@ -27,6 +27,10 @@
 
 const marked = require("marked");
 
+marked.setOptions({
+    xhtml: true
+});
+
 /**
  * Kennel
  * The class that stores and renders a native depiction.
@@ -99,10 +103,26 @@ export default class Kennel {
      */
     private _DepictionBaseView(elem: object) {
         // This is where we see what class an element is and subsequently call a function to render it.
-        if (elem["class"].toLowerCase().includes("hidden")) return "";
-        let fn: any = this.#views.get(elem["class"]);
-        if (typeof fn != "function") return this._DepictionUnknownView(elem);
-        return fn(elem);
+        if (elem["class"]) {
+            try {
+                if (elem["class"].toLowerCase().includes("hidden")) return "";
+                let fn: any = this.#views.get(elem["class"]);
+                if (typeof fn != "function") return this._DepictionUnknownView(elem);
+                return fn(elem);
+            } catch(e) {
+                if (e.name === "TypeError") {
+                    console.error("Kennel: Element is malformed.")
+                    return this._DepictionErrorView(elem, "Could not render malformed element");
+                } else {
+                    console.error("Kennel: An unknown error occurred.");
+                    return this._DepictionErrorView(elem, "An unknown error occurred during render");
+                }
+            }
+        } else {
+            console.log("Kennel: Class for element is not defined.")
+            elem["class"] = "UndefinedViewClass";
+            return this._DepictionErrorView(elem, "Class for element is not defined");
+        }
     }
     /**
      * _DepictionTabView(elem)
@@ -508,6 +528,18 @@ export default class Kennel {
     private _DepictionUnknownView(elem: object) {
         return `<p style="opacity:0.3">[Could not render: ${Kennel._sanitize(elem["class"])}]</p>`;
     }
+
+    /**
+     * _DepictionErrorView(elem)
+     * Renders a DepictionUnknownView, given Object elem for context.
+     * Calling directly is not recommended but is possible.
+     *
+     * @param {object} elem The native depiction class.
+     * @param {string} err A string describing the error.
+     */
+    private _DepictionErrorView(elem: object, err: string) {
+        return `<p style="opacity:0.3;color:red">[${err}: ${Kennel._sanitize(elem["class"])}]</p>`;
+    }
     /*
      * _sanitize(str)
      * Aggressive sanitation. All non-alphanum characters are sanitized.
@@ -670,12 +702,11 @@ export default class Kennel {
     }
     /**
      * _buttonLinkHandler(url, label)
-     * Use Parcility to render depiction- links in Sileo.
+     * Use Parcility to render -depiction links in Sileo.
      *
      * @param {string} url A URL.
      * @param {string} label A string to set as the title for a new depiction's URL.
      */
-    // Allow for -_Depiction links to work, too!
     private static _buttonLinkHandler(url: string, label: string) {
         // javascript: links should do nothing.
         const jsXssIndex = url.indexOf("javascript:");
