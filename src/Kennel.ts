@@ -77,7 +77,7 @@ export default class Kennel {
     }
     /**
      * render()
-     * Renders the body of the _Depiction.
+     * Renders the body of the depiction.
      * Does not include any styles. This has to be imported as a CSS file.
      *
      * @return string A string of minified HTML.
