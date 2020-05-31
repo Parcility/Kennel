@@ -28,7 +28,8 @@
 const marked = require("marked");
 
 marked.setOptions({
-    xhtml: true
+    xhtml: true,
+    gfm: false
 });
 
 /**
@@ -326,10 +327,20 @@ export default class Kennel {
         // yet to load.
         if (rendered.indexOf("<style>") != -1) {
             // This render includes a style element! Let's make sure it's accounted for properly!
-            // *because shadow DOMs can't have body tags, so we gotta do some editing.
-            let newStyleEl = rendered.substring(rendered.indexOf("<style>") + 7, rendered.indexOf("</style>"))
-            newStyleEl = newStyleEl.replace(/body/g, "root").replace(/html/g, "root");
-            rendered = rendered.substring(0, rendered.indexOf("<style>") + 7) + newStyleEl + rendered.substring(rendered.indexOf("</style>"));
+            // *because shadow DOMs can't have body tags, we gotta do some editing.
+            let firstHalf = -1;
+            let secondHalf = -1;
+            while (rendered.indexOf("<style>", firstHalf + 1) != -1) {
+                firstHalf = rendered.indexOf("<style>", firstHalf);
+                secondHalf = rendered.indexOf("</style>", secondHalf);
+
+                let newStyleEl = rendered.substring(firstHalf + 7, secondHalf);
+                newStyleEl = newStyleEl.replace(/body/g, "root").replace(/html/g, "root");
+                rendered = rendered.substring(0, firstHalf + 7) + newStyleEl + rendered.substring(secondHalf);
+
+                firstHalf++;
+                secondHalf++;
+            }
 
             // JS-free rendering.
             noJSRender = rendered.substring(0, rendered.indexOf("<style>")) + rendered.substring(rendered.indexOf("</style>") + 8);
