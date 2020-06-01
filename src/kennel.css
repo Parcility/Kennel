@@ -221,14 +221,16 @@ a.nd {
 
 .nd_landscape_stack {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
     align-items: stretch;
 }
 
-.nd_landscape_stack > div {
+.nd_landscape_stack > div, .nd_landscape_stack > a {
     display: block;
     flex: 1;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .nd_review {
@@ -273,8 +275,8 @@ a.nd {
 }
 
 .nd_nested_stack > div > div:not(.nd_cell) {
-    margin-left: 20px;
-    margin-right: 20px;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 iframe.nd_max_width {
