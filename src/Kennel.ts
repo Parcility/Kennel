@@ -156,7 +156,7 @@ export default class Kennel {
         buffer += `<div>`;
         for (i = 0; i < elem["tabs"].length; i++) {
             // Be consistent on our use of random IDs!
-            buffer += `<div class="nd_tab ${tabViewId} ${`${tabViewId}_tab_${i}`} ${i > 0 ? "nd_hidden" : ""}">`;
+            buffer += `<div class="nd_tab ${tabViewId} ${tabViewId}_tab_${i} ${i > 0 ? "nd_hidden" : ""}">`;
             buffer += this._DepictionBaseView(elem["tabs"][i]);
             buffer += `</div>`
         }
@@ -335,8 +335,7 @@ export default class Kennel {
                 rendered = `${xssWarn}${rendered}`;
             }
             // Remove onerror/onload/etc
-            if (/on([^\s]+?)=/im.test(rendered))
-            {
+            if (/on([^\s]+?)=/im.test(rendered)) {
                 if (!didWarnXSS) {
                     rendered = `${xssWarn}${rendered}`;
                     didWarnXSS = true;
