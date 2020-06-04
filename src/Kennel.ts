@@ -27,9 +27,11 @@
 
 const marked = require("marked");
 
+// GFM is used unless useRawFormat is set to true.
+// TODO: Properly mod Marked to disable link parsing, enable code blocks with escape code.
 marked.setOptions({
     xhtml: true,
-    gfm: false
+    gfm: true
 });
 
 /**
@@ -85,8 +87,8 @@ export default class Kennel {
      */
     render() {
         // This is the string that will contain everything.
-        let tint = Kennel._sanitizeColor(this.#tint);
-        let buffer = `<div class="native_depiction"><style>a, .nd_tint, .nd_active {color: ${tint}} .nd_active {border-bottom: 2px solid ${tint};} .nd_btn {background-color: ${tint}}</style>`;
+        let tint: string = Kennel._sanitizeColor(this.#tint);
+        let buffer: string = `<div class="native_depiction"><style>a, .nd_tint, .nd_active {color: ${tint}} .nd_active {border-bottom: 2px solid ${tint};} .nd_btn {background-color: ${tint}}</style>`;
         buffer += this._DepictionBaseView(this.#depiction);
 
         buffer += "</div>";
@@ -103,17 +105,22 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionBaseView(elem: object) {
+        let fn: any, kennelError: string;
         // This is where we see what class an element is and subsequently call a function to render it.
         if (elem["class"]) {
             try {
                 if (elem["class"].toLowerCase().includes("hidden")) return "";
-                let fn: any = this.#views.get(elem["class"]);
+                fn = this.#views.get(elem["class"]);
                 if (typeof fn != "function") return this._DepictionUnknownView(elem);
                 return fn(elem);
             } catch(e) {
                 if (e.name === "TypeError") {
                     console.error("Kennel: Element is malformed.")
                     return this._DepictionErrorView(elem, "Could not render malformed element");
+                } else if (e.indexOf("kennel:") != -1) {
+                    kennelError = e.substring(7);
+                    console.error(`Kennel: ${kennelError}`);
+                    return this._DepictionErrorView(elem, kennelError);
                 } else {
                     console.error("Kennel: An unknown error occurred.");
                     return this._DepictionErrorView(elem, "An unknown error occurred during render");
@@ -133,20 +140,21 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionTabView(elem: object) {
-        let buffer = `<div class="nd_tabView">`;
+        let i: number;
+        let buffer: string = `<div class="nd_tabView">`;
 
         // Give this TabView a unique ID.
-        let tabViewId = Kennel._makeIdentifier("nd_tabView");
+        let tabViewId: string = Kennel._makeIdentifier("nd_tabView");
 
         // Render tab selector.
         buffer += `<div class="nd_nav">`;
-        for (let i = 0; i < elem["tabs"].length; i++)
+        for (i = 0; i < elem["tabs"].length; i++)
             buffer += `<div class="${tabViewId} ${tabViewId}_tab_${i} nd_nav_btn nd_tweak_info_btn ${(i == 0) ? "nd_active" : ""}" onclick="ndChangeTab('.${tabViewId}_tab_${i}', '.${tabViewId}')">${Kennel._sanitize(elem["tabs"][i].tabname)}</div>`;
         buffer += `</div>`;
 
         // Render the tabs themselves
         buffer += `<div>`;
-        for (let i = 0; i < elem["tabs"].length; i++) {
+        for (i = 0; i < elem["tabs"].length; i++) {
             // Be consistent on our use of random IDs!
             buffer += `<div class="nd_tab ${tabViewId} ${`${tabViewId}_tab_${i}`} ${i > 0 ? "nd_hidden" : ""}">`;
             buffer += this._DepictionBaseView(elem["tabs"][i]);
@@ -166,7 +174,8 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionStackView(elem: object) {
-        let buffer = "";
+        let i: number;
+        let buffer: string = "";
 
         if (typeof elem["backgroundColor"] != "undefined")
             buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitizeColor(elem["backgroundColor"])}">`;
@@ -175,12 +184,12 @@ export default class Kennel {
 
         if (typeof elem["orientation"] == "undefined" || elem["orientation"].toLowerCase() != "landscape") {
             // Standard orientation
-            for (let i = 0; i < elem["views"].length; i++)
+            for (i = 0; i < elem["views"].length; i++)
                 buffer += this._DepictionBaseView(elem["views"][i]);
         } else {
             // "Landscape" orientation, or causing StackViews to be next to each other.
             buffer += `<div class="nd_landscape_stack">`;
-            for (let i = 0; i < elem["views"].length; i++)
+            for (i = 0; i < elem["views"].length; i++)
                 buffer += this._DepictionBaseView(elem["views"][i]);
             buffer += `</div>`;
         }
@@ -196,7 +205,8 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionAutoStackView(elem: object) {
-        let buffer = "";
+        let i: number;
+        let buffer: string = "";
         if (typeof elem["backgroundColor"] != "undefined")
             buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitizeColor(elem["backgroundColor"])}; width: ${elem["horizontalSpacing"] ? `${Kennel._sanitizeDouble(elem["horizontalSpacing"])}px` : "100%"}">`;
         else
@@ -204,12 +214,12 @@ export default class Kennel {
 
         if (typeof elem["orientation"] == "undefined" || elem["orientation"].toLowerCase() != "landscape") {
             // Standard orientation
-            for (let i = 0; i < elem["views"].length; i++)
+            for (i = 0; i < elem["views"].length; i++)
                 buffer += this._DepictionBaseView(elem["views"][i]);
         } else {
             // "Landscape" orientation, or causing StackViews to be next to each other.
             buffer += `<div class="nd_landscape_stack">`;
-            for (let i = 0; i < elem["views"].length; i++)
+            for (i = 0; i < elem["views"].length; i++)
                 buffer += this._DepictionBaseView(elem["views"][i]);
             buffer += `</div>`;
         }
@@ -225,6 +235,9 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionTableTextView(elem: object) {
+        if (typeof elem["title"] == "undefined") throw "kennel:Missing required \"title\" property";
+        if (typeof elem["text"] == "undefined") throw "kennel:Missing required \"text\" property";
+
         return `<div class="nd_table"><div class="nd_cell"><div class="nd_title">${Kennel._sanitize(elem["title"])}</div><div class="nd_text">${Kennel._sanitize(elem["text"])}</div></div></div>`;
     }
     /**
@@ -235,7 +248,11 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionTableButtonView(elem: object) {
-        let extra_params = "";
+        let extra_params: string = "";
+
+        if (typeof elem["title"] == "undefined") throw "kennel:Missing required \"title\" property";
+        if (typeof elem["action"] == "undefined") throw "kennel:Missing required \"action\" property";
+
         if (elem["openExternal"]) {
             extra_params += ` target="_blank"`;
         }
@@ -244,7 +261,6 @@ export default class Kennel {
             if (elem["yPadding"])
                 extra_params += `padding-bottom: '${Kennel._sanitizeDouble(elem["yPadding"])}';`;
             if (elem["tintColor"]) {
-                // !TODO Fix bug where the chevron will stay uncolored.
                 extra_params += `color: ${Kennel._sanitizeColor(elem["tintColor"])};`;
             }
             extra_params += `"`;
@@ -260,7 +276,11 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionButtonView(elem: object) {
-        let extra_params = "";
+        let extra_params: string = "";
+
+        if (typeof elem["text"] == "undefined") throw "kennel:Missing required \"text\" property";
+        if (typeof elem["action"] == "undefined") throw "kennel:Missing required \"action\" property";
+
         if (elem["openExternal"]) {
             extra_params += ` target="_blank"`;
         }
@@ -284,21 +304,27 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionMarkdownView(elem: object) {
-        let didWarnXSS = false;
-        let ident = Kennel._makeIdentifier("md");
+        let noJSRender: string, xssWarn: string, rendered: string;
+        let didWarnXSS: boolean = false;
+        let ident: string = Kennel._makeIdentifier("md");
+
+        if (typeof elem["markdown"] == "undefined") throw "kennel:Missing required \"markdown\" property";
+
         // Is there a tint color passed?
         if (typeof elem["tintColor"] == "undefined" && typeof this.#tint == "undefined")
             elem["tintColor"] = "#6264D3";
         else if (typeof elem["tintColor"] == "undefined" && typeof this.#tint != "undefined")
             elem["tintColor"] = this.#tint;
 
-        let xssWarn = `<p style="opacity:0.3">[Warning: This depiction may be trying to maliciously run code in your browser.]</p><br>`
+        xssWarn = `<p style="opacity:0.3">[Warning: This depiction may be trying to maliciously run code in your browser.]</p><br>`
 
-        let rendered;
         if (elem["useRawFormat"]) {
-            // ! XSS WARNING ! //
+            // ! BEWARE OF XSS ! //
             // Unfortunately, this is a design flaw with the spec.
+            // TODO: Just disable link parsing. This is non-trivial to do, so for now, we just disable GFM-flavored Markdown for useRawFormat.
+            marked.setOptions({gfm: false});
             rendered = marked(elem["markdown"]).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
+            marked.setOptions({gfm: true});
 
             // Remove all <script> tags.
             if (rendered.toLowerCase().indexOf("<script>") != -1 || rendered.toLowerCase().indexOf("</script>") != -1) {
@@ -321,20 +347,21 @@ export default class Kennel {
         } else {
             rendered = marked(Kennel._laxSanitize(elem["markdown"])).replace(/<hr>/g, this._DepictionSeparatorView(elem));
         }
-        let noJSRender;
 
         // Use <script> to help build the shadow DOM, as we're sending this to a page that is
         // yet to load.
         if (rendered.indexOf("<style>") != -1) {
             // This render includes a style element! Let's make sure it's accounted for properly!
             // *because shadow DOMs can't have body tags, we gotta do some editing.
-            let firstHalf = -1;
-            let secondHalf = -1;
+            let newStyleEl: string;
+            let firstHalf: number = -1;
+            let secondHalf: number = -1;
+
             while (rendered.indexOf("<style>", firstHalf + 1) != -1) {
                 firstHalf = rendered.indexOf("<style>", firstHalf);
                 secondHalf = rendered.indexOf("</style>", secondHalf);
 
-                let newStyleEl = rendered.substring(firstHalf + 7, secondHalf);
+                newStyleEl = rendered.substring(firstHalf + 7, secondHalf);
                 newStyleEl = newStyleEl.replace(/body/g, "root").replace(/html/g, "root");
                 rendered = rendered.substring(0, firstHalf + 7) + newStyleEl + rendered.substring(secondHalf);
 
@@ -350,10 +377,10 @@ export default class Kennel {
 
         // Return the JavaScript code needed to create the shadow DOM.
         // I know this is a very long line, but all functions shall output minified JS, and the
-        // extra time it costs to remove the whitespaces programatically isn't worth it.
+        // extra time it costs to remove the whitespaces programmatically isn't worth it.
         return `<div id="${ident}" class="nd_md_view"><noscript>${noJSRender}</noscript><script>mdEl = document.createElement("sandboxed-markdown");shadowRoot = mdEl.attachShadow({mode: 'open'});shadowRoot.innerHTML = \`<style>a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;}</style><root>${rendered}</root>\`;el = document.getElementById("${ident}");el.appendChild(mdEl);el.removeAttribute("id");el.removeChild(el.children[0]);el.removeChild(el.children[0]);</script></div>`;
     }
-    /**let shad
+    /**
      * _DepictionLabelView(elem)
      * Renders a DepictionLabelView, given Object elem for context.
      * Calling directly is not recommended but is possible.
@@ -361,7 +388,10 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionLabelView(elem: object) {
-        let marginStr;
+        let marginStr: string;
+
+        if (typeof elem["text"] == "undefined") throw "kennel:Missing required \"text\" property";
+
         if (typeof elem["margins"] != "undefined")
             marginStr = Kennel._marginResolver(elem["margins"]);
         else
@@ -385,11 +415,18 @@ export default class Kennel {
      */
     private _DepictionScreenshotsView(elem: object) {
         // Parse itemSize, screenshotObject
-        let ret = `<div class="nd_scroll_view">`
-        let size = elem["itemSize"].substring(1, elem["itemSize"].length-1).split(",");
-        let x = Number(size[0]);
-        let y = Number(size[1]);
-        let sizeStr = "";
+        let size: string[], x: number, y: number, ssURL: string;
+        let ret: string = `<div class="nd_scroll_view">`;
+        let sizeStr: string = "";
+        let i: number;
+
+        if (typeof elem["screenshots"] == "undefined") throw "kennel:Missing required \"screenshots\" property";
+        if (typeof elem["itemCornerRadius"] == "undefined") throw "kennel:Missing required \"itemCornerRadius\" property";
+        if (typeof elem["itemSize"] == "undefined") throw "kennel:Missing required \"itemSize\" property";
+
+        size = elem["itemSize"].substring(1, elem["itemSize"].length-1).split(",");
+        x = Number(size[0]);
+        y = Number(size[1]);
 
         if (x > y) {
             sizeStr = `width: ${Kennel._sanitizeDouble(x)}px`;
@@ -397,8 +434,9 @@ export default class Kennel {
             sizeStr = `height: ${Kennel._sanitizeDouble(y)}px`;
         }
 
-        for (let i = 0; i < elem["screenshots"].length; i++) {
-            let ssURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["screenshots"][i].url}`);
+        for (i = 0; i < elem["screenshots"].length; i++) {
+            if (typeof elem["screenshots"][i]["url"] == "undefined") throw "kennel:Missing required \"url\" property in screenshot object.";
+            ssURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["screenshots"][i]["url"]}`);
             ret += `<img style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" class="nd_img_card" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
         }
 
@@ -413,7 +451,11 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionSpacerView(elem: object) {
-        let spacing = Kennel._sanitizeDouble(elem["spacing"]);
+        let spacing: string;
+
+        if (typeof elem["spacing"] == "undefined") throw "kennel:Missing required \"spacing\" property";
+
+        spacing = Kennel._sanitizeDouble(elem["spacing"]);
         return `<div class="nd_br" style="padding-top: ${spacing}px"></div>`;
     }
     /**
@@ -434,6 +476,8 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionHeaderView(elem: object) {
+        if (typeof elem["title"] == "undefined") throw "kennel:Missing required \"title\" property";
+
         elem["fontWeight"] = "bold";
         if (typeof elem["useBoldText"] != "undefined") {
             elem["fontWeight"] = elem["useBoldText"] ? "bold" : "normal";
@@ -448,6 +492,8 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionSubheaderView(elem: object) {
+        if (typeof elem["title"] == "undefined") throw "kennel:Missing required \"title\" property";
+
         elem["fontWeight"] = "normal";
         if (typeof elem["useBoldText"] != "undefined") {
             elem["fontWeight"] = elem["useBoldText"] ? "bold" : "normal";
@@ -462,8 +508,16 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionImageView(elem: object) {
-        let url = Kennel._laxSanitize(`${this.#proxyURL}${elem["URL"]}`); // Use proxy server (if set).
-        let padding = (typeof elem["horizontalPadding"] != "undefined" ? `padding-top:${Kennel._sanitizeDouble(elem["horizontalPadding"])}px;padding-bottom:${Kennel._sanitizeDouble(elem["horizontalPadding"])}px;` :"");
+        let url: string;
+        let padding: string;
+
+        if (typeof elem["URL"] == "undefined") throw "kennel:Missing required \"URL\" property";
+        if (typeof elem["width"] == "undefined") throw "kennel:Missing required \"width\" property";
+        if (typeof elem["height"] == "undefined") throw "kennel:Missing required \"height\" property";
+        if (typeof elem["cornerRadius"] == "undefined") throw "kennel:Missing required \"cornerRadius\" property";
+
+        url = Kennel._laxSanitize(`${this.#proxyURL}${elem["URL"]}`); // Use proxy server (if set).
+        padding = (typeof elem["horizontalPadding"] != "undefined" ? `padding-top:${Kennel._sanitizeDouble(elem["horizontalPadding"])}px;padding-bottom:${Kennel._sanitizeDouble(elem["horizontalPadding"])}px;` :"");
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
         return `<div style="text-align:${elem["alignment"]};"><img src="${url}" style="width:${Kennel._sanitizeDouble(elem["width"])}px;height:${Kennel._sanitizeDouble(elem["height"])}px;border-radius:${Kennel._sanitizeDouble(elem["cornerRadius"])}px;max-width:100%;${padding}" alt="Image from depiction."></div>`;
     }
@@ -475,7 +529,12 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionRatingView(elem: object) {
-        let stars = Kennel._starString(elem["rating"]);
+        let stars: string;
+
+        if (typeof elem["rating"] == "undefined") throw "kennel:Missing required \"rating\" property";
+        if (typeof elem["alignment"] == "undefined") throw "kennel:Missing required \"alignment\" property";
+
+        stars = Kennel._starString(elem["rating"]);
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
         return `<div title="${Kennel._sanitizeDouble(elem["rating"])}/5 stars." style="color:#a1a1a1; text-align:${elem["alignment"]};">${stars}</div>`;
     }
@@ -487,12 +546,21 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionReviewView(elem: object) {
-        let md = this._DepictionMarkdownView(elem);
-        let ratingStr;
-        if (typeof elem["rating"] != "undefined")
+        let ratingStr: string;
+        let md: string;
+
+        if (typeof elem["title"] == "undefined") throw "kennel:Missing required \"title\" property";
+        if (typeof elem["author"] == "undefined") throw "kennel:Missing required \"author\" property";
+        if (typeof elem["markdown"] == "undefined") throw "kennel:Missing required \"markdown\" property";
+
+        md = this._DepictionMarkdownView(elem);
+
+        if (typeof elem["rating"] != "undefined") {
+            elem["alignment"] = 2;
             ratingStr = this._DepictionRatingView(elem);
-        else
-            ratingStr = "";
+        } else {
+        ratingStr = "";
+       }
         return `<div class="nd_review"><div class="nd_review_head"><div class="nd_left"><p>${Kennel._sanitize(elem["title"])}</p><p class="nd_author">by ${Kennel._sanitize(elem["author"])}</p></div><div class="nd_right">${ratingStr}</div></div>${md}</div>`;
     }
     /**
@@ -503,7 +571,12 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionWebView(elem: object) {
+        if (typeof elem["URL"] == "undefined") throw "kennel:Missing required \"URL\" property";
+        if (typeof elem["width"] == "undefined") throw "kennel:Missing required \"width\" property";
+        if (typeof elem["height"] == "undefined") throw "kennel:Missing required \"height\" property";
+
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
+
         // Implementation details: Discussions with repos show a disdain for Sileo's whitelist approach.
         // As a result, all URLs are supported.
         return `<div style="text-align: ${elem["alignment"]}"><iframe class="nd_max_width" src="${Kennel._laxSanitize(elem["URL"])}" style="width: ${Kennel._sanitizeDouble(elem["width"])}px; height: ${Kennel._sanitizeDouble(elem["height"])}px;"></iframe></div>`;
@@ -516,6 +589,11 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionVideoView(elem: object) {
+        if (typeof elem["URL"] == "undefined") throw "kennel:Missing required \"URL\" property";
+        if (typeof elem["width"] == "undefined") throw "kennel:Missing required \"width\" property";
+        if (typeof elem["height"] == "undefined") throw "kennel:Missing required \"height\" property";
+        if (typeof elem["cornerRadius"] == "undefined") throw "kennel:Missing required \"cornerRadius\" property";
+
         return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" controls style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" src="${Kennel._laxSanitize(elem["URL"])}" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"></video></div>`;
     }
     /**
@@ -526,7 +604,9 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionAdmobView(elem: object) {
-        // Do not render ad views.
+        // Do not render ad views. However, still err for them as per spec (and for those debugging them).
+        if (typeof elem["adUnitID"] == "undefined") throw "kennel:Missing required \"adUnitID\" property";
+
         return "";
     }
     /**
@@ -558,10 +638,12 @@ export default class Kennel {
      * @param {string} str A string to sanitize.
      */
     private static _sanitize(str: string) {
+        let char: string;
+        let newStr: string = "";
         str = String(str);
-        let newStr = "";
+
         for (let i = 0; i < str.length; i++) {
-            let char = str[i];
+            char = str[i];
             if ((char >= "A" && char <= "z") || (char >= "0" && char <= "9"))
                 newStr += char;
             else
@@ -578,10 +660,12 @@ export default class Kennel {
      * @return {string} A string of the now-sanitized number.
      */
     private static _sanitizeDouble(num: number) {
-        let str = String(num);
-        let newStr = "";
-        for (let i = 0; i < str.length; i++) {
-            let char = str[i];
+        let i: number, char: string;
+        let str: string = String(num);
+        let newStr: string = "";
+
+        for (i = 0; i < str.length; i++) {
+            char = str[i];
             if ((char == ".") || (char >= "0" && char <= "9"))
                 newStr += char;
         }
@@ -594,10 +678,12 @@ export default class Kennel {
      * @param {string} str A string to sanitize.
      */
     private static _sanitizeColor(str: string) {
+        let i: number, char: string;
+        let newStr: string = "";
         str = String(str);
-        let newStr = "";
-        for (let i = 0; i < str.length; i++) {
-            let char = str[i];
+
+        for (i = 0; i < str.length; i++) {
+            char = str[i];
             if ((char >= "A" && char <= "z") || (char >= "0" && char <= "9") || (char == "#") || (char == ".") || (char == "-") || (char == ",") || (char == "(") || (char == ")"))
                 newStr += char;
         }
@@ -610,10 +696,11 @@ export default class Kennel {
      * @param {string} str A string to sanitize.
      */
     private static _laxSanitize(str: string) {
+        let i: number, char: string;
         str = String(str);
         let newStr = "";
-        for (let i = 0; i < str.length; i++) {
-            let char = str[i];
+        for (i = 0; i < str.length; i++) {
+            char = str[i];
             if (
                 char == "&" ||
                 char == "<" ||
@@ -692,7 +779,7 @@ export default class Kennel {
      * @param {string} UIEdgeInsets A margins struct from Sileo.
      */
     private static _marginResolver(UIEdgeInsets: string) {
-        let arr = JSON.parse(UIEdgeInsets.replace("{", "[").replace("}", "]"));
+        let arr: number[] = JSON.parse(UIEdgeInsets.replace("{", "[").replace("}", "]"));
         return `margin: ${Kennel._sanitizeDouble(arr[0])}px, ${Kennel._sanitizeDouble(arr[3])}px, ${Kennel._sanitizeDouble(arr[2])}px, ${Kennel._sanitizeDouble(arr[1])}px;`
     }
     /**
