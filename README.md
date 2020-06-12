@@ -67,8 +67,14 @@ All arguments are optional, but `depiction` is highly suggested for proper usage
 // Import Kennel
 import Kennel from '@zenithdevs/kennel';
 
-// Assumes these variables exist elsewhere. Either could be omitted.
-const nd = new Kennel(depiction, proxyURL);
+// Set options.
+const options = {
+    "iframeStyle": "",
+    "useShadowDom": false
+};
+
+// Assumes the `depiction` variables exists elsewhere. Either could be omitted.
+const nd = new Kennel(depiction, options);
 
 // Renders the HTML code for the depiction.
 const nd_out = nd.render();
