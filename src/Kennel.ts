@@ -425,6 +425,7 @@ export default class Kennel {
             elem["tintColor"] = this.#tint;
 
         if (elem["useRawFormat"]) {
+            // TODO: Just disable link parsing. This is non-trivial to do, so for now, we just disable GFM-flavored Markdown for useRawFormat.
             marked.setOptions({gfm: false});
             rendered = marked(elem["markdown"]).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
             marked.setOptions({gfm: true});
@@ -514,7 +515,7 @@ export default class Kennel {
         x = Number(size[0]);
         y = Number(size[1]);
 
-        sizeStr = `width: ${Kennel._sanitizeDouble(Math.max(x, y))}px`;
+        sizeStr = `${x > y ? "width" : "height"}: ${Kennel._sanitizeDouble(Math.max(x, y))}px`;
 
         for (i = 0; i < elem["screenshots"].length; i++) {
             if (typeof elem["screenshots"][i]["url"] == "undefined") throw "kennel:Missing required \"url\" property in screenshot object.";
