@@ -61,7 +61,7 @@ export default class Kennel {
         this.#depiction = (typeof depiction != "undefined") ? depiction : dummyDepiction;
         if (typeof options != "undefined") {
             this.#proxyURL = (typeof options["proxyURL"] != "undefined") ? options["proxyURL"] : "";
-            this.#iframeHeader = (typeof options["iframeHeader"] != "undefined") ? options["iframeHeader"] : "";
+            this.#iframeHeader = (typeof options["iframeHeader"] != "undefined") ? options["iframeHeader"] : "<style>@media (prefers-color-scheme: dark) { html {color: white} }</style>";
             this.#useShadowDom = Boolean(options["useShadowDom"]);
         } else {
             this.#proxyURL = "";
