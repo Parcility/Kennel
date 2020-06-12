@@ -16,8 +16,9 @@ You will also need to put the following lines of HTML code into the `<head>` of 
 <link rel="stylesheet" type="text/css" href="kennel.css">
 <script>
     function ndChangeTab(show, hide) {
+        let i;
         // Hide elements.
-        for (let i = 0; i < document.querySelectorAll(`${hide}.nd_tab`).length; i++) {
+        for (i = 0; i < document.querySelectorAll(`${hide}.nd_tab`).length; i++) {
             document.querySelectorAll(`${hide}.nd_tab`)[i].classList.add("nd_hidden");
             document.querySelectorAll(`${hide}.nd_nav_btn`)[i].classList.remove("nd_active");
         }
@@ -26,6 +27,16 @@ You will also need to put the following lines of HTML code into the `<head>` of 
             document.querySelectorAll(`${show}.nd_tab`)[i].classList.remove("nd_hidden");
             document.querySelectorAll(`${show}.nd_nav_btn`)[i].classList.add("nd_active");
         }
+        // Fix frame heights.
+        setFrameHeights();
+    }
+    function setFrameHeights() {
+        let i;
+        // Set IFrame height to its content's height.
+        let iframe = document.querySelectorAll("iframe.nd_md_iframe");
+        for (i = 0; i < iframe.length; i++) {
+            iframe[i].height = getComputedStyle(iframe[i].contentDocument.body.parentElement).height;
+        }
     }
 </script>
 ```
@@ -33,14 +44,20 @@ You will also need to put the following lines of HTML code into the `<head>` of 
 ### API
 Kennel was written to be as easy to interact with as possible.
 
-> `Kennel(depiction: object, proxyURL: string)`
+> `Kennel(depiction: object, options: object)`
 >
 > The class that stores and renders a native depiction.
 >
 > `depiction`: An object that stores the native depiction's contents.
 >
-> `proxyURL`: A URL to prepend to all image URLs, such as if you wanted to load them through your own proxy.
-> 
+> `options`: An object that stores various options to pass to Kennel.
+
+These are the options that can be set:
+> `proxyURL`: A URL to prepend to all images, ideal for an image proxy server. Empty by default.
+>
+> `useShadowDom` A boolean that enables the insecure shadow DOM implementation for DepictionMarkdownView. False by default (recommended).
+>
+> `iframeHeader`: An HTML string to inject into DepictionMarkdownView IFrames. Will set text to white if dark mode (via \<style />) by default.
 
 All arguments are optional, but `depiction` is highly suggested for proper usage.
 

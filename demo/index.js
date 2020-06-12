@@ -542,7 +542,10 @@ const depiction = {
     ],
     "class": "DepictionTabView"
 };
-const nd = new Kennel(depiction);
+const options = {
+    "iframeStyle": ""
+};
+const nd = new Kennel(depiction, options);
 const nd_out = nd.render();
 const out = `<html lang="en">
     <head>
@@ -553,8 +556,9 @@ const out = `<html lang="en">
     <body>${nd_out}</body>
     <script>
         function ndChangeTab(show, hide) {
+            let i;
             // Hide elements.
-            for (let i = 0; i < document.querySelectorAll(\`\${hide}.nd_tab\`).length; i++) {
+            for (i = 0; i < document.querySelectorAll(\`\${hide}.nd_tab\`).length; i++) {
                 document.querySelectorAll(\`\${hide}.nd_tab\`)[i].classList.add("nd_hidden");
                 document.querySelectorAll(\`\${hide}.nd_nav_btn\`)[i].classList.remove("nd_active");
             }
@@ -562,6 +566,16 @@ const out = `<html lang="en">
             for (i = 0; i < document.querySelectorAll(\`\${show}.nd_tab\`).length; i++) {
                 document.querySelectorAll(\`\${show}.nd_tab\`)[i].classList.remove("nd_hidden");
                 document.querySelectorAll(\`\${show}.nd_nav_btn\`)[i].classList.add("nd_active");
+            }
+            // Fix frame heights.
+            setFrameHeights();
+        }
+        function setFrameHeights() {
+            let i;
+            // Set IFrame height to its content's height.
+            let iframe = document.querySelectorAll("iframe.nd_md_iframe");
+            for (i = 0; i < iframe.length; i++) {
+                iframe[i].height = getComputedStyle(iframe[i].contentDocument.body.parentElement).height;
             }
         }
 </script>

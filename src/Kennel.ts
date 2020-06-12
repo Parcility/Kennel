@@ -39,20 +39,35 @@ marked.setOptions({
  * The class that stores and renders a native depiction.
  *
  * @param {object} Depiction Stores the native depiction.
- * @param {string} proxyURL a URL to prepend to all images, ideal for an image proxy server.
+ * @param {object} options Stores various options to pass to Kennel. Optional.
+ *
+ * Options:
+ *  - {string} proxyURL A URL to prepend to all images, ideal for an image proxy server. Empty by default.
+ *  - {boolean} useShadowDom Enables the insecure shadow DOM implementation for DepictionMarkdownView. False by default.
+ *  - {string} iframeHeader HTML to inject into DepictionMarkdownView IFrames. Will set text to white if dark mode (via <style />) by default.
  */
 export default class Kennel {
     // Declare data types.
     readonly #depiction: object;
     readonly #proxyURL: string;
+    readonly #useShadowDom: boolean;
+    readonly #iframeHeader: string;
+    readonly #options: boolean;
     readonly #tint: string;
+    #views: Map<String, Function>;
 
-    #views : Map<String, Function>;
-
-    constructor(depiction: object, proxyURL: string) {
+    constructor(depiction: object, options: object) {
         const dummyDepiction = {"minVersion": "0.1", "tintColor": "#6264D3", "class": "DepictionLabelView", "text": "(This depiction is empty.)"};
         this.#depiction = (typeof depiction != "undefined") ? depiction : dummyDepiction;
-        this.#proxyURL = (typeof proxyURL != "undefined") ? proxyURL : "";
+        if (typeof options != "undefined") {
+            this.#proxyURL = (typeof options["proxyURL"] != "undefined") ? options["proxyURL"] : "";
+            this.#iframeHeader = (typeof options["iframeHeader"] != "undefined") ? options["iframeHeader"] : "";
+            this.#useShadowDom = Boolean(options["useShadowDom"]);
+        } else {
+            this.#proxyURL = "";
+            this.#iframeHeader = "<style>@media (prefers-color-scheme: dark) { html {color: white} }</style>";
+            this.#useShadowDom = false;
+        }
         this.#tint = (typeof this.#depiction["tintColor"] != "undefined") ? Kennel._sanitizeColor(this.#depiction["tintColor"]) : "#6264d3";
 
         // Build a map of all the classes Kennel knows about.
@@ -62,7 +77,6 @@ export default class Kennel {
         this.#views.set("DepictionTabView", (elem: object) => this._DepictionTabView(elem));
         this.#views.set("DepictionTableTextView", (elem: object) => this._DepictionTableTextView(elem));
         this.#views.set("DepictionTableButtonView", (elem: object) => this._DepictionTableButtonView(elem));
-        this.#views.set("DepictionMarkdownView", (elem: object) => this._DepictionMarkdownView(elem));
         this.#views.set("DepictionLabelView", (elem: object) => this._DepictionLabelView(elem));
         this.#views.set("DepictionScreenshotsView", (elem: object) => this._DepictionScreenshotsView(elem));
         this.#views.set("DepictionSpacerView", (elem: object) => this._DepictionSpacerView(elem));
@@ -76,6 +90,12 @@ export default class Kennel {
         this.#views.set("DepictionWebView", (elem: object) => this._DepictionWebView(elem));
         this.#views.set("DepictionVideoView", (elem: object) => this._DepictionVideoView(elem));
         this.#views.set("DepictionAdmobView", (elem: object) => this._DepictionAdmobView(elem));
+
+        // Respect useShadowDom setting.
+        if (this.#useShadowDom)
+            this.#views.set("DepictionMarkdownView", (elem: object) => this._DepictionMarkdownShadowDomView(elem));
+        else
+            this.#views.set("DepictionMarkdownView", (elem: object) => this._DepictionMarkdownView(elem));
 
     }
     /**
@@ -297,13 +317,13 @@ export default class Kennel {
         return `<a class="nd nd_btn" href="${elem["action"]}"${extra_params}>${Kennel._sanitize(elem["text"])}</a>`;
     }
     /**
-     * _DepictionMarkdownView(elem)
-     * Renders a DepictionMarkdownView, given Object elem for context.
+     * _DepictionMarkdownShadowDomView(elem)
+     * Renders a DepictionMarkdownView, given Object elem for context, using a shadow DOM.
      * Calling directly is not recommended but is possible.
      *
      * @param {object} elem The native depiction class.
      */
-    private _DepictionMarkdownView(elem: object) {
+    private _DepictionMarkdownShadowDomView(elem: object) {
         let noJSRender: string, xssWarn: string, rendered: string;
         let didWarnXSS: boolean = false;
         let ident: string = Kennel._makeIdentifier("md");
@@ -377,7 +397,64 @@ export default class Kennel {
         // Return the JavaScript code needed to create the shadow DOM.
         // I know this is a very long line, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
-        return `<div id="${ident}" class="nd_md_view"><noscript>${noJSRender}</noscript><script>mdEl = document.createElement("sandboxed-markdown");shadowRoot = mdEl.attachShadow({mode: 'open'});shadowRoot.innerHTML = \`<style>a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;}</style><root>${rendered}</root>\`;el = document.getElementById("${ident}");el.appendChild(mdEl);el.removeAttribute("id");el.removeChild(el.children[0]);el.removeChild(el.children[0]);</script></div>`;
+        return `<div id="${ident}" class="nd_md_view"><noscript>${noJSRender}</noscript><script>mdEl = document.createElement("sandboxed-markdown");shadowRoot = mdEl.attachShadow({mode: 'open'});shadowRoot.innerHTML = \`<style>a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px; font-size: 12px;}</style><root>${rendered}</root>\`;el = document.getElementById("${ident}");el.appendChild(mdEl);el.removeAttribute("id");el.removeChild(el.children[0]);el.removeChild(el.children[0]);</script></div>`;
+    }
+
+    /**
+     * _DepictionMarkdownView(elem)
+     * Renders a DepictionMarkdownView, given Object elem for context.
+     * Calling directly is not recommended but is possible.
+     *
+     * @param {object} elem The native depiction class.
+     */
+    private _DepictionMarkdownView(elem: object) {
+        let noJSRender: string, xssWarn: string, rendered: string;
+        let didWarnXSS: boolean = false;
+        let ident: string = Kennel._makeIdentifier("md");
+
+        if (typeof elem["markdown"] == "undefined") throw "kennel:Missing required \"markdown\" property";
+
+        // Is there a tint color passed?
+        if (typeof elem["tintColor"] == "undefined" && typeof this.#tint == "undefined")
+            elem["tintColor"] = "#6264D3";
+        else if (typeof elem["tintColor"] == "undefined" && typeof this.#tint != "undefined")
+            elem["tintColor"] = this.#tint;
+
+        if (elem["useRawFormat"]) {
+            // ! BEWARE OF XSS ! //
+            // Unfortunately, this is a design flaw with the spec.
+            // TODO: Just disable link parsing. This is non-trivial to do, so for now, we just disable GFM-flavored Markdown for useRawFormat.
+            marked.setOptions({gfm: false});
+            rendered = marked(elem["markdown"]).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
+            marked.setOptions({gfm: true});
+
+            // Remove all <script> tags.
+            if (rendered.toLowerCase().indexOf("<script>") != -1 || rendered.toLowerCase().indexOf("</script>") != -1) {
+                // If <script> is detected, sanitize it.
+                rendered = rendered.replace(/<script>/im, "&lt;script&gt;").replace(/<\/script>/im, "&lt;/script&gt;")
+
+                didWarnXSS = true;
+                rendered = `${xssWarn}${rendered}`;
+            }
+            // Remove onerror/onload/etc
+            if (/on([^\s]+?)=/im.test(rendered)) {
+                if (!didWarnXSS) {
+                    rendered = `${xssWarn}${rendered}`;
+                    didWarnXSS = true;
+                }
+                rendered = rendered.replace(/on([^\s]+?)=/ig, "onXSSAttempt=");
+            }
+
+        } else {
+            rendered = marked(Kennel._laxSanitize(elem["markdown"])).replace(/<hr>/g, this._DepictionSeparatorView(elem));
+        }
+
+        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} * {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif}</style></head><body>${rendered.replace(/"/ig, "&quot;")}</body>`
+
+        // Return the JavaScript code needed to create the shadow DOM.
+        // I know this is a very long line, but all functions shall output minified JS, and the
+        // extra time it costs to remove the whitespaces programmatically isn't worth it.
+        return `<iframe onload="this.height = getComputedStyle(this.contentDocument.body.parentElement).height" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
     }
     /**
      * _DepictionLabelView(elem)

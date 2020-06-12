@@ -206,7 +206,14 @@ a.nd {
 }
 
 .nd_md_view {
-    line-height: 1.nd_5;
+    line-height: 1.5;
+}
+
+.nd_md_iframe {
+    width: 100%;
+    border: none;
+    min-height: 35px;
+    overflow: hidden;
 }
 
 .nd_hr_wrap {
@@ -244,6 +251,10 @@ a.nd {
 .nd_review > .nd_review_head {
     display: flex;
     justify-content: space-between;
+}
+
+.nd_review_head > .nd_left > p {
+    margin: 2px;
 }
 
 .nd_review_head > .nd_left > p:not(.nd_author) {
