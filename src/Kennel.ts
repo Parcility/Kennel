@@ -433,14 +433,15 @@ export default class Kennel {
         }
 
         // render modes:
-        // 1) just set the height
-        // 2) use IntersectionObserver
-        // 3) use setInterval
-        let renderMode = 1;
+        // 1) just set the height (doesn't fully work due to `display: none` on iframes in hidden tabs)
+        // 2) use IntersectionObserver in iframe (depends on element at the end of `<body>`, doesn't shrink with content)
+        // 3) use setInterval (hacky and unperformant)
+        // 4) use IntersectionObserver on iframe (non-responsive)
+        let renderMode = 4;
 
         let onload = null;
         if (renderMode == 1) {
-            onload = "this.height = this.contentDocument.body.scrollHeight;";
+            onload = `this.height = this.contentDocument.documentElement.scrollHeight;`;
         } else if (renderMode == 2) {
             onload = `
                 let e = this.contentDocument.body.lastChild;
@@ -449,14 +450,20 @@ export default class Kennel {
                 });
                 o.observe(e);
             `;
+        } else if (renderMode == 3) {
+            onload = `setInterval(_ => { this.height = this.contentDocument.documentElement.scrollHeight; });`;
         } else {
-            onload = "(e => { setInterval(_ => { e.height = e.contentDocument.body.scrollHeight; }); })(this);";
+            onload = `
+                let o = new IntersectionObserver(_ => {
+                    this.height = getComputedStyle(this.contentDocument.documentElement).height;
+                });
+                o.observe(this);
+            `;
         }
 
-        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} * {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
-
-        // I know this is a very long line, but all functions shall output minified JS, and the
+        // I know these are some very long lines, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
+        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} * {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
         return `<iframe onload="${Kennel._laxSanitize(onload)}" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
     }
     /**
