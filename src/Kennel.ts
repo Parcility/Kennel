@@ -432,11 +432,32 @@ export default class Kennel {
             rendered = marked(Kennel._laxSanitize(elem["markdown"])).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
         }
 
+        // render modes:
+        // 1) just set the height
+        // 2) use IntersectionObserver
+        // 3) use setInterval
+        let renderMode = 1;
+
+        let onload = null;
+        if (renderMode == 1) {
+            onload = "this.height = this.contentDocument.body.scrollHeight;";
+        } else if (renderMode == 2) {
+            onload = `
+                let e = this.contentDocument.body.lastChild;
+                let o = new IntersectionObserver(_ => {
+                    this.height = getComputedStyle(this.contentDocument.documentElement).height;
+                });
+                o.observe(e);
+            `;
+        } else {
+            onload = "(e => { setInterval(_ => { e.height = e.contentDocument.body.scrollHeight; }); })(this);";
+        }
+
         rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} * {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
 
         // I know this is a very long line, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
-        return `<iframe onload="let e = this.contentDocument.body.lastChild; let o = new IntersectionObserver(_ => { this.height = getComputedStyle(this.contentDocument.documentElement).height }); o.observe(e);" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
+        return `<iframe onload="${Kennel._laxSanitize(onload)}" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
     }
     /**
      * _DepictionLabelView(elem)
