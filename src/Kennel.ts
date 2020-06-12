@@ -45,6 +45,7 @@ marked.setOptions({
  *  - {string} proxyURL A URL to prepend to all images, ideal for an image proxy server. Empty by default.
  *  - {boolean} useShadowDom Enables the insecure shadow DOM implementation for DepictionMarkdownView. False by default.
  *  - {string} iframeHeader HTML to inject into DepictionMarkdownView IFrames. Will set text to white if dark mode (via <style />) by default.
+ *  - {boolean} silenceErrors Silence any syntax errors from the depiction. False by default.
  */
 export default class Kennel {
     // Declare data types.
