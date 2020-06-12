@@ -543,7 +543,7 @@ const depiction = {
     "class": "DepictionTabView"
 };
 const options = {
-    "iframeStyle": ""
+    "iframeHeader": ""
 };
 const nd = new Kennel(depiction, options);
 const nd_out = nd.render();

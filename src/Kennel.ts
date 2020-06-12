@@ -453,7 +453,7 @@ export default class Kennel {
             rendered = marked(Kennel._laxSanitize(elem["markdown"])).replace(/<hr>/g, this._DepictionSeparatorView(elem));
         }
 
-        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} * {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif}</style></head><body>${rendered.replace(/"/ig, "&quot;")}</body>`
+        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} * {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif}</style></head><body>${rendered.replace(/"/ig, "&quot;")}</body></html>`
 
         // Return the JavaScript code needed to create the shadow DOM.
         // I know this is a very long line, but all functions shall output minified JS, and the
