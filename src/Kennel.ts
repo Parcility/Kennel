@@ -51,6 +51,7 @@ export default class Kennel {
     readonly #depiction: object;
     readonly #proxyURL: string;
     readonly #useShadowDom: boolean;
+    readonly #silenceErrors: boolean;
     readonly #iframeHeader: string;
     readonly #options: boolean;
     readonly #tint: string;
@@ -63,10 +64,12 @@ export default class Kennel {
             this.#proxyURL = (typeof options["proxyURL"] != "undefined") ? options["proxyURL"] : "";
             this.#iframeHeader = (typeof options["iframeHeader"] != "undefined") ? options["iframeHeader"] : "<style>@media (prefers-color-scheme: dark) { html {color: white} }</style>";
             this.#useShadowDom = Boolean(options["useShadowDom"]);
+            this.#silenceErrors = Boolean(options["silenceErrors"]);
         } else {
             this.#proxyURL = "";
             this.#iframeHeader = "<style>@media (prefers-color-scheme: dark) { html {color: white} }</style>";
             this.#useShadowDom = false;
+            this.#silenceErrors = false;
         }
         this.#tint = (typeof this.#depiction["tintColor"] != "undefined") ? Kennel._sanitizeColor(this.#depiction["tintColor"]) : "#6264d3";
 
@@ -693,7 +696,10 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionUnknownView(elem: object) {
-        return `<p style="opacity:0.3">[Could not render: ${Kennel._sanitize(elem["class"])}]</p>`;
+        if (this.#silenceErrors)
+            return "";
+        else
+            return `<p style="opacity:0.3">[Could not render: ${Kennel._sanitize(elem["class"])}]</p>`;
     }
 
     /**
@@ -705,7 +711,10 @@ export default class Kennel {
      * @param {string} err A string describing the error.
      */
     private _DepictionErrorView(elem: object, err: string) {
-        return `<p style="opacity:0.3;color:red">[${err}: ${Kennel._sanitize(elem["class"])}]</p>`;
+        if (this.#silenceErrors)
+            return "";
+        else
+            return `<p style="opacity:0.3;color:red">[${err}: ${Kennel._sanitize(elem["class"])}]</p>`;
     }
     /*
      * _sanitize(str)

@@ -58,6 +58,8 @@ These are the options that can be set:
 > `useShadowDom` A boolean that enables the insecure shadow DOM implementation for DepictionMarkdownView. False by default (recommended).
 >
 > `iframeHeader`: An HTML string to inject into DepictionMarkdownView IFrames. Will set text to white if dark mode (via \<style />) by default.
+>
+> `silenceErrors`: A boolean to silence any syntax errors from the depiction. False by default.
 
 All arguments are optional, but `depiction` is highly suggested for proper usage.
 
