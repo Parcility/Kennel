@@ -425,40 +425,18 @@ export default class Kennel {
             elem["tintColor"] = this.#tint;
 
         if (elem["useRawFormat"]) {
-            // ! BEWARE OF XSS ! //
-            // Unfortunately, this is a design flaw with the spec.
-            // TODO: Just disable link parsing. This is non-trivial to do, so for now, we just disable GFM-flavored Markdown for useRawFormat.
             marked.setOptions({gfm: false});
             rendered = marked(elem["markdown"]).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
             marked.setOptions({gfm: true});
-
-            // Remove all <script> tags.
-            if (rendered.toLowerCase().indexOf("<script>") != -1 || rendered.toLowerCase().indexOf("</script>") != -1) {
-                // If <script> is detected, sanitize it.
-                rendered = rendered.replace(/<script>/im, "&lt;script&gt;").replace(/<\/script>/im, "&lt;/script&gt;")
-
-                didWarnXSS = true;
-                rendered = `${xssWarn}${rendered}`;
-            }
-            // Remove onerror/onload/etc
-            if (/on([^\s]+?)=/im.test(rendered)) {
-                if (!didWarnXSS) {
-                    rendered = `${xssWarn}${rendered}`;
-                    didWarnXSS = true;
-                }
-                rendered = rendered.replace(/on([^\s]+?)=/ig, "onXSSAttempt=");
-            }
-
         } else {
-            rendered = marked(Kennel._laxSanitize(elem["markdown"])).replace(/<hr>/g, this._DepictionSeparatorView(elem));
+            rendered = marked(Kennel._laxSanitize(elem["markdown"])).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
         }
 
-        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} * {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif}</style></head><body>${rendered.replace(/"/ig, "&quot;")}</body></html>`
+        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} * {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
 
-        // Return the JavaScript code needed to create the shadow DOM.
         // I know this is a very long line, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
-        return `<iframe onload="this.height = getComputedStyle(this.contentDocument.body.parentElement).height" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
+        return `<iframe onload="let e = this.contentDocument.body.lastChild; let o = new IntersectionObserver(_ => { this.height = getComputedStyle(this.contentDocument.documentElement).height }); o.observe(e);" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
     }
     /**
      * _DepictionLabelView(elem)
@@ -508,11 +486,7 @@ export default class Kennel {
         x = Number(size[0]);
         y = Number(size[1]);
 
-        if (x > y) {
-            sizeStr = `width: ${Kennel._sanitizeDouble(x)}px`;
-        } else {
-            sizeStr = `height: ${Kennel._sanitizeDouble(y)}px`;
-        }
+        sizeStr = `width: ${Kennel._sanitizeDouble(Math.max(x, y))}px`;
 
         for (i = 0; i < elem["screenshots"].length; i++) {
             if (typeof elem["screenshots"][i]["url"] == "undefined") throw "kennel:Missing required \"url\" property in screenshot object.";
