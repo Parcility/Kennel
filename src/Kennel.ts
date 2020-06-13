@@ -72,7 +72,7 @@ export default class Kennel {
             this.#useShadowDom = false;
             this.#silenceErrors = false;
         }
-        this.#tint = (typeof this.#depiction["tintColor"] != "undefined") ? Kennel._sanitizeColor(this.#depiction["tintColor"]) : "#6264d3";
+        this.#tint = (typeof this.#depiction["tintColor"] != "undefined" || this.#depiction["tintColor"] != "") ? Kennel._sanitizeColor(this.#depiction["tintColor"]) : "#6264d3";
 
         // Build a map of all the classes Kennel knows about.
         this.#views = new Map<String, Function>();
