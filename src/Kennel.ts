@@ -46,6 +46,7 @@ marked.setOptions({
  *  - {boolean} useShadowDom Enables the insecure shadow DOM implementation for DepictionMarkdownView. False by default.
  *  - {string} iframeHeader HTML to inject into DepictionMarkdownView IFrames. Will set text to white if dark mode (via <style />) by default.
  *  - {boolean} silenceErrors Silence any syntax errors from the depiction. False by default.
+ *  - {string} packagePrefix A URL to prepend to all package references. Uses the Parcility API by default.
  */
 export default class Kennel {
     // Declare data types.
@@ -56,6 +57,7 @@ export default class Kennel {
     readonly #iframeHeader: string;
     readonly #options: boolean;
     readonly #tint: string;
+    readonly #packagePrefix: string;
     #views: Map<String, Function>;
 
     constructor(depiction: object, options: object) {
@@ -66,13 +68,15 @@ export default class Kennel {
             this.#iframeHeader = (typeof options["iframeHeader"] != "undefined") ? options["iframeHeader"] : "<style>@media (prefers-color-scheme: dark) { html {color: white} }</style>";
             this.#useShadowDom = Boolean(options["useShadowDom"]);
             this.#silenceErrors = Boolean(options["silenceErrors"]);
+            this.#packagePrefix = (typeof options["packagePrefix"] != "undefined" ? options["packagePrefix"] : "https://api.parcility.co/render/package/");
         } else {
             this.#proxyURL = "";
             this.#iframeHeader = "<style>@media (prefers-color-scheme: dark) { html {color: white} }</style>";
             this.#useShadowDom = false;
             this.#silenceErrors = false;
+            this.#packagePrefix = "https://api.parcility.co/render/package/";
         }
-        this.#tint = (typeof this.#depiction["tintColor"] != "undefined" || this.#depiction["tintColor"] != "") ? Kennel._sanitizeColor(this.#depiction["tintColor"]) : "#6264d3";
+        this.#tint = (typeof this.#depiction["tintColor"] != "undefined" || this.#depiction["tintColor"] !== "") ? Kennel._sanitizeColor(this.#depiction["tintColor"]) : "#6264d3";
 
         // Build a map of all the classes Kennel knows about.
         this.#views = new Map<String, Function>();
@@ -93,6 +97,8 @@ export default class Kennel {
         this.#views.set("DepictionReviewView", (elem: object) => this._DepictionReviewView(elem));
         this.#views.set("DepictionWebView", (elem: object) => this._DepictionWebView(elem));
         this.#views.set("DepictionVideoView", (elem: object) => this._DepictionVideoView(elem));
+        this.#views.set("DepictionBannersView", (elem: object) => this._DepictionBannersView(elem));
+        this.#views.set("FeaturedBannersView", (elem: object) => this._DepictionBannersView(elem));
         this.#views.set("DepictionAdmobView", (elem: object) => this._DepictionAdmobView(elem));
 
         // Respect useShadowDom setting.
@@ -141,7 +147,7 @@ export default class Kennel {
                 if (e.name === "TypeError") {
                     console.error("Kennel: Element is malformed.")
                     return this._DepictionErrorView(elem, "Could not render malformed element");
-                } else if (e.indexOf("kennel:") != -1) {
+                } else if (e.indexOf("kennel:") !== -1) {
                     kennelError = e.substring(7);
                     console.error(`Kennel: ${kennelError}`);
                     return this._DepictionErrorView(elem, kennelError);
@@ -206,7 +212,7 @@ export default class Kennel {
         else
             buffer += `<div class="nd_nested_stack">`;
 
-        if (typeof elem["orientation"] == "undefined" || elem["orientation"].toLowerCase() != "landscape") {
+        if (typeof elem["orientation"] == "undefined" || elem["orientation"].toLowerCase() !== "landscape") {
             // Standard orientation
             for (i = 0; i < elem["views"].length; i++)
                 buffer += this._DepictionBaseView(elem["views"][i]);
@@ -236,7 +242,7 @@ export default class Kennel {
         else
             buffer += `<div class="nd_nested_stack" style="width: ${elem["horizontalSpacing"] ? `${Kennel._sanitizeDouble(elem["horizontalSpacing"])}px` : "100%"}">`;
 
-        if (typeof elem["orientation"] == "undefined" || elem["orientation"].toLowerCase() != "landscape") {
+        if (typeof elem["orientation"] == "undefined" || elem["orientation"].toLowerCase() !== "landscape") {
             // Standard orientation
             for (i = 0; i < elem["views"].length; i++)
                 buffer += this._DepictionBaseView(elem["views"][i]);
@@ -351,7 +357,7 @@ export default class Kennel {
             marked.setOptions({gfm: true});
 
             // Remove all <script> tags.
-            if (rendered.toLowerCase().indexOf("<script>") != -1 || rendered.toLowerCase().indexOf("</script>") != -1) {
+            if (rendered.toLowerCase().indexOf("<script>") !== -1 || rendered.toLowerCase().indexOf("</script>") !== -1) {
                 // If <script> is detected, sanitize it.
                 rendered = rendered.replace(/<script>/im, "&lt;script&gt;").replace(/<\/script>/im, "&lt;/script&gt;")
 
@@ -373,14 +379,14 @@ export default class Kennel {
 
         // Use <script> to help build the shadow DOM, as we're sending this to a page that is
         // yet to load.
-        if (rendered.indexOf("<style>") != -1) {
+        if (rendered.indexOf("<style>") !== -1) {
             // This render includes a style element! Let's make sure it's accounted for properly!
             // *because shadow DOMs can't have body tags, we gotta do some editing.
             let newStyleEl: string;
             let firstHalf: number = -1;
             let secondHalf: number = -1;
 
-            while (rendered.indexOf("<style>", firstHalf + 1) != -1) {
+            while (rendered.indexOf("<style>", firstHalf + 1) !== -1) {
                 firstHalf = rendered.indexOf("<style>", firstHalf);
                 secondHalf = rendered.indexOf("</style>", secondHalf);
 
@@ -433,7 +439,7 @@ export default class Kennel {
             marked.setOptions({gfm: true});
 
             // Remove all <script> tags.
-            if (rendered.toLowerCase().indexOf("<script>") != -1 || rendered.toLowerCase().indexOf("</script>") != -1) {
+            if (rendered.toLowerCase().indexOf("<script>") !== -1 || rendered.toLowerCase().indexOf("</script>") !== -1) {
                 // If <script> is detected, sanitize it.
                 rendered = rendered.replace(/<script>/im, "&lt;script&gt;").replace(/<\/script>/im, "&lt;/script&gt;")
 
@@ -677,6 +683,54 @@ export default class Kennel {
         return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" controls style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" src="${Kennel._laxSanitize(elem["URL"])}" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"></video></div>`;
     }
     /**
+     * _DepictionBannersView(elem)
+     * Renders a DepictionBannersView, given Object elem for context.
+     * Sileo calls this a "FeaturedBannersView" but inconsistency is bothersome.
+     * Calling directly is not recommended but is possible.
+     *
+     * @param {object} elem The native depiction class.
+     */
+    private _DepictionBannersView(elem: object) {
+        let i: number, size: string[], x: number, y: number, imgURL: string, pkgURL: string, isShadow: string, text: string;
+        let ret: string = `<div class="nd_scroll_view">\``;
+        let sizeStr: string = "";
+        let sizeFactor: number = 0.75;
+
+        if (typeof elem["itemSize"] == "undefined") throw "kennel:Missing required \"itemSize\" property";
+        if (typeof elem["itemCornerRadius"] == "undefined") throw "kennel:Missing required \"itemCornerRadius\" property";
+        if (typeof elem["banners"] == "undefined") throw "kennel:Missing required \"banners\" property";
+
+        if (typeof elem["hideShadow"] == "undefined")
+            isShadow = "nd_text_shadow";
+        else
+            isShadow = elem["hideShadow"] ? "" : "nd_text_shadow";
+
+        size = elem["itemSize"].substring(1, elem["itemSize"].length-1).split(",");
+        x = Number(size[0]) * sizeFactor;
+        y = Number(size[1]) * sizeFactor;
+
+        sizeStr = `width: ${Kennel._sanitizeDouble(x)}px; height: ${Kennel._sanitizeDouble(y)}px;`;
+
+        for (i = 0; i < elem["banners"].length; i++) {
+            if (typeof elem["banners"][i]["url"] == "undefined") throw "kennel:Missing required \"url\" property in banner object.";
+            if (typeof elem["banners"][i]["title"] == "undefined") throw "kennel:Missing required \"title\" property in banner object.";
+            if (typeof elem["banners"][i]["package"] == "undefined") throw "kennel:Missing required \"package\" property in banner object.";
+
+            imgURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["banners"][i]["url"]}`);
+            pkgURL = this.#packagePrefix + Kennel._laxSanitize(elem["banners"][i]["package"]);
+
+            if (typeof elem["displayText"] == "undefined" || elem["displayText"])
+                text = `<p class="${isShadow} nd_truncate" style="width: ${Kennel._sanitizeDouble(x - 10)}px">${Kennel._sanitize(elem["banners"][i]["title"])}</p>`;
+            else
+                text = "";
+
+            ret += `<a class="nd_card" style="background-image: url(${imgURL}); border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px; ${sizeStr}" href="${pkgURL}">${text}</a>`;
+        }
+        ret += "</div>";
+
+        return ret;
+    }
+    /**
      * _DepictionAdmobView(elem)
      * Renders a DepictionAdmobView, given Object elem for context.
      * Calling directly is not recommended but is possible.
@@ -686,7 +740,6 @@ export default class Kennel {
     private _DepictionAdmobView(elem: object) {
         // Do not render ad views. However, still err for them as per spec (and for those debugging them).
         if (typeof elem["adUnitID"] == "undefined") throw "kennel:Missing required \"adUnitID\" property";
-
         return "";
     }
     /**
@@ -788,17 +841,17 @@ export default class Kennel {
         for (i = 0; i < str.length; i++) {
             char = str[i];
             if (
-                char == "&" ||
-                char == "<" ||
-                char == ">" ||
-                char == "\"" ||
-                char == "\'" ||
-                char == "\`" ||
-                char == "{" ||
-                char == "}" ||
-                char == "$" ||
-                char == "\\" ||
-                char == "/"
+                char === "&" ||
+                char === "<" ||
+                char === ">" ||
+                char === "\"" ||
+                char === "\'" ||
+                char === "\`" ||
+                char === "{" ||
+                char === "}" ||
+                char === "$" ||
+                char === "\\" ||
+                char === "/"
             )
                 newStr += `&#x${char.charCodeAt(0).toString(16).padStart(4, "0")};`;
             else
@@ -894,7 +947,7 @@ export default class Kennel {
     private static _buttonLinkHandler(url: string, label: string) {
         // javascript: links should do nothing.
         const jsXssIndex = url.indexOf("javascript:");
-        if (jsXssIndex != -1) {
+        if (jsXssIndex !== -1) {
             return url.substring(0, jsXssIndex) + encodeURIComponent(url.substring(jsXssIndex));
         // depiction- links should link to a depiction. Use Parcility's API for this.
         } else if (url.indexOf("depiction-") == 0) {
