@@ -62,6 +62,8 @@ These are the options that can be set:
 > `silenceErrors`: A boolean to silence any syntax errors from the depiction. False by default.
 >
 > `packagePrefix`: A URL to prepend to all package references. Uses the Parcility API by default.
+>
+> `defaultTint`: A CSS-compatible string to use as the default tint color.
 
 All arguments are optional, but `depiction` is highly suggested for proper usage.
 

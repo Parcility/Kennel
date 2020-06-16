@@ -47,6 +47,7 @@ marked.setOptions({
  *  - {string} iframeHeader HTML to inject into DepictionMarkdownView IFrames. Will set text to white if dark mode (via <style />) by default.
  *  - {boolean} silenceErrors Silence any syntax errors from the depiction. False by default.
  *  - {string} packagePrefix A URL to prepend to all package references. Uses the Parcility API by default.
+ *  - {string} defaultTint A CSS-compatible string to use as the default tint color.
  */
 export default class Kennel {
     // Declare data types.
@@ -58,6 +59,7 @@ export default class Kennel {
     readonly #options: boolean;
     readonly #tint: string;
     readonly #packagePrefix: string;
+    readonly #defaultTint: string;
     #views: Map<String, Function>;
 
     constructor(depiction: object, options: object) {
@@ -69,14 +71,16 @@ export default class Kennel {
             this.#useShadowDom = Boolean(options["useShadowDom"]);
             this.#silenceErrors = Boolean(options["silenceErrors"]);
             this.#packagePrefix = (typeof options["packagePrefix"] != "undefined" ? options["packagePrefix"] : "https://api.parcility.co/render/package/");
+            this.#defaultTint = (typeof options["defaultTint"] != "undefined") ? options["defaultTint"] : "#6264d3";
         } else {
             this.#proxyURL = "";
             this.#iframeHeader = "<style>@media (prefers-color-scheme: dark) { html {color: white} }</style>";
             this.#useShadowDom = false;
             this.#silenceErrors = false;
             this.#packagePrefix = "https://api.parcility.co/render/package/";
+            this.#defaultTint = "#6264d3";
         }
-        this.#tint = (typeof this.#depiction["tintColor"] != "undefined" || this.#depiction["tintColor"] !== "") ? Kennel._sanitizeColor(this.#depiction["tintColor"]) : "#6264d3";
+        this.#tint = (typeof this.#depiction["tintColor"] != "undefined" && this.#depiction["tintColor"] !== "") ? Kennel._sanitizeColor(this.#depiction["tintColor"]) : this.#defaultTint;
 
         // Build a map of all the classes Kennel knows about.
         this.#views = new Map<String, Function>();
@@ -692,7 +696,7 @@ export default class Kennel {
      */
     private _DepictionBannersView(elem: object) {
         let i: number, size: string[], x: number, y: number, imgURL: string, pkgURL: string, isShadow: string, text: string;
-        let ret: string = `<div class="nd_scroll_view">\``;
+        let ret: string = `<div class="nd_scroll_view">`;
         let sizeStr: string = "";
         let sizeFactor: number = 0.75;
 
