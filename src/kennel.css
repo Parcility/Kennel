@@ -123,6 +123,11 @@ h3.nd_header {
     margin-bottom: 15px;
 }
 
+h4.nd_header {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
 .nd_footer {
     margin-top: 20px;
 }

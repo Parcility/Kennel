@@ -425,6 +425,7 @@ export default class Kennel {
         let noJSRender: string, xssWarn: string, rendered: string;
         let didWarnXSS: boolean = false;
         let ident: string = Kennel._makeIdentifier("md");
+        let spacing: number = 5;
 
         if (typeof elem["markdown"] == "undefined") throw "kennel:Missing required \"markdown\" property";
 
@@ -433,6 +434,9 @@ export default class Kennel {
             elem["tintColor"] = "#6264D3";
         else if (typeof elem["tintColor"] == "undefined" && typeof this.#tint != "undefined")
             elem["tintColor"] = this.#tint;
+
+        if (typeof elem["useSpacing"] != "undefined" && elem["useSpacing"] == false)
+            spacing = 0;
 
         if (elem["useRawFormat"]) {
             // ! BEWARE OF XSS ! //
@@ -463,7 +467,7 @@ export default class Kennel {
             rendered = marked(Kennel._laxSanitize(elem["markdown"])).replace(/<hr>/g, this._DepictionSeparatorView(elem));
         }
 
-        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} * {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif}</style></head><body>${rendered.replace(/"/ig, "&quot;")}</body></html>`
+        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6 {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} * {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} p {margin-top: ${spacing}px; margin-bottom: ${spacing}px;}</style></head><body>${rendered.replace(/"/ig, "&quot;")}</body></html>`
 
         // Return the JavaScript code needed to create the shadow DOM.
         // I know this is a very long line, but all functions shall output minified JS, and the
@@ -482,10 +486,14 @@ export default class Kennel {
 
         if (typeof elem["text"] == "undefined") throw "kennel:Missing required \"text\" property";
 
-        if (typeof elem["margins"] != "undefined")
+        if (elem["margins"] && elem["useMargins"])
             marginStr = Kennel._marginResolver(elem["margins"]);
         else
             marginStr = "";
+
+        // If usePadding is false, remove top/bottom margin.
+        if (typeof elem["usePadding"] != "undefined" && elem["usePadding"] == false)
+            marginStr += "margin-top: 0; margin=bottom: 0;"
 
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
         elem["fontWeight"] = Kennel._weightStringResolver(elem["fontWeight"]);
@@ -569,13 +577,20 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionHeaderView(elem: object) {
+        let margin: string = "";
         if (typeof elem["title"] == "undefined") throw "kennel:Missing required \"title\" property";
 
         elem["fontWeight"] = "bold";
         if (typeof elem["useBoldText"] != "undefined") {
             elem["fontWeight"] = elem["useBoldText"] ? "bold" : "normal";
         }
-        return `<h3 class="nd_header" style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};font-weight: ${Kennel._sanitize(elem["fontWeight"])}">${Kennel._sanitize(elem["title"])}</h3>`;
+        if (elem["useMargins"]) {
+            // These options require useMargins.
+            if (elem["useBottomMargin"]) {
+                margin = "margin-bottom:23px;"
+            }
+        }
+        return `<h3 class="nd_header" style="${margin}text-align: ${Kennel._alignmentResolver(elem["alignment"])};font-weight: ${Kennel._sanitize(elem["fontWeight"])}">${Kennel._sanitize(elem["title"])}</h3>`;
     }
     /**
      * _DepictionSubheaderView(elem)
@@ -585,13 +600,20 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionSubheaderView(elem: object) {
+        let margin: string = "";
         if (typeof elem["title"] == "undefined") throw "kennel:Missing required \"title\" property";
 
         elem["fontWeight"] = "normal";
         if (typeof elem["useBoldText"] != "undefined") {
             elem["fontWeight"] = elem["useBoldText"] ? "bold" : "normal";
         }
-        return `<h4 class="nd_header" style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};font-weight: ${Kennel._sanitize(elem["fontWeight"])}">${Kennel._sanitize(elem["title"])}</h4>`;
+        if (elem["useMargins"]) {
+            // These options require useMargins.
+            if (elem["useBottomMargin"]) {
+                margin = "margin-bottom:22px;"
+            }
+        }
+        return `<h4 class="nd_header" style="${margin}text-align: ${Kennel._alignmentResolver(elem["alignment"])};font-weight: ${Kennel._sanitize(elem["fontWeight"])}">${Kennel._sanitize(elem["title"])}</h4>`;
     }
     /**
      * _DepictionImageView(elem)
