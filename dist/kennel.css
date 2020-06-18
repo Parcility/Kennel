@@ -199,6 +199,10 @@ a.nd {
         background: #202020;
         color: #fff;
     }
+
+    .nd_img_card {
+        background-color: #222;
+    }
 }
 
 .nd_hidden {

@@ -527,7 +527,10 @@ export default class Kennel {
         for (i = 0; i < elem["screenshots"].length; i++) {
             if (typeof elem["screenshots"][i]["url"] == "undefined") throw "kennel:Missing required \"url\" property in screenshot object.";
             ssURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["screenshots"][i]["url"]}`);
-            ret += `<img loading="lazy" style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" class="nd_img_card" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
+            if (elem["screenshots"][i]["video"])
+                ret += `<video controls class="nd_img_card" style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}"><source src="${ssURL}"></video>`;
+            else
+               ret += `<img loading="lazy" style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" class="nd_img_card" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
         }
 
         ret += `</div>`;
@@ -679,12 +682,22 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionVideoView(elem: object) {
+        let video_settings: string = "";
         if (typeof elem["URL"] == "undefined") throw "kennel:Missing required \"URL\" property";
         if (typeof elem["width"] == "undefined") throw "kennel:Missing required \"width\" property";
         if (typeof elem["height"] == "undefined") throw "kennel:Missing required \"height\" property";
         if (typeof elem["cornerRadius"] == "undefined") throw "kennel:Missing required \"cornerRadius\" property";
 
-        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" controls style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" src="${Kennel._laxSanitize(elem["URL"])}" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"></video></div>`;
+        if (typeof elem["showPlaybackControls"] == "undefined" || elem["showPlaybackControls"] == true)
+            video_settings += "controls ";
+
+        if (elem["autoplay"])
+            video_settings += "autoplay ";
+
+        if (elem["loop"])
+            video_settings += "loop ";
+
+        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" ${video_settings}style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"><source src="${Kennel._laxSanitize(elem["URL"])}"></video></div>`;
     }
     /**
      * _DepictionBannersView(elem)
