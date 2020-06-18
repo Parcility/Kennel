@@ -190,6 +190,11 @@ const depiction = {
                     "itemSize": "{125,200}",
                     "screenshots": [
                         {
+                            "accessibilityText": "...",
+                            "video": true,
+                            "url": "https://shuga.co/giveupnow.mp4"
+                        },
+                        {
                             "accessibilityText": "Some",
                             "url": "https://repo.shuga.co/assets/heyitsshuga.lunadarkmode/screenshot/01.png"
                         },
