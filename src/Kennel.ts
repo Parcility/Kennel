@@ -415,7 +415,8 @@ export default class Kennel {
         let noJSRender: string, xssWarn: string, rendered: string;
         let didWarnXSS: boolean = false;
         let ident: string = Kennel._makeIdentifier("md");
-
+        let spacing: number = 5;
+        
         if (typeof elem["markdown"] == "undefined") throw "kennel:Missing required \"markdown\" property";
 
         // Is there a tint color passed?
@@ -423,6 +424,9 @@ export default class Kennel {
             elem["tintColor"] = "#6264D3";
         else if (typeof elem["tintColor"] == "undefined" && typeof this.#tint != "undefined")
             elem["tintColor"] = this.#tint;
+            
+        if (typeof elem["useSpacing"] != "undefined" && elem["useSpacing"] == false)
+            spacing = 0;
 
         if (elem["useRawFormat"]) {
             marked.setOptions({gfm: false});
