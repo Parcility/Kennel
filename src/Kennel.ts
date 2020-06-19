@@ -991,13 +991,12 @@ export default class Kennel {
         // depiction- links should link to a depiction. Use Parcility's API for this.
         } else if (url.indexOf("depiction-") == 0) {
             url = url.substring(10);
-
             if (typeof label == "undefined")
                 label = "Depiction";
-
-            return `https://api.parcility.co/render/headerless?url=${encodeURIComponent(url)}&name=${label}`
+            return `https://api.parcility.co/render/headerless?url=${encodeURIComponent(url)}&name=${label}`;
         } else if (url.indexOf("form-") == 0) {
-            return url.substring(4);
+            url = url.substring(4);
+            return `https://api.parcility.co/render/form?url=${encodeURIComponent(url)}`;
         } else {
             return url;
         }
