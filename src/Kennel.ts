@@ -412,8 +412,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionMarkdownView(elem: object) {
-        let noJSRender: string, xssWarn: string, rendered: string;
-        let didWarnXSS: boolean = false;
+        let rendered: string;
         let ident: string = Kennel._makeIdentifier("md");
         let spacing: number = 5;
         
