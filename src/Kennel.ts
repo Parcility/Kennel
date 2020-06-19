@@ -429,7 +429,7 @@ export default class Kennel {
             rendered = marked(elem["markdown"]).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
             marked.setOptions({gfm: true});
         } else {
-            rendered = marked(Kennel._laxSanitize(elem["markdown"])).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
+            rendered = marked(elem["markdown"]).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
         }
 
         // render modes:
@@ -463,7 +463,7 @@ export default class Kennel {
 
         // I know these are some very long lines, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
-        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} * {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} pre {white-space: pre-wrap}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
+        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} p {margin-top: ${spacing}px; margin-bottom: ${spacing}px;} blockquote {color: grey;} pre {white-space: pre-wrap}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
         return `<iframe onload="${Kennel._laxSanitize(onload)}" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
     }
     /**
