@@ -994,7 +994,7 @@ export default class Kennel {
                 label = "Depiction";
             return `https://api.parcility.co/render/headerless?url=${encodeURIComponent(url)}&name=${label}`;
         } else if (url.indexOf("form-") == 0) {
-            url = url.substring(4);
+            url = url.substring(5);
             return `https://api.parcility.co/render/form?url=${encodeURIComponent(url)}`;
         } else {
             return url;
