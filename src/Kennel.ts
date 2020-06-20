@@ -932,22 +932,36 @@ export default class Kennel {
         str = str.toLowerCase();
 
         // Suggestions from the W3 spec: https://www.w3.org/TR/CSS2/fonts.html#font-boldness
-        if (str == "normal" || str == "bold" || str == "bolder" || str == "lighter")
-            return str;
-        else if (str == "ultralight")
-            return "100";
-        else if (str == "thin")
-            return "200";
-        else if (str == "light")
-            return "300";
-        else if (str == "book")
-            return "400";
-        else if (str == "semibold" || str == "Demibold" || str == "medium")
-            return "600";
-        else if (str == "heavy")
-            return "800";
-        else if (str == "black" || str == "extrablack")
-            return "900";
+        switch (str) {
+            case "normal":
+                return str;
+            case "bold":
+                return str;
+            case "bolder":
+                return str;
+            case "ultralight":
+                return "100";
+            case "thin":
+                return "200";
+            case "light":
+                return "300";
+            case "book":
+                return "400";
+            case "semibold":
+                return "600";
+            case "demibold":
+                return "600";
+            case "medium":
+                return "600";
+            case "heavy":
+                return "800";
+            case "black":
+                return "900";
+            case "extrablack":
+                return "900"
+            default:
+                return str;
+        }
     }
     /**
      * _marginResolver(UIEdgeInsets)
@@ -966,14 +980,16 @@ export default class Kennel {
      * @param {number} num A number for horizontal alignment.
      */
     private static _alignmentResolver(num: number) {
-        if (num == 0)
-            return "left";
-        else if (num == 1)
-            return "center";
-        else if (num == 2)
-            return "right";
-        else
-            return "left";
+        switch (num) {
+            case 0:
+                return "left";
+            case 1:
+                return "center";
+            case 2:
+                return "right";
+            default:
+                return "left";
+        }
     }
     /**
      * _buttonLinkHandler(url, label)
