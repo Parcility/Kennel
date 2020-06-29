@@ -566,7 +566,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionSeparatorView(elem: object) {
-        return `<div class="nd_hr_wrap"><hr></div>`;
+        return `<div class="nd_hr"></div>`;
     }
     /**
      * _DepictionHeaderView(elem)
