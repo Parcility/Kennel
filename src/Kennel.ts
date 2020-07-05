@@ -448,34 +448,12 @@ export default class Kennel {
             rendered = marked(elem["markdown"]).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
         }
 
-        // render modes:
-        // 1) just set the height (doesn't fully work due to `display: none` on iframes in hidden tabs)
-        // 2) use IntersectionObserver in iframe (depends on element at the end of `<body>`, doesn't shrink with content)
-        // 3) use setInterval (hacky and unperformant)
-        // 4) use IntersectionObserver on iframe (non-responsive)
-        let renderMode = 4;
-
-        let onload = null;
-        if (renderMode == 1) {
-            onload = `this.height = this.contentDocument.documentElement.scrollHeight;`;
-        } else if (renderMode == 2) {
-            onload = `
-                let e = this.contentDocument.body.lastChild;
-                let o = new IntersectionObserver(_ => {
-                    this.height = getComputedStyle(this.contentDocument.documentElement).height;
-                });
-                o.observe(e);
-            `;
-        } else if (renderMode == 3) {
-            onload = `setInterval(_ => { this.height = this.contentDocument.documentElement.scrollHeight; });`;
-        } else {
-            onload = `
-                let o = new IntersectionObserver(_ => {
-                    this.height = this.contentDocument.documentElement.scrollHeight;
-                });
-                o.observe(this);
-            `;
-        }
+        // ResizeObserver: Resize to fix sizing.
+        let onload: string = `let e = this.contentDocument.body.lastChild;
+            let r = new ResizeObserver(_ => {
+                this.height = getComputedStyle(this.contentDocument.documentElement).height;
+            });
+            r.observe(e);`;
 
         rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6 {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} p {margin-top: ${spacing}px; margin-bottom: ${spacing}px;} blockquote {color: grey;}</style></head><body>${rendered.replace(/"/ig, "&quot;")}</body></html>`
 
