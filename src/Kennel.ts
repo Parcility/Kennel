@@ -422,8 +422,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionMarkdownView(elem: object) {
-        let noJSRender: string, xssWarn: string, rendered: string;
-        let didWarnXSS: boolean = false;
+        let rendered: string;
         let ident: string = Kennel._makeIdentifier("md");
         let spacing: number = 5;
 
@@ -434,44 +433,34 @@ export default class Kennel {
             elem["tintColor"] = "#6264D3";
         else if (typeof elem["tintColor"] == "undefined" && typeof this.#tint != "undefined")
             elem["tintColor"] = this.#tint;
+            
+        if (typeof elem["useSpacing"] != "undefined" && elem["useSpacing"] == false)
+            spacing = 0;
 
         if (typeof elem["useSpacing"] != "undefined" && elem["useSpacing"] == false)
             spacing = 0;
 
         if (elem["useRawFormat"]) {
-            // Unlike in the Shadow DOM implementation, markdown views are in sandboxed iframes. This should mitigate unwanted XSS attacks.
-            // TODO: Just disable link parsing. This is non-trivial to do, so for now, we just disable GFM-flavored Markdown for useRawFormat.
             marked.setOptions({gfm: false});
             rendered = marked(elem["markdown"]).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
             marked.setOptions({gfm: true});
-
-            // Remove all <script> tags.
-            if (rendered.toLowerCase().indexOf("<script>") !== -1 || rendered.toLowerCase().indexOf("</script>") !== -1) {
-                // If <script> is detected, sanitize it.
-                rendered = rendered.replace(/<script>/im, "&lt;script&gt;").replace(/<\/script>/im, "&lt;/script&gt;")
-
-                didWarnXSS = true;
-                rendered = `${xssWarn}${rendered}`;
-            }
-            // Remove onerror/onload/etc
-            if (/on([^\s]+?)=/im.test(rendered)) {
-                if (!didWarnXSS) {
-                    rendered = `${xssWarn}${rendered}`;
-                    didWarnXSS = true;
-                }
-                rendered = rendered.replace(/on([^\s]+?)=/ig, "onXSSAttempt=");
-            }
-
         } else {
-            rendered = marked(elem["markdown"]).replace(/<hr>/g, this._DepictionSeparatorView(elem));
+            rendered = marked(elem["markdown"]).replace(/<hr>/ig, this._DepictionSeparatorView(elem));
         }
+
+        // ResizeObserver: Resize to fix sizing.
+        let onload: string = `let e = this.contentDocument.body.lastChild;
+            let r = new ResizeObserver(_ => {
+                this.height = getComputedStyle(this.contentDocument.documentElement).height;
+            });
+            r.observe(e);`;
 
         rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6 {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} p {margin-top: ${spacing}px; margin-bottom: ${spacing}px;} blockquote {color: grey;}</style></head><body>${rendered.replace(/"/ig, "&quot;")}</body></html>`
 
-        // Return the JavaScript code needed to create the shadow DOM.
-        // I know this is a very long line, but all functions shall output minified JS, and the
+        // I know these are some very long lines, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
-        return `<iframe onload="this.height = getComputedStyle(this.contentDocument.body.parentElement).height" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
+        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} p {margin-top: ${spacing}px; margin-bottom: ${spacing}px;} blockquote {color: grey;} pre {white-space: pre-wrap}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
+        return `<iframe onload="${Kennel._laxSanitize(onload)}" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
     }
     /**
      * _DepictionLabelView(elem)
@@ -525,11 +514,7 @@ export default class Kennel {
         x = Number(size[0]);
         y = Number(size[1]);
 
-        if (x > y) {
-            sizeStr = `width: ${Kennel._sanitizeDouble(x)}px`;
-        } else {
-            sizeStr = `height: ${Kennel._sanitizeDouble(y)}px`;
-        }
+        sizeStr = `${x > y ? "width" : "height"}: ${Kennel._sanitizeDouble(Math.max(x, y))}px`;
 
         for (i = 0; i < elem["screenshots"].length; i++) {
             if (typeof elem["screenshots"][i]["url"] == "undefined") throw "kennel:Missing required \"url\" property in screenshot object.";

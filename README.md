@@ -27,16 +27,6 @@ You will also need to put the following lines of HTML code into the `<head>` of 
             document.querySelectorAll(`${show}.nd_tab`)[i].classList.remove("nd_hidden");
             document.querySelectorAll(`${show}.nd_nav_btn`)[i].classList.add("nd_active");
         }
-        // Fix frame heights.
-        setFrameHeights();
-    }
-    function setFrameHeights() {
-        let i;
-        // Set IFrame height to its content's height.
-        let iframe = document.querySelectorAll("iframe.nd_md_iframe");
-        for (i = 0; i < iframe.length; i++) {
-            iframe[i].height = getComputedStyle(iframe[i].contentDocument.body.parentElement).height;
-        }
     }
 </script>
 ```
