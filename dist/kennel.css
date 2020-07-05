@@ -31,7 +31,8 @@ p.nd {
 .nd_scroll_view {
     overflow-x: auto;
     overflow-y: hidden;
-    margin: 10px;
+    margin-left: 0;
+    margin-right: 18px;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
@@ -48,12 +49,12 @@ p.nd {
 }
 
 .nd_scroll_view > .nd_card {
-    background-color: #ccc;
+    background-color: transparent;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     padding: 10px;
-    margin: 10px;
+    margin: 7px 14px 7px 0;
     border-radius: 10px;
     font-weight: bold;
     height: 125px;
@@ -63,7 +64,7 @@ p.nd {
 }
 
 .nd_scroll_view > .nd_img_card {
-    background-color: #ccc;
+    background-color: transparent;
     margin: 5px;
     border-radius: 10px;
     font-weight: bold;
@@ -121,6 +122,11 @@ p.nd {
 h3.nd_header {
     margin-top: 15px;
     margin-bottom: 15px;
+}
+
+h4.nd_header {
+    margin-top: 12px;
+    margin-bottom: 12px;
 }
 
 .nd_footer {
@@ -199,10 +205,19 @@ a.nd {
         background: #202020;
         color: #fff;
     }
+
+    .nd_img_card {
+        background-color: #222;
+    }
 }
 
 .nd_hidden {
     display: none;
+}
+
+.nd_review > .nd_md_iframe {
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 .nd_md_view {
@@ -210,15 +225,33 @@ a.nd {
 }
 
 .nd_md_iframe {
-    width: 100%;
+    width: calc(100% - 30px);
     border: none;
     min-height: 35px;
     overflow: hidden;
 }
 
-.nd_hr_wrap {
-    padding-top: 2px;
-    padding-bottom: 2px;
+:root {
+    --kennel-device-pixel-ratio: 1;
+}
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+    :root {
+        --kennel-device-pixel-ratio: 2;
+    }
+}
+@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 3dppx) {
+    :root {
+        --kennel-device-pixel-ratio: 3;
+    }
+}
+
+.nd_hr {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    border: none;
+    display: block;
+    background-color: rgba(141,141,141,0.1);
+    height: calc(6px / var(--kennel-device-pixel-ratio));
 }
 
 .nd_br {
@@ -297,4 +330,25 @@ iframe.nd_max_width {
 .nd_label {
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.nd_truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nd_card > p {
+    margin: 0;
+    color: #fff;
+    bottom: 12px;
+    left: 16px;
+    font-size: 23px;
+    position: absolute;
+}
+.nd_card > p.nd_text_shadow {
+    text-shadow: 0 0 10px rgba(0,0,0,.8)
+}
+.nd_card:hover {
+    opacity: 0.75;
 }
