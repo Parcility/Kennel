@@ -747,7 +747,7 @@ export default class Kennel {
             else
                 text = "";
 
-            ret += `<a class="nd_card" style="background-image: url(${this.#proxyURL}${imgURL}); border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px; ${sizeStr}" href="${pkgURL}">${text}</a>`;
+            ret += `<a class="nd_card" style="background-image: url(${imgURL}); border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px; ${sizeStr}" href="${pkgURL}">${text}</a>`;
         }
         ret += "</div>";
 
