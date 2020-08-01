@@ -453,7 +453,8 @@ export default class Kennel {
             let r = new ResizeObserver(_ => {
                 this.height = getComputedStyle(this.contentDocument.documentElement).height;
             });
-            r.observe(e);`;
+            r.observe(e);
+            this.height = getComputedStyle(this.contentDocument.documentElement).height;`;
 
         rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, li {margin: 5px 0 5px 0;} body {margin: 0} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} p {margin-top: ${spacing}px; margin-bottom: ${spacing}px;} blockquote {color: grey;}</style></head><body>${rendered.replace(/"/ig, "&quot;")}</body></html>`
 
