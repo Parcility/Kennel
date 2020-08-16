@@ -449,18 +449,18 @@ export default class Kennel {
         }
 
         // ResizeObserver: Resize to fix sizing.
-        let onload: string = `let e = this.contentDocument.body.lastChild;
+        let onload: string = `try {
+            let e = this.contentDocument.body.lastChild;
             let r = new ResizeObserver(_ => {
                 this.height = getComputedStyle(this.contentDocument.documentElement).height;
             });
             r.observe(e);
-            this.height = getComputedStyle(this.contentDocument.documentElement).height;`;
-
-        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, li {margin: 5px 0 5px 0;} body {margin: 0} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} p {margin-top: ${spacing}px; margin-bottom: ${spacing}px;} blockquote {color: grey;}</style></head><body>${rendered.replace(/"/ig, "&quot;")}</body></html>`
+            this.height = getComputedStyle(this.contentDocument.documentElement).height;
+        } catch(err) {}`;
 
         // I know these are some very long lines, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
-        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} p {margin-top: ${spacing}px; margin-bottom: ${spacing}px;} blockquote {color: grey;} pre {white-space: pre-wrap}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
+        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} p {margin-top: ${spacing}px; margin-bottom: ${spacing}px;} blockquote {color: grey;} pre {white-space: pre-wrap} * {max-width: 100%}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
         return `<iframe onload="${Kennel._laxSanitize(onload)}" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
     }
     /**
@@ -482,7 +482,7 @@ export default class Kennel {
 
         // If usePadding is false, remove top/bottom margin.
         if (typeof elem["usePadding"] != "undefined" && elem["usePadding"] == false)
-            marginStr += "margin-top: 0; margin=bottom: 0;"
+            marginStr += "margin-top: 0; margin-bottom: 0;"
 
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
         elem["fontWeight"] = Kennel._weightStringResolver(elem["fontWeight"]);

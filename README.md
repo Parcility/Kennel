@@ -61,7 +61,7 @@ All arguments are optional, but `depiction` is highly suggested for proper usage
 
 ```ts
 // Import Kennel
-import Kennel from '@zenithdevs/kennel';
+const Kennel = require("@zenithdevs/kennel");
 
 // Set options.
 const options = {

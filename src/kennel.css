@@ -192,7 +192,7 @@ a.nd {
 .nd_table-btn:after {
     content: "›";
     font-size:30px;
-    transform: translateY(-40px);
+    transform: translateY(-48px);
     float: right;
 }
 
