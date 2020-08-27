@@ -452,7 +452,9 @@ export default class Kennel {
         let onload: string = `try {
             let e = this.contentDocument.body.lastChild;
             let r = new ResizeObserver(_ => {
-                this.height = getComputedStyle(this.contentDocument.documentElement).height;
+                try {
+                    this.height = getComputedStyle(this.contentDocument.documentElement).height;
+                } catch(e) {}
             });
             r.observe(e);
             this.height = getComputedStyle(this.contentDocument.documentElement).height;
