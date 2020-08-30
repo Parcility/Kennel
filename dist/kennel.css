@@ -366,3 +366,15 @@ iframe.nd_max_width {
 .nd_card:hover {
     opacity: 0.75;
 }
+.kennel_warning {
+    background: #cc3333;
+    color: white;
+}
+.kennel_notice {
+    background: rgba(44,44,44,0.4);
+}
+.kennel_notice, .kennel_warning {
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px;
+}

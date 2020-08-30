@@ -787,7 +787,7 @@ export default class Kennel {
             });
         }
 
-        buffer = `<div style="background:#cc3333;color:white;padding:10px;border-radius:10px;"><b>Warning!</b> DepictionBasicView is experimental and is likely to change.</div>` + buffer;
+        buffer = `<div class="kennel_warning"><b>Warning!</b> DepictionBasicView is experimental and is likely to change.</div>` + buffer;
 
         return buffer;
     }
@@ -905,7 +905,7 @@ export default class Kennel {
         if (this.#silenceErrors)
             return "";
         else
-            return `<p style="opacity:0.3">[Could not render: ${Kennel._sanitize(elem["class"])}]</p>`;
+            return `<div class="kennel_notice"><b>Error!</b> Could not render ${Kennel._sanitize(elem["class"])}</div>`;
     }
 
     /**
@@ -920,7 +920,7 @@ export default class Kennel {
         if (this.#silenceErrors)
             return "";
         else
-            return `<p style="opacity:0.3;color:red">[${err}: ${Kennel._sanitize(elem["class"])}]</p>`;
+            return `<div class="kennel_warning"><b>Warning!</b> ${err} in ${Kennel._sanitize(elem["class"])}</div>`;
     }
     /*
      * _sanitize(str)
