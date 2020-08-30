@@ -425,6 +425,7 @@ export default class Kennel {
         let rendered: string;
         let ident: string = Kennel._makeIdentifier("md");
         let spacing: number = 5;
+        let margin: string;
 
         if (typeof elem["markdown"] == "undefined") throw "kennel:Missing required \"markdown\" property";
 
@@ -437,8 +438,10 @@ export default class Kennel {
         if (typeof elem["useSpacing"] != "undefined" && elem["useSpacing"] == false)
             spacing = 0;
 
-        if (typeof elem["useSpacing"] != "undefined" && elem["useSpacing"] == false)
-            spacing = 0;
+        if (typeof elem["useMargins"] != "undefined" && elem["useMargins"] == false)
+            margin = "margin: 0;"
+        else
+            margin = "margin: 5px;"
 
         if (elem["useRawFormat"]) {
             marked.setOptions({gfm: false});
@@ -462,7 +465,7 @@ export default class Kennel {
 
         // I know these are some very long lines, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
-        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin: 0} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} p {margin-top: ${spacing}px; margin-bottom: ${spacing}px;} blockquote {color: grey;} pre {white-space: pre-wrap} * {max-width: 100%}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
+        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin-top: ${spacing}px; margin-bottom: ${spacing}px; ${margin}} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} blockquote {color: grey;} pre {white-space: pre-wrap} * {max-width: 100%}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
         return `<iframe onload="${Kennel._laxSanitize(onload)}" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
     }
     /**
@@ -477,10 +480,13 @@ export default class Kennel {
 
         if (typeof elem["text"] == "undefined") throw "kennel:Missing required \"text\" property";
 
-        if (elem["margins"] && elem["useMargins"])
+        // useMargins takes precedence.
+        if (elem["margins"] && (typeof elem["useMargins"] == "undefined" || elem["useMargins"] == true))
             marginStr = Kennel._marginResolver(elem["margins"]);
+        else if(!elem["margins"] && (typeof elem["useMargins"] == "undefined" || elem["useMargins"] == true))
+            marginStr = "margin: 2px;";
         else
-            marginStr = "";
+            marginStr = "margin: 0;"
 
         // If usePadding is false, remove top/bottom margin.
         if (typeof elem["usePadding"] != "undefined" && elem["usePadding"] == false)
@@ -571,12 +577,17 @@ export default class Kennel {
         if (typeof elem["useBoldText"] != "undefined") {
             elem["fontWeight"] = elem["useBoldText"] ? "bold" : "normal";
         }
-        if (elem["useMargins"]) {
-            // These options require useMargins.
-            if (elem["useBottomMargin"]) {
-                margin = "margin-bottom:23px;"
-            }
-        }
+
+        // If useMargin is false, remove all margins.
+        if (typeof elem["useMargins"] != "undefined" && elem["useMargins"] == false)
+            margin += "margin: 0;"
+
+        // If useBottomMargin is false, remove margin.
+        if (typeof elem["useBottomMargin"] == "undefined" || elem["useBottomMargin"] == true)
+            margin += "margin-bottom: 23px;";
+        else
+            margin += "margin-bottom: 0px;";
+
         return `<h3 class="nd_header" style="${margin}text-align: ${Kennel._alignmentResolver(elem["alignment"])};font-weight: ${Kennel._sanitize(elem["fontWeight"])}">${Kennel._sanitize(elem["title"])}</h3>`;
     }
     /**
@@ -594,12 +605,17 @@ export default class Kennel {
         if (typeof elem["useBoldText"] != "undefined") {
             elem["fontWeight"] = elem["useBoldText"] ? "bold" : "normal";
         }
-        if (elem["useMargins"]) {
-            // These options require useMargins.
-            if (elem["useBottomMargin"]) {
-                margin = "margin-bottom:22px;"
-            }
-        }
+
+        // If useMargin is false, remove all margins.
+        if (typeof elem["useMargins"] != "undefined" && elem["useMargins"] == false)
+            margin += "margin: 0;"
+
+        // If useBottomMargin is false, remove margin.
+        if (typeof elem["useBottomMargin"] == "undefined" || elem["useBottomMargin"] == true)
+            margin += "margin-bottom: 23px;";
+        else
+            margin += "margin-bottom: 0px;";
+
         return `<h4 class="nd_header" style="${margin}text-align: ${Kennel._alignmentResolver(elem["alignment"])};font-weight: ${Kennel._sanitize(elem["fontWeight"])}">${Kennel._sanitize(elem["title"])}</h4>`;
     }
     /**
@@ -619,7 +635,7 @@ export default class Kennel {
         if (typeof elem["cornerRadius"] == "undefined") throw "kennel:Missing required \"cornerRadius\" property";
 
         url = Kennel._laxSanitize(`${this.#proxyURL}${elem["URL"]}`); // Use proxy server (if set).
-        padding = (typeof elem["horizontalPadding"] != "undefined" ? `padding-top:${Kennel._sanitizeDouble(elem["horizontalPadding"])}px;padding-bottom:${Kennel._sanitizeDouble(elem["horizontalPadding"])}px;` :"");
+        padding = (typeof elem["xPadding"] != "undefined" ? `padding-top:${Kennel._sanitizeDouble(elem["xPadding"])}px;padding-bottom:${Kennel._sanitizeDouble(elem["xPadding"])}px;` :"");
         elem["alignment"] = Kennel._alignmentResolver(elem["alignment"]);
         return `<div style="text-align:${elem["alignment"]};"><img loading="lazy" src="${url}" style="width:${Kennel._sanitizeDouble(elem["width"])}px;height:${Kennel._sanitizeDouble(elem["height"])}px;border-radius:${Kennel._sanitizeDouble(elem["cornerRadius"])}px;max-width:100%;${padding}" alt="Image from depiction."></div>`;
     }
