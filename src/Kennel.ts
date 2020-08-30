@@ -96,6 +96,7 @@ export default class Kennel {
         this.#views.set("DepictionHeaderView", (elem: object) => this._DepictionHeaderView(elem));
         this.#views.set("DepictionSubheaderView", (elem: object) => this._DepictionSubheaderView(elem));
         this.#views.set("DepictionButtonView", (elem: object) => this._DepictionButtonView(elem));
+        this.#views.set("DepictionLayerView", (elem: object) => this._DepictionLayerView(elem));
         this.#views.set("DepictionImageView", (elem: object) => this._DepictionImageView(elem));
         this.#views.set("DepictionRatingView", (elem: object) => this._DepictionRatingView(elem));
         this.#views.set("DepictionReviewView", (elem: object) => this._DepictionReviewView(elem));
@@ -211,6 +212,8 @@ export default class Kennel {
         let i: number;
         let buffer: string = "";
 
+        if (typeof elem["views"] == "undefined") throw "kennel:Missing required \"views\" property";
+
         if (typeof elem["backgroundColor"] != "undefined")
             buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitizeColor(elem["backgroundColor"])}">`;
         else
@@ -232,6 +235,24 @@ export default class Kennel {
         return buffer;
     }
     /**
+     * _DepictionLayerView(elem)
+     * Renders a DepictionLayerView, given Object elem for context.
+     * Calling directly is not recommended but is possible.
+     *
+     * @param {object} elem The native depiction class.
+     */
+    private _DepictionLayerView(elem: object) {
+        let i: number;
+        let buffer: string = "";
+
+        // Layer them on!
+        for (i = 0; i < elem["views"].length; i++)
+            buffer += `<div>${this._DepictionBaseView(elem["views"][i])}</div>`;
+
+        buffer += `</div>`;
+        return buffer;
+    }
+    /**
      * _DepictionAutoStackView(elem)
      * Renders a DepictionAutoStackView, given Object elem for context.
      * Calling directly is not recommended but is possible.
@@ -241,6 +262,10 @@ export default class Kennel {
     private _DepictionAutoStackView(elem: object) {
         let i: number;
         let buffer: string = "";
+
+        if (typeof elem["views"] == "undefined") throw "kennel:Missing required \"views\" property";
+        if (typeof elem["horizontalSpacing"] == "undefined") throw "kennel:Missing required \"horizontalSpacing\" property";
+
         if (typeof elem["backgroundColor"] != "undefined")
             buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitizeColor(elem["backgroundColor"])}; width: ${elem["horizontalSpacing"] ? `${Kennel._sanitizeDouble(elem["horizontalSpacing"])}px` : "100%"}">`;
         else
@@ -311,9 +336,16 @@ export default class Kennel {
      */
     private _DepictionButtonView(elem: object) {
         let extra_params: string = "";
+        let contents: string;
 
-        if (typeof elem["text"] == "undefined") throw "kennel:Missing required \"text\" property";
         if (typeof elem["action"] == "undefined") throw "kennel:Missing required \"action\" property";
+
+        // If a view is set, default it over text.
+        if (typeof elem["view"] != "undefined" && elem["view"] != "") {
+            contents = this._DepictionBaseView(elem["view"]);
+        } else {
+            contents = Kennel._sanitize(elem["text"]);
+        }
 
         if (elem["openExternal"]) {
             extra_params += ` target="_blank"`;
@@ -328,7 +360,7 @@ export default class Kennel {
             extra_params += `"`;
         }
         elem["action"] = Kennel._sanitize(Kennel._buttonLinkHandler(elem["action"], elem["text"]));
-        return `<a class="nd nd_btn" href="${elem["action"]}"${extra_params}>${Kennel._sanitize(elem["text"])}</a>`;
+        return `<a class="nd nd_btn" href="${elem["action"]}"${extra_params}>${contents}</a>`;
     }
     /**
      * _DepictionMarkdownShadowDomView(elem)

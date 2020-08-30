@@ -259,6 +259,20 @@ a.nd {
     padding-top: 10px;
 }
 
+.nd_layered_stack > div {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.nd_layered_stack > div:first-child {
+    position: relative;
+}
+
+.nd_layered_stack {
+    position: relative;
+}
+
 .nd_landscape_stack {
     display: flex;
     flex-wrap: nowrap;

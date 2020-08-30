@@ -281,6 +281,16 @@ const depiction = {
                 },
                 {
                     "class": "DepictionButtonView",
+                    "text": "I hold a view!",
+                    "action": "https://shuga.co",
+                    "view": {
+                        "class": "DepictionLabelView",
+                        "text": "Graphic design is my passion!",
+                        "textColor": "pink"
+                    }
+                },
+                {
+                    "class": "DepictionButtonView",
                     "text": "Red, open in new app.",
                     "action": "https://shuga.co",
                     "openExternal": 1,
@@ -402,6 +412,24 @@ const depiction = {
                 },
                 {
                     "class": "DepictionSeparatorView"
+                },
+
+                {
+                    "class": "DepictionHeaderView",
+                    "title": "DepictionLayerView"
+                },
+                {
+                    "class": "DepictionLayerView",
+                    "views": [
+                        {
+                            "class": "DepictionLabelView",
+                            "text": "---"
+                        },
+                        {
+                            "class": "DepictionLabelView",
+                            "text": "___"
+                        }
+                    ]
                 },
 
 
