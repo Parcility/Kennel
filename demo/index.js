@@ -431,6 +431,54 @@ const depiction = {
                         }
                     ]
                 },
+                {
+                    "class": "DepictionHeaderView",
+                    "title": "DepictionBasicView"
+                },
+                {
+                    "class": "DepictionBasicView",
+                    "tagline": "A short description",
+                    "markdown": "A more detailed description with markdown text available.",
+                    "changelog": [
+                        {
+                            "version": "1.1.1",
+                            "markdown": "Bug fixes and performance improvements."
+                        },
+                        {
+                            "version": "1.1",
+                            "markdown": "- Added new bugs\n- Fixed old bugs\n- Created new crashes"
+                        },
+                        {
+                            "version": "1.1",
+                            "markdown": "Initial release"
+                        }
+                    ],
+                    "screenshots": [
+                        {
+                            "accessibilityText": "Screenshot #1",
+                            "url": "https://parcility.co/assets/prcl/unknown.jpeg"
+                        },
+                        {
+                            "accessibilityText": "Screenshot #2",
+                            "url": "https://parcility.co/assets/prcl/unknown.jpeg"
+                        },
+                        {
+                            "accessibilityText": "Screenshot #2",
+                            "url": "https://parcility.co/assets/prcl/unknown.jpeg"
+                        }
+                    ],
+                    "links": [
+                        {
+                            "action": "https://example.com/",
+                            "title": "Website"
+                        },
+                        {
+                            "action": "https://twitter.com/HeyItsShuga/",
+                            "title": "Twitter",
+                            "tintColor": "#dd3344"
+                        }
+                    ]
+                },
 
 
                 {

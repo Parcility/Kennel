@@ -105,6 +105,7 @@ export default class Kennel {
         this.#views.set("DepictionBannersView", (elem: object) => this._DepictionBannersView(elem));
         this.#views.set("FeaturedBannersView", (elem: object) => this._DepictionBannersView(elem));
         this.#views.set("DepictionAdmobView", (elem: object) => this._DepictionAdmobView(elem));
+        this.#views.set("DepictionBasicView", (elem: object) => this._DepictionBasicView(elem));
 
         // Respect useShadowDom setting.
         if (this.#useShadowDom)
@@ -473,7 +474,7 @@ export default class Kennel {
         if (typeof elem["useMargins"] != "undefined" && elem["useMargins"] == false)
             margin = "margin: 0;"
         else
-            margin = "margin: 5px;"
+            margin = "margin: 3px;"
 
         if (elem["useRawFormat"]) {
             marked.setOptions({gfm: false});
@@ -712,6 +713,83 @@ export default class Kennel {
         ratingStr = "";
        }
         return `<div class="nd_review"><div class="nd_review_head"><div class="nd_left"><p>${Kennel._sanitize(elem["title"])}</p><p class="nd_author">by ${Kennel._sanitize(elem["author"])}</p></div><div class="nd_right">${ratingStr}</div></div>${md}</div>`;
+    }
+    /**
+     * _DepictionBasicView(elem)
+     * Renders a DepictionBasicView, given Object elem for context.
+     * Calling directly is not recommended but is possible.
+     *
+     * @param {object} elem The native depiction class.
+     */
+    private _DepictionBasicView(elem: object) {
+        // eta son
+        let buffer: string;
+        let nd: object[] = [];
+        let changes: object[] = [];
+        let i: number;
+
+        if (typeof elem["tagline"] != "undefined")
+            nd.push({
+                "class": "DepictionLabelView",
+                "fontWeight": "bold",
+                "text": elem["tagline"]
+            });
+        if (typeof elem["screenshots"] != "undefined")
+            nd.push({
+                "class": "DepictionScreenshotsView",
+                "screenshots": elem["screenshots"],
+                "itemSize": "{188,300}",
+                "itemCornerRadius": 8
+            })
+        if (typeof elem["markdown"] != "undefined")
+            nd.push({
+                "class": "DepictionMarkdownView",
+                "markdown": elem["markdown"]
+            })
+        if (typeof elem["links"] != "undefined")
+            for (i = 0; i < elem["links"].length; i++) {
+                elem["links"][i]["class"] = "DepictionTableButtonView";
+                nd.push(elem["links"][i]);
+            }
+
+        if (typeof elem["changelog"] != "undefined") {
+            // Create changelog
+            for (i = 0; i < elem["changelog"].length; i++) {
+                changes.push({
+                    "class": "DepictionHeaderView",
+                    "title": `Version ${elem["changelog"][i]["version"]}`,
+                    "useBottomMargin": false
+                })
+                changes.push({
+                    "class": "DepictionMarkdownView",
+                    "markdown": elem["changelog"][i]["markdown"]
+                })
+            }
+
+            // Create TabView
+            buffer = this._DepictionTabView({
+                "tabs": [
+                    {
+                        "class": "DepictionStackView",
+                        "views": nd,
+                        "tabname": "Details"
+                    },
+                    {
+                        "class": "DepictionStackView",
+                        "views": changes,
+                        "tabname": "Changelog"
+                    }
+                ]
+            });
+        } else {
+            buffer = this._DepictionStackView({
+                "views": nd,
+            });
+        }
+
+        buffer = `<div style="background:#cc3333;color:white;padding:10px;border-radius:10px;"><b>Warning!</b> DepictionBasicView is experimental and is likely to change.</div>` + buffer;
+
+        return buffer;
     }
     /**
      * _DepictionWebView(elem)
