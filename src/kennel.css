@@ -98,20 +98,30 @@ p.nd {
     cursor: pointer;
     text-decoration: none;
 }
-
-.nd_add_sileo:hover, a.nd:hover {
-    opacity: 0.8;
+.nd_add_sileo:hover, a.nd:hover, .nd_card:hover, .nd_subtle_link:hover, .nd_subtle_link > *:hover, .nd_nav_btn:hover, .nd_table_btn:hover, .nd_table_btn > div:hover {
+    opacity: 0.75;
     cursor: pointer;
 }
-
+.nd_add_sileo:active, a.nd:active, .nd_card:active, .nd_subtle_link:active, .nd_subtle_link > *:active, .nd_nav_btn:active, .nd_table_btn:active, .nd_table_btn > div:active {
+    opacity: 0.65;
+    cursor: pointer;
+}
+.nd_add_sileo, a.nd, .nd_card, .nd_subtle_link, .nd_subtle_link > *, nd_nav_btn, .nd_table_btn, .nd_table_btn > div {
+    transition: opacity 0.15s ease-in-out;
+}
+.nd_nav_btn {
+    border-bottom: 2px solid transparent;
+    transition: border-bottom-color 0.15s ease-in-out;
+}
+.nd_nav_btn:not(.nd_active):hover {
+    border-bottom-color: rgba(141,141,141,0.1);
+}
 .nd_cell > .nd_title {
     color: #999;
 }
-
 .nd_cell > .nd_text {
     text-align: right;
 }
-
 .nd_cell {
     display: flex;
     margin-top: 15px;
@@ -137,11 +147,6 @@ h4.nd_header {
     text-decoration: none;
     color: black;
 }
-
-.nd_subtle_link:hover, .nd_subtle_link > *:hover {
-    opacity: 0.8;
-}
-
 .nd_green {
     color: #00b90c;
 }
@@ -184,12 +189,12 @@ a.nd {
     text-decoration: none;
 }
 
-.nd_table-btn, .nd_table-btn > div {
+.nd_table_btn, .nd_table_btn > div {
     padding-top: 11px;
     padding-bottom: 11px;
 }
 
-.nd_table-btn:after {
+.nd_table_btn:after {
     content: "›";
     font-size:30px;
     transform: translateY(-48px);
@@ -199,6 +204,10 @@ a.nd {
 @media (prefers-color-scheme: dark) {
     .nd_subtle_link, .nd_subtle_link > div > div, .nd_subtle_link > div > div > p {
         color: white;
+    }
+
+    .nd_btn_featured.nd_btn_featured.nd_btn_featured {
+        background: #202020;
     }
 
     .nd_review.nd_review {
@@ -267,6 +276,7 @@ a.nd {
 
 .nd_layered_stack > div:first-child {
     position: relative;
+    padding-top: 0.1px;
 }
 
 .nd_layered_stack {
@@ -285,6 +295,10 @@ a.nd {
     flex: 1;
     margin-left: 5px;
     margin-right: 5px;
+}
+
+.nd_btn_featured.nd_btn_featured {
+    background: #F5F5F5;
 }
 
 .nd_review {
@@ -362,9 +376,6 @@ iframe.nd_max_width {
 }
 .nd_card > p.nd_text_shadow {
     text-shadow: 0 0 10px rgba(0,0,0,.8)
-}
-.nd_card:hover {
-    opacity: 0.75;
 }
 .kennel_warning {
     background: #cc3333;

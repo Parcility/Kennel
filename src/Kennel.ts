@@ -106,6 +106,7 @@ export default class Kennel {
         this.#views.set("FeaturedBannersView", (elem: object) => this._DepictionBannersView(elem));
         this.#views.set("DepictionAdmobView", (elem: object) => this._DepictionAdmobView(elem));
         this.#views.set("DepictionBasicView", (elem: object) => this._DepictionBasicView(elem));
+        this.#views.set("FeaturedButtonView", (elem: object) => this._DepictionButtonView(elem));
 
         // Respect useShadowDom setting.
         if (this.#useShadowDom)
@@ -244,7 +245,7 @@ export default class Kennel {
      */
     private _DepictionLayerView(elem: object) {
         let i: number;
-        let buffer: string = "";
+        let buffer: string = `<div class="nd_layered_stack">`;
 
         // Layer them on!
         for (i = 0; i < elem["views"].length; i++)
@@ -326,7 +327,7 @@ export default class Kennel {
             extra_params += `"`;
         }
         elem["action"] = Kennel._sanitize(Kennel._buttonLinkHandler(elem["action"], elem["title"]));
-        return `<a class="nd nd_table-btn" href="${elem["action"]}"${extra_params}><div>${Kennel._sanitize(elem["title"])}</div></a>`;
+        return `<a class="nd nd_table_btn" href="${elem["action"]}"${extra_params}><div>${Kennel._sanitize(elem["title"])}</div></a>`;
     }
     /**
      * _DepictionButtonView(elem)
@@ -338,8 +339,12 @@ export default class Kennel {
     private _DepictionButtonView(elem: object) {
         let extra_params: string = "";
         let contents: string;
+        let css: string = "";
 
         if (typeof elem["action"] == "undefined") throw "kennel:Missing required \"action\" property";
+
+        if (elem["class"] == "FeaturedButtonView")
+            css = " nd_btn_featured nd_tint";
 
         // If a view is set, default it over text.
         if (typeof elem["view"] != "undefined" && elem["view"] != "") {
@@ -356,12 +361,15 @@ export default class Kennel {
             if (elem["yPadding"])
                 extra_params += `padding-bottom: '${Kennel._sanitizeDouble(elem["yPadding"])}';`;
             if (elem["tintColor"]) {
-                extra_params += `background-color: ${Kennel._sanitizeColor(elem["tintColor"])};`;
+                if (elem["class"] == "FeaturedButtonView")
+                    extra_params += `color: ${Kennel._sanitizeColor(elem["tintColor"])};`;
+                else
+                    extra_params += `background-color: ${Kennel._sanitizeColor(elem["tintColor"])};`;
             }
             extra_params += `"`;
         }
         elem["action"] = Kennel._sanitize(Kennel._buttonLinkHandler(elem["action"], elem["text"]));
-        return `<a class="nd nd_btn" href="${elem["action"]}"${extra_params}>${contents}</a>`;
+        return `<a class="nd nd_btn${css}" href="${elem["action"]}"${extra_params}>${contents}</a>`;
     }
     /**
      * _DepictionMarkdownShadowDomView(elem)
@@ -444,7 +452,7 @@ export default class Kennel {
         // Return the JavaScript code needed to create the shadow DOM.
         // I know this is a very long line, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
-        return `<div id="${ident}" class="nd_md_view"><noscript>${noJSRender}</noscript><script>mdEl = document.createElement("sandboxed-markdown");shadowRoot = mdEl.attachShadow({mode: 'open'});shadowRoot.innerHTML = \`<style>a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px; font-size: 12px;}</style><root>${rendered}</root>\`;el = document.getElementById("${ident}");el.appendChild(mdEl);el.removeAttribute("id");el.removeChild(el.children[0]);el.removeChild(el.children[0]);</script></div>`;
+        return `<div id="${ident}" class="nd_md_view"><noscript>${noJSRender}</noscript><script>mdEl = document.createElement("sandboxed-markdown");shadowRoot = mdEl.attachShadow({mode: 'open'});shadowRoot.innerHTML = \`<style>a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a {transition: opacity 0.15s ease-in-out;} a:hover {opacity:0.75} a:active {opacity:0.65} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px; font-size: 12px;}</style><root>${rendered}</root>\`;el = document.getElementById("${ident}");el.appendChild(mdEl);el.removeAttribute("id");el.removeChild(el.children[0]);el.removeChild(el.children[0]);</script></div>`;
     }
 
     /**
@@ -498,7 +506,7 @@ export default class Kennel {
 
         // I know these are some very long lines, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
-        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a:hover {opacity:0.8} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin-top: ${spacing}px; margin-bottom: ${spacing}px; ${margin}} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} blockquote {color: grey;} pre {white-space: pre-wrap} * {max-width: 100%}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
+        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a {transition: opacity 0.15s ease-in-out;} a:hover {opacity:0.75} a:active {opacity:0.65} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin-top: ${spacing}px; margin-bottom: ${spacing}px; ${margin}} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} blockquote {color: grey;} pre {white-space: pre-wrap} * {max-width: 100%}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
         return `<iframe onload="${Kennel._laxSanitize(onload)}" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
     }
     /**

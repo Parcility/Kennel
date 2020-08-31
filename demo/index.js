@@ -515,7 +515,7 @@ const depiction = {
                             "class": "DepictionStackView",
                             "views": [
                                 {
-                                    "class": "DepictionButtonView",
+                                    "class": "FeaturedButtonView",
                                     "text": "Button 3",
                                     "action": "https://shuga.co"
                                 }
