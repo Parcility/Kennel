@@ -103,10 +103,10 @@ export default class Kennel {
         this.#views.set("DepictionWebView", (elem: object) => this._DepictionWebView(elem));
         this.#views.set("DepictionVideoView", (elem: object) => this._DepictionVideoView(elem));
         this.#views.set("DepictionBannersView", (elem: object) => this._DepictionBannersView(elem));
-        this.#views.set("FeaturedBannersView", (elem: object) => this._DepictionBannersView(elem));
         this.#views.set("DepictionAdmobView", (elem: object) => this._DepictionAdmobView(elem));
         this.#views.set("DepictionBasicView", (elem: object) => this._DepictionBasicView(elem));
-        this.#views.set("FeaturedButtonView", (elem: object) => this._DepictionButtonView(elem));
+        this.#views.set("DepictionPackageView", (elem: object) => this._DepictionPackageView(elem));
+        this.#views.set("DepictionInfoFooterView", (elem: object) => this._DepictionInfoFooterView(elem));
 
         // Respect useShadowDom setting.
         if (this.#useShadowDom)
@@ -147,7 +147,7 @@ export default class Kennel {
         if (elem["class"]) {
             try {
                 if (elem["class"].toLowerCase().includes("hidden")) return "";
-                fn = this.#views.get(elem["class"]);
+                fn = this.#views.get(elem["class"].replace("Featured", "Depiction"));
                 if (typeof fn != "function") return this._DepictionUnknownView(elem);
                 return fn(elem);
             } catch(e) {
@@ -217,7 +217,7 @@ export default class Kennel {
         if (typeof elem["views"] == "undefined") throw "kennel:Missing required \"views\" property";
 
         if (typeof elem["backgroundColor"] != "undefined")
-            buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitizeColor(elem["backgroundColor"])}">`;
+            buffer += `<div class="nd_nested_stack nd_colored" style="background: ${Kennel._sanitizeColor(elem["backgroundColor"])}">`;
         else
             buffer += `<div class="nd_nested_stack">`;
 
@@ -269,9 +269,9 @@ export default class Kennel {
         if (typeof elem["horizontalSpacing"] == "undefined") throw "kennel:Missing required \"horizontalSpacing\" property";
 
         if (typeof elem["backgroundColor"] != "undefined")
-            buffer += `<div class="nd_nested_stack" style="background: ${Kennel._sanitizeColor(elem["backgroundColor"])}; width: ${elem["horizontalSpacing"] ? `${Kennel._sanitizeDouble(elem["horizontalSpacing"])}px` : "100%"}">`;
+            buffer += `<div class="nd_nested_stack nd_colored nd_auto" style="background: ${Kennel._sanitizeColor(elem["backgroundColor"])}; max-width: ${elem["horizontalSpacing"] ? `${Kennel._sanitizeDouble(elem["horizontalSpacing"])}em` : "100%"}">`;
         else
-            buffer += `<div class="nd_nested_stack" style="width: ${elem["horizontalSpacing"] ? `${Kennel._sanitizeDouble(elem["horizontalSpacing"])}px` : "100%"}">`;
+            buffer += `<div class="nd_nested_stack nd_auto" style="max-width: ${elem["horizontalSpacing"] ? `${Kennel._sanitizeDouble(elem["horizontalSpacing"])}em` : "100%"}">`;
 
         if (typeof elem["orientation"] == "undefined" || elem["orientation"].toLowerCase() !== "landscape") {
             // Standard orientation
@@ -891,6 +891,42 @@ export default class Kennel {
         return ret;
     }
     /**
+     * _DepictionPackageView(elem)
+     * Renders a DepictionPackageView, given Object elem for context.
+     * Sileo calls this a "FeaturedPackageView" but inconsistency is bothersome.
+     * Calling directly is not recommended but is possible.
+     *
+     * @param {object} elem The native depiction class.
+     */
+    private _DepictionPackageView(elem: object) {
+        let i: number, size: string[], x: number, y: number, imgURL: string, pkgURL: string, isShadow: string, text: string;
+        let ret: string = "";
+
+        if (typeof elem["package"] == "undefined") throw "kennel:Missing required \"package\" property";
+        if (typeof elem["packageName"] == "undefined") throw "kennel:Missing required \"packageName\" property";
+        if (typeof elem["packageAuthor"] == "undefined") throw "kennel:Missing required \"packageAuthor\" property";
+        if (typeof elem["repoName"] == "undefined") throw "kennel:Missing required \"repoName\" property";
+        if (typeof elem["packageIcon"] == "undefined") throw "kennel:Missing required \"packageIcon\" property";
+
+
+        imgURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["packageIcon"]}`);
+        pkgURL = this.#packagePrefix + Kennel._laxSanitize(elem["package"]);
+
+        ret += `<a class="nd_package nd_subtle_link" href="${pkgURL}">
+                    <div>
+                        <img src="${imgURL}">
+                        <div class="nd_get_btn">GET</div>
+                        <div>
+                            <h5>${elem["packageName"]}</h5>
+                            <p>${elem["packageAuthor"]}</p>
+                            <p>${elem["repoName"]}</p>
+                        </div>
+                    </div>
+                </a>`;
+
+        return ret;
+    }
+    /**
      * _DepictionAdmobView(elem)
      * Renders a DepictionAdmobView, given Object elem for context.
      * Calling directly is not recommended but is possible.
@@ -901,6 +937,20 @@ export default class Kennel {
         // Do not render ad views. However, still err for them as per spec (and for those debugging them).
         if (typeof elem["adUnitID"] == "undefined") throw "kennel:Missing required \"adUnitID\" property";
         return "";
+    }
+    /**
+     * _DepictionAdmobView(elem)
+     * Renders a DepictionAdmobView, given Object elem for context.
+     * Calling directly is not recommended but is possible.
+     *
+     * @param {object} elem The native depiction class.
+     */
+    private _DepictionInfoFooterView(elem: object) {
+        return this._DepictionLabelView({
+            "text": "Powered by Kennel",
+            "textColor": "grey",
+            "alignment": 1
+        });
     }
     /**
      * _DepictionUnknownView(elem)

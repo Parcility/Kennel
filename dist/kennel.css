@@ -1,15 +1,25 @@
 .native_depiction {
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Helvetica", sans-serif;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin: 20px 10px;
 }
-
 @media only screen and (min-width: 601px) {
-    .nd_nested_stack {
+    .nd_nested_stack.nd_colored {
         border-radius: 8px;
     }
 }
-
+@media only screen and (max-width: 600px) {
+    .nd_nested_stack.nd_colored {
+        width: calc(100% + 20px);
+        margin-left: -10px;
+    }
+    .nd_nested_stack.nd_colored > * {
+        width: 100%;
+    }
+}
+.nd_nested_stack.nd_colored > iframe {
+    width: calc(100% - 20px);
+    margin: 0 10px;
+}
 p.nd {
     margin: 2px;
 }
@@ -32,10 +42,12 @@ p.nd {
     overflow-x: auto;
     overflow-y: hidden;
     margin-left: 0;
-    margin-right: 18px;
+    margin-right: 0;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
+    width: calc(100% + 20px);
+    margin-left: -10px;
 }
 
 .nd_scroll_view::-webkit-scrollbar {
@@ -98,15 +110,15 @@ p.nd {
     cursor: pointer;
     text-decoration: none;
 }
-.nd_add_sileo:hover, a.nd:hover, .nd_card:hover, .nd_subtle_link:hover, .nd_subtle_link > *:hover, .nd_nav_btn:hover, .nd_table_btn:hover, .nd_table_btn > div:hover {
+.nd_add_sileo:hover, a.nd:hover, .nd_card:hover, .nd_subtle_link:hover, .nd_subtle_link > *:hover, .nd_nav_btn:hover, .nd_table_btn:hover, .nd_table_btn > div:hover, .nd_package > div:hover {
     opacity: 0.75;
     cursor: pointer;
 }
-.nd_add_sileo:active, a.nd:active, .nd_card:active, .nd_subtle_link:active, .nd_subtle_link > *:active, .nd_nav_btn:active, .nd_table_btn:active, .nd_table_btn > div:active {
+.nd_add_sileo:active, a.nd:active, .nd_card:active, .nd_subtle_link:active, .nd_subtle_link > *:active, .nd_nav_btn:active, .nd_table_btn:active, .nd_table_btn > div:active, .nd_package > div:active {
     opacity: 0.65;
     cursor: pointer;
 }
-.nd_add_sileo, a.nd, .nd_card, .nd_subtle_link, .nd_subtle_link > *, nd_nav_btn, .nd_table_btn, .nd_table_btn > div {
+.nd_add_sileo, a.nd, .nd_card, .nd_subtle_link, .nd_subtle_link > *, nd_nav_btn, .nd_table_btn, .nd_table_btn > div, .nd_package > div {
     transition: opacity 0.15s ease-in-out;
 }
 .nd_nav_btn {
@@ -205,7 +217,9 @@ a.nd {
     .nd_subtle_link, .nd_subtle_link > div > div, .nd_subtle_link > div > div > p {
         color: white;
     }
-
+    .nd_package.nd_package > div > img {
+        background: #202020;
+    }
     .nd_btn_featured.nd_btn_featured.nd_btn_featured {
         background: #202020;
     }
@@ -224,17 +238,12 @@ a.nd {
     display: none;
 }
 
-.nd_review > .nd_md_iframe {
-    margin-left: 15px;
-    margin-right: 15px;
-}
-
 .nd_md_view {
     line-height: 1.5;
 }
 
 .nd_md_iframe {
-    width: calc(100% - 30px);
+    width: 100%;
     border: none;
     min-height: 35px;
     overflow: hidden;
@@ -345,12 +354,9 @@ a.nd {
     text-align: center;
     display: block;
 }
-
-.nd_nested_stack > div > div:not(.nd_cell) {
-    margin-left: 15px;
-    margin-right: 15px;
+.nd_auto {
+    margin: 0 auto;
 }
-
 iframe.nd_max_width {
     border: none;
 }
@@ -376,6 +382,55 @@ iframe.nd_max_width {
 }
 .nd_card > p.nd_text_shadow {
     text-shadow: 0 0 10px rgba(0,0,0,.8)
+}
+.nd_package > div {
+    display: block;
+    padding: 10px 0;
+}
+.nd_package > div > div > h5, .nd_package > div > div > p {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.nd_package > div > img {
+    border-radius: 15px;
+    width: 70px;
+    height: 70px;
+    float: left;
+    background: #F5F5F5;
+}
+.nd_package > div > div:last-child {
+    margin-left: 80px;
+    text-decoration: none;
+}
+.nd_package > div > div > h5 {
+    margin: 0 0 5px;
+    font-size: 21px;
+    font-weight: bold;
+    width: calc(100% - 70px);
+}
+.nd_package > div > div > p {
+    margin: 5px 0;
+    font-size: 12px;
+    opacity: 0.4;
+}
+.nd_package > div > div > p:nth-child(2) {
+    font-size: 14px;
+    font-weight: bold;
+    opacity: 0.4;
+}
+.nd_package > div > .nd_get_btn {
+    float: right;
+}
+.nd_get_btn {
+    font-size: 18px;
+    border-radius: 25px;
+    padding: 7px 14px;
+    font-weight: bold;
+    background: #6264D3;
+    color: white;
+    margin-top: 12px;
+    margin-bottom: 12px;
 }
 .kennel_warning {
     background: #cc3333;

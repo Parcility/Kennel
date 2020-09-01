@@ -480,6 +480,19 @@ const depiction = {
                     ]
                 },
 
+                {
+                    "class": "DepictionHeaderView",
+                    "title": "FeaturedPackageView"
+                },
+                {
+                    "class": "FeaturedPackageView",
+                    "package": "com.d3vl0pr.relapse",
+                    "packageName": "RelapseUI",
+                    "packageAuthor": "d3vl0pr",
+                    "repoName": "Packix",
+                    "packageIcon": "https://featuredpage.getsileo.app/icons/com.d3vl0pr.relapse.png"
+                },
+
 
                 {
                     "class": "DepictionHeaderView",
@@ -623,16 +636,14 @@ const depiction = {
     ],
     "class": "DepictionTabView"
 };
-const options = {
-    "iframeHeader": ""
-};
-const nd = new Kennel(depiction, options);
+const nd = new Kennel(depiction);
 const nd_out = nd.render();
 const out = `<html lang="en">
     <head>
         <meta charset="utf8">
         <link rel="stylesheet" type="text/css" href="../dist/kennel.css">
         <title>Kennel depiction.</title>
+        <style>@media (prefers-color-scheme: dark) {html {background: #121212; color: white;}} body {margin: 0;}</style>
     </head>
     <body>${nd_out}</body>
     <script>
