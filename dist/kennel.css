@@ -119,11 +119,7 @@ p.nd {
     cursor: pointer;
 }
 .nd_add_sileo, a.nd, .nd_card, .nd_subtle_link, .nd_subtle_link > *, nd_nav_btn, .nd_table_btn, .nd_table_btn > div, .nd_package > div {
-    transition: opacity 0.15s ease-in-out;
-}
-.nd_nav_btn {
-    border-bottom: 2px solid transparent;
-    transition: border-bottom-color 0.15s ease-in-out;
+    transition: opacity 0.25s ease-in-out;
 }
 .nd_nav_btn:not(.nd_active):hover {
     border-bottom-color: rgba(141,141,141,0.1);
@@ -177,20 +173,27 @@ h4.nd_header {
     margin-bottom: 25px;
     top: 0;
 }
-
 .nd_nav {
     display: flex;
     margin: 20px;
 }
-
+.nd_nav_centerer {
+    margin: auto;
+}
+.nd_nav_centerer > div {
+    margin: 0 10px;
+}
 .nd_nav_btn {
-    width: 100%;
-    display:inline;
+    display: inline;
     text-align: center;
     color: #999;
     font-weight: 500;
-    padding-bottom: 10px;
     cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: border-bottom-color 0.25s ease-in-out, color 0.25s ease-in-out;
+    width: auto;
+    margin: auto;
+    padding: 0 20px 10px;
 }
 
 .nd_changelog_entry {

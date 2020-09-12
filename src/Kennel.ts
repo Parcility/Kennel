@@ -184,10 +184,10 @@ export default class Kennel {
         let tabViewId: string = Kennel._makeIdentifier("nd_tabView");
 
         // Render tab selector.
-        buffer += `<div class="nd_nav">`;
+        buffer += `<div class="nd_nav"><div class="nd_nav_centerer">`;
         for (i = 0; i < elem["tabs"].length; i++)
             buffer += `<div class="${tabViewId} ${tabViewId}_tab_${i} nd_nav_btn nd_tweak_info_btn ${(i == 0) ? "nd_active" : ""}" onclick="ndChangeTab('.${tabViewId}_tab_${i}', '.${tabViewId}')">${Kennel._sanitize(elem["tabs"][i].tabname)}</div>`;
-        buffer += `</div>`;
+        buffer += `</div></div>`;
 
         // Render the tabs themselves
         buffer += `<div>`;
@@ -452,7 +452,7 @@ export default class Kennel {
         // Return the JavaScript code needed to create the shadow DOM.
         // I know this is a very long line, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
-        return `<div id="${ident}" class="nd_md_view"><noscript>${noJSRender}</noscript><script>mdEl = document.createElement("sandboxed-markdown");shadowRoot = mdEl.attachShadow({mode: 'open'});shadowRoot.innerHTML = \`<style>a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a {transition: opacity 0.15s ease-in-out;} a:hover {opacity:0.75} a:active {opacity:0.65} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px; font-size: 12px;}</style><root>${rendered}</root>\`;el = document.getElementById("${ident}");el.appendChild(mdEl);el.removeAttribute("id");el.removeChild(el.children[0]);el.removeChild(el.children[0]);</script></div>`;
+        return `<div id="${ident}" class="nd_md_view"><noscript>${noJSRender}</noscript><script>mdEl = document.createElement("sandboxed-markdown");shadowRoot = mdEl.attachShadow({mode: 'open'});shadowRoot.innerHTML = \`<style>a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a {transition: opacity 0.25s ease-in-out;} a:hover {opacity:0.75} a:active {opacity:0.65} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px; font-size: 12px;}</style><root>${rendered}</root>\`;el = document.getElementById("${ident}");el.appendChild(mdEl);el.removeAttribute("id");el.removeChild(el.children[0]);el.removeChild(el.children[0]);</script></div>`;
     }
 
     /**
@@ -500,13 +500,19 @@ export default class Kennel {
                     this.height = getComputedStyle(this.contentDocument.documentElement).height;
                 } catch(e) {}
             });
+            let s = new IntersectionObserver(_ => {
+                try {
+                    this.height = getComputedStyle(this.contentDocument.documentElement).height;
+                } catch(e) {}
+            });
             r.observe(e);
+            s.observe(e);
             this.height = getComputedStyle(this.contentDocument.documentElement).height;
         } catch(err) {}`;
 
         // I know these are some very long lines, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
-        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a {transition: opacity 0.15s ease-in-out;} a:hover {opacity:0.75} a:active {opacity:0.65} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin-top: ${spacing}px; margin-bottom: ${spacing}px; ${margin}} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} blockquote {color: grey;} pre {white-space: pre-wrap} * {max-width: 100%}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
+        rendered = `<html><head><base target='_top'>${this.#iframeHeader.replace(/"/g, "'")}<style>${typeof elem["title"] != "undefined" ? "@media (prefers-color-scheme: dark) { html { color: white; }}" : ""} a {color:${Kennel._sanitizeColor(elem["tintColor"])};text-decoration: none} a {transition: opacity 0.25s ease-in-out;} a:hover {opacity:0.75} a:active {opacity:0.65} h1, h2, h3, h4, h5, h6, p {margin-top: 5px; margin-bottom: 5px;} body {margin-top: ${spacing}px; margin-bottom: ${spacing}px; ${margin}} *:not(code) {font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Helvetica', sans-serif} blockquote {color: grey;} pre {white-space: pre-wrap} * {max-width: 100%}</style></head><body>${rendered.replace(/"/ig, "&quot;")}<div style='height: 0px'></div></body></html>`
         return `<iframe onload="${Kennel._laxSanitize(onload)}" sandbox="allow-same-origin allow-popups allow-top-navigation" id="${ident}" class="nd_md_iframe" srcdoc="${rendered}"></iframe>`;
     }
     /**
@@ -815,7 +821,7 @@ export default class Kennel {
 
         // Implementation details: Discussions with repos show a disdain for Sileo's whitelist approach.
         // As a result, all URLs are supported.
-        return `<div style="text-align: ${elem["alignment"]}"><iframe class="nd_max_width" src="${Kennel._laxSanitize(elem["URL"])}" style="width: ${Kennel._sanitizeDouble(elem["width"])}px; height: ${Kennel._sanitizeDouble(elem["height"])}px;"></iframe></div>`;
+        return `<div style="text-align: ${elem["alignment"]}"><iframe title="Depiction Markdown" class="nd_max_width" src="${Kennel._laxSanitize(elem["URL"])}" style="width: ${Kennel._sanitizeDouble(elem["width"])}px; height: ${Kennel._sanitizeDouble(elem["height"])}px;"></iframe></div>`;
     }
     /**
      * _DepictionVideoView(elem)
