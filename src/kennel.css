@@ -118,7 +118,7 @@ p.nd {
     opacity: 0.65;
     cursor: pointer;
 }
-.nd_add_sileo, a.nd, .nd_card, .nd_subtle_link, .nd_subtle_link > *, nd_nav_btn, .nd_table_btn, .nd_table_btn > div, .nd_package > div {
+.nd_add_sileo, a.nd, .nd_card, .nd_subtle_link, .nd_subtle_link > *, nd_nav_btn, .nd_table_btn, .nd_table_btn > div, .nd_package > div, .nd_active {
     transition: opacity 0.25s ease-in-out;
 }
 .nd_nav_btn:not(.nd_active):hover {
