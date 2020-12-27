@@ -118,7 +118,7 @@ p.nd {
     opacity: 0.65;
     cursor: pointer;
 }
-.nd_add_sileo, a.nd, .nd_card, .nd_subtle_link, .nd_subtle_link > *, nd_nav_btn, .nd_table_btn, .nd_table_btn > div, .nd_package > div {
+.nd_add_sileo, a.nd, .nd_card, .nd_subtle_link, .nd_subtle_link > *, nd_nav_btn, .nd_table_btn, .nd_table_btn > div, .nd_package > div, .nd_nav_btn.nd_nav_btn {
     transition: opacity 0.25s ease-in-out;
 }
 .nd_nav_btn:not(.nd_active):hover {
@@ -430,10 +430,10 @@ iframe.nd_max_width {
     border-radius: 25px;
     padding: 7px 14px;
     font-weight: bold;
-    background: #6264D3;
     color: white;
     margin-top: 12px;
     margin-bottom: 12px;
+    width: auto;
 }
 .kennel_warning {
     background: #cc3333;

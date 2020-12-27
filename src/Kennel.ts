@@ -475,7 +475,7 @@ export default class Kennel {
             elem["tintColor"] = "#6264D3";
         else if (typeof elem["tintColor"] == "undefined" && typeof this.#tint != "undefined")
             elem["tintColor"] = this.#tint;
-            
+
         if (typeof elem["useSpacing"] != "undefined" && elem["useSpacing"] == false)
             spacing = 0;
 
@@ -921,7 +921,7 @@ export default class Kennel {
         ret += `<a class="nd_package nd_subtle_link" href="${pkgURL}">
                     <div>
                         <img src="${imgURL}">
-                        <div class="nd_get_btn">GET</div>
+                        <div class="nd_get_btn nd_btn">GET</div>
                         <div>
                             <h5>${elem["packageName"]}</h5>
                             <p>${elem["packageAuthor"]}</p>

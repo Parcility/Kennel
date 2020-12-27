@@ -3,7 +3,7 @@ const Kennel = require("../dist/Kennel");
 const depiction = {
     "minVersion": "0.1",
     "headerImage": "https://prcl.app/assets/missing.png",
-    "tintColor": "#6264D3",
+    "tintColor": "#00ff00",
     "tabs": [
         {
             "tabname": "Introduction",
@@ -636,7 +636,9 @@ const depiction = {
     ],
     "class": "DepictionTabView"
 };
-const nd = new Kennel(depiction);
+const nd = new Kennel(depiction, {
+    "defaultTint": "#ff0000"
+});
 const nd_out = nd.render();
 const out = `<html lang="en">
     <head>

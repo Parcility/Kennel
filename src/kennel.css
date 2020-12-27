@@ -430,10 +430,10 @@ iframe.nd_max_width {
     border-radius: 25px;
     padding: 7px 14px;
     font-weight: bold;
-    background: #6264D3;
     color: white;
     margin-top: 12px;
     margin-bottom: 12px;
+    width: auto;
 }
 .kennel_warning {
     background: #cc3333;
