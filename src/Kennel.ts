@@ -831,7 +831,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionVideoView(elem: object) {
-        let video_settings: string = "";
+        let video_settings: string, videoURL: string;
         if (typeof elem["URL"] == "undefined") throw "kennel:Missing required \"URL\" property";
         if (typeof elem["width"] == "undefined") throw "kennel:Missing required \"width\" property";
         if (typeof elem["height"] == "undefined") throw "kennel:Missing required \"height\" property";
@@ -845,8 +845,8 @@ export default class Kennel {
 
         if (elem["loop"])
             video_settings += "loop ";
-
-        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" ${video_settings}style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"><source src="${Kennel._laxSanitize(`${this.#proxyURL}${elem["URL"]}`)}"></video></div>`;
+        videoURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["URL"]}`);
+        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" ${video_settings}style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"><source src="${videoURL}"></video></div>`;
     }
     /**
      * _DepictionBannersView(elem)
