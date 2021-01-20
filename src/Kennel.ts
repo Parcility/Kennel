@@ -493,22 +493,22 @@ export default class Kennel {
         }
 
         // ResizeObserver: Resize to fix sizing.
-        let onload: string = `try {
-            let e = this.contentDocument.body.lastChild;
-            let r = new ResizeObserver(_ => {
-                try {
-                    this.height = getComputedStyle(this.contentDocument.documentElement).height;
-                } catch(e) {}
-            });
-            let s = new IntersectionObserver(_ => {
-                try {
-                    this.height = getComputedStyle(this.contentDocument.documentElement).height;
-                } catch(e) {}
-            });
-            r.observe(e);
-            s.observe(e);
-            this.height = getComputedStyle(this.contentDocument.documentElement).height;
-        } catch(err) {}`;
+        let onload: string = `try {` +
+            `let e = this.contentDocument.body.lastChild;` +
+            `let r = new ResizeObserver(_ => {` +
+                `try {` +
+                    `this.height = getComputedStyle(this.contentDocument.documentElement).height;` +
+                `} catch(e) {}` +
+            `});` +
+            `let s = new IntersectionObserver(_ => {` +
+                `try {` +
+                    `this.height = getComputedStyle(this.contentDocument.documentElement).height;` +
+                `} catch(e) {}` +
+            `});` +
+            `r.observe(e);` +
+            `s.observe(e);` +
+            `this.height = getComputedStyle(this.contentDocument.documentElement).height;` +
+        `} catch(err) {}`;
 
         // I know these are some very long lines, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
@@ -574,7 +574,7 @@ export default class Kennel {
 
         for (i = 0; i < elem["screenshots"].length; i++) {
             if (typeof elem["screenshots"][i]["url"] == "undefined") throw "kennel:Missing required \"url\" property in screenshot object.";
-            ssURL = Kennel._laxSanitize(`${elem["screenshots"][i]["url"]}`);
+            ssURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["screenshots"][i]["url"]}`);
             if (elem["screenshots"][i]["video"])
                 ret += `<video controls class="nd_img_card" style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}"><source src="${ssURL}"></video>`;
             else
@@ -846,7 +846,7 @@ export default class Kennel {
         if (elem["loop"])
             video_settings += "loop ";
 
-        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" ${video_settings}style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"><source src="${Kennel._laxSanitize(elem["URL"])}"></video></div>`;
+        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" ${video_settings}style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"><source src="${Kennel._laxSanitize(`${this.#proxyURL}${elem["URL"]}`)}"></video></div>`;
     }
     /**
      * _DepictionBannersView(elem)
@@ -918,17 +918,17 @@ export default class Kennel {
         imgURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["packageIcon"]}`);
         pkgURL = this.#packagePrefix + Kennel._laxSanitize(elem["package"]);
 
-        ret += `<a class="nd_package nd_subtle_link" href="${pkgURL}">
-                    <div>
-                        <img src="${imgURL}">
-                        <div class="nd_get_btn nd_btn">GET</div>
-                        <div>
-                            <h5>${elem["packageName"]}</h5>
-                            <p>${elem["packageAuthor"]}</p>
-                            <p>${elem["repoName"]}</p>
-                        </div>
-                    </div>
-                </a>`;
+        ret += `<a class="nd_package nd_subtle_link" href="${pkgURL}">` +
+                    `<div>` +
+                        `<img src="${imgURL}">` +
+                        `<div class="nd_get_btn nd_btn">GET</div>` +
+                        `<div>` +
+                            `<h5>${elem["packageName"]}</h5>` +
+                            `<p>${elem["packageAuthor"]}</p>` +
+                            `<p>${elem["repoName"]}</p>` +
+                        `</div>` +
+                    `</div>` +
+                `</a>`;
 
         return ret;
     }
