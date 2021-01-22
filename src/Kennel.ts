@@ -574,11 +574,13 @@ export default class Kennel {
 
         for (i = 0; i < elem["screenshots"].length; i++) {
             if (typeof elem["screenshots"][i]["url"] == "undefined") throw "kennel:Missing required \"url\" property in screenshot object.";
-            ssURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["screenshots"][i]["url"]}`);
-            if (elem["screenshots"][i]["video"])
+            if (elem["screenshots"][i]["video"]) {
+                ssURL = Kennel._laxSanitize(elem["screenshots"][i]["url"]);
                 ret += `<video controls class="nd_img_card" style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}"><source src="${ssURL}"></video>`;
-            else
-               ret += `<img loading="lazy" style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" class="nd_img_card" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
+            } else {
+                ssURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["screenshots"][i]["url"]}`);
+                ret += `<img loading="lazy" style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" class="nd_img_card" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
+            }
         }
 
         ret += `</div>`;
@@ -845,7 +847,7 @@ export default class Kennel {
 
         if (elem["loop"])
             video_settings += "loop ";
-        videoURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["URL"]}`);
+        videoURL = Kennel._laxSanitize(elem["URL"]);
         return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" ${video_settings}style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"><source src="${videoURL}"></video></div>`;
     }
     /**
