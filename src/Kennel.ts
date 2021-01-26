@@ -493,22 +493,22 @@ export default class Kennel {
         }
 
         // ResizeObserver: Resize to fix sizing.
-        let onload: string = `try {
-            let e = this.contentDocument.body.lastChild;
-            let r = new ResizeObserver(_ => {
-                try {
-                    this.height = getComputedStyle(this.contentDocument.documentElement).height;
-                } catch(e) {}
-            });
-            let s = new IntersectionObserver(_ => {
-                try {
-                    this.height = getComputedStyle(this.contentDocument.documentElement).height;
-                } catch(e) {}
-            });
-            r.observe(e);
-            s.observe(e);
-            this.height = getComputedStyle(this.contentDocument.documentElement).height;
-        } catch(err) {}`;
+        let onload: string = `try {` +
+            `let e = this.contentDocument.body.lastChild;` +
+            `let r = new ResizeObserver(_ => {` +
+                `try {` +
+                    `this.height = getComputedStyle(this.contentDocument.documentElement).height;` +
+                `} catch(e) {}` +
+            `});` +
+            `let s = new IntersectionObserver(_ => {` +
+                `try {` +
+                    `this.height = getComputedStyle(this.contentDocument.documentElement).height;` +
+                `} catch(e) {}` +
+            `});` +
+            `r.observe(e);` +
+            `s.observe(e);` +
+            `this.height = getComputedStyle(this.contentDocument.documentElement).height;` +
+        `} catch(err) {}`;
 
         // I know these are some very long lines, but all functions shall output minified JS, and the
         // extra time it costs to remove the whitespaces programmatically isn't worth it.
@@ -574,11 +574,13 @@ export default class Kennel {
 
         for (i = 0; i < elem["screenshots"].length; i++) {
             if (typeof elem["screenshots"][i]["url"] == "undefined") throw "kennel:Missing required \"url\" property in screenshot object.";
-            ssURL = Kennel._laxSanitize(`${elem["screenshots"][i]["url"]}`);
-            if (elem["screenshots"][i]["video"])
+            if (elem["screenshots"][i]["video"]) {
+                ssURL = Kennel._laxSanitize(elem["screenshots"][i]["url"]);
                 ret += `<video controls class="nd_img_card" style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}"><source src="${ssURL}"></video>`;
-            else
-               ret += `<img loading="lazy" style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" class="nd_img_card" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
+            } else {
+                ssURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["screenshots"][i]["url"]}`);
+                ret += `<img loading="lazy" style="${Kennel._sanitize(sizeStr)}; border-radius: ${Kennel._sanitizeDouble(elem["itemCornerRadius"])}px" class="nd_img_card" alt="${Kennel._sanitize(elem["screenshots"][i].accessibilityText)}" src="${ssURL}">`;
+            }
         }
 
         ret += `</div>`;
@@ -831,7 +833,7 @@ export default class Kennel {
      * @param {object} elem The native depiction class.
      */
     private _DepictionVideoView(elem: object) {
-        let video_settings: string = "";
+        let video_settings: string, videoURL: string;
         if (typeof elem["URL"] == "undefined") throw "kennel:Missing required \"URL\" property";
         if (typeof elem["width"] == "undefined") throw "kennel:Missing required \"width\" property";
         if (typeof elem["height"] == "undefined") throw "kennel:Missing required \"height\" property";
@@ -845,8 +847,8 @@ export default class Kennel {
 
         if (elem["loop"])
             video_settings += "loop ";
-
-        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" ${video_settings}style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"><source src="${Kennel._laxSanitize(elem["URL"])}"></video></div>`;
+        videoURL = Kennel._laxSanitize(elem["URL"]);
+        return `<div style="text-align: ${Kennel._alignmentResolver(elem["alignment"])};"><video class="nd_max_width" ${video_settings}style="border-radius: ${Kennel._sanitizeDouble(elem["cornerRadius"])}px;" width="${Kennel._sanitizeDouble(elem["width"])}" height="${Kennel._sanitizeDouble(elem["height"])}"><source src="${videoURL}"></video></div>`;
     }
     /**
      * _DepictionBannersView(elem)
@@ -918,17 +920,17 @@ export default class Kennel {
         imgURL = Kennel._laxSanitize(`${this.#proxyURL}${elem["packageIcon"]}`);
         pkgURL = this.#packagePrefix + Kennel._laxSanitize(elem["package"]);
 
-        ret += `<a class="nd_package nd_subtle_link" href="${pkgURL}">
-                    <div>
-                        <img src="${imgURL}">
-                        <div class="nd_get_btn nd_btn">GET</div>
-                        <div>
-                            <h5>${elem["packageName"]}</h5>
-                            <p>${elem["packageAuthor"]}</p>
-                            <p>${elem["repoName"]}</p>
-                        </div>
-                    </div>
-                </a>`;
+        ret += `<a class="nd_package nd_subtle_link" href="${pkgURL}">` +
+                    `<div>` +
+                        `<img src="${imgURL}">` +
+                        `<div class="nd_get_btn nd_btn">GET</div>` +
+                        `<div>` +
+                            `<h5>${elem["packageName"]}</h5>` +
+                            `<p>${elem["packageAuthor"]}</p>` +
+                            `<p>${elem["repoName"]}</p>` +
+                        `</div>` +
+                    `</div>` +
+                `</a>`;
 
         return ret;
     }
