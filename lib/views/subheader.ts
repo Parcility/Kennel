@@ -1,5 +1,5 @@
+import { RenderCtx } from "../util";
 import DepictionHeaderView from "./header";
-import { RenderCtx } from "./_util";
 
 export default class DepictionSubheaderView extends DepictionHeaderView {
 	constructor(dictionary: any, ctx: RenderCtx) {

@@ -1,6 +1,6 @@
 import "./index.css";
+import { makeView, makeViews, RenderCtx, renderViews } from "./util";
 import { DepictionBaseView, views } from "./views";
-import { makeView, makeViews, RenderCtx, renderViews } from "./views/_util";
 
 export default class Kennel {
 	#depiction: any;

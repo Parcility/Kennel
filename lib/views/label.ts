@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { fontWeightParse, parseSize, RenderCtx, textAlignment } from "./_util";
+import { defaultIfNotType, fontWeightParse, parseSize, RenderCtx, textAlignment } from "../util";
 
 export default class DepictionLabelView implements DepictionBaseView {
 	text: string;
@@ -24,15 +24,11 @@ export default class DepictionLabelView implements DepictionBaseView {
 			this.margins = { left, right, top, bottom };
 		}
 
-		if (this.margins.left === 0) {
-			this.margins.left = 16;
-		}
-		if (this.margins.right === 0) {
-			this.margins.right = 16;
-		}
+		if (this.margins.left === 0) this.margins.left = 16;
+		if (this.margins.right === 0) this.margins.right = 16;
 
-		let useMargins = dictionary["useMargins"] ?? true;
-		let usePadding = dictionary["usePadding"] ?? true;
+		let useMargins = defaultIfNotType(dictionary["useMargins"], "boolean", true);
+		let usePadding = defaultIfNotType(dictionary["usePadding"], "boolean", true);
 
 		if (!useMargins) {
 			this.margins = { left: 0, right: 0, top: 0, bottom: 0 };

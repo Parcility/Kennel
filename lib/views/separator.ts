@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { RenderCtx } from "./_util";
+import { RenderCtx } from "../util";
 
 export default class DepictionSeparatorView implements DepictionBaseView {
 	ctx: RenderCtx;

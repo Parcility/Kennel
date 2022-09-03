@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { defaultIfNotType, parseSize, RenderCtx } from "./_util";
+import { defaultIfNotType, guardIfNotType, parseSize, RenderCtx, undefIfNotType } from "../util";
 
 interface Screenshot {
 	url: string;
@@ -20,8 +20,7 @@ export default class DepictionScreenshotsView implements DepictionBaseView {
 		this.ctx = ctx;
 		if (dictionary["iphone"]) dictionary = dictionary["iphone"];
 
-		let rawItemSize = dictionary["itemSize"];
-		if (typeof rawItemSize !== "string") return;
+		let rawItemSize = guardIfNotType(dictionary["itemSize"], "string");
 
 		[this.itemWidth, this.itemHeight] = parseSize(rawItemSize);
 		this.itemBorderRadius = defaultIfNotType(dictionary["itemBorderRadius"], "number", 0);
@@ -37,7 +36,7 @@ export default class DepictionScreenshotsView implements DepictionBaseView {
 		if (typeof dictionary["accessibilityText"] !== "string") return;
 		return {
 			url: dictionary.url,
-			fullSizeURL: defaultIfNotType(dictionary["fullSizeURL"], "string", undefined),
+			fullSizeURL: undefIfNotType(dictionary["fullSizeURL"], "string"),
 			video: defaultIfNotType(dictionary["video"], "boolean", false),
 			accessibilityText: dictionary.accessibilityText,
 		};

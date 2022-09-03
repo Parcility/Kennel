@@ -1,5 +1,5 @@
 import { DepictionBaseView, views } from ".";
-import { makeView, RenderCtx, renderView } from "./_util";
+import { defaultIfNotType, guardIfNotType, makeView, RenderCtx, renderView } from "../util";
 
 export default class DepictionButtonView implements DepictionBaseView {
 	text?: string;
@@ -13,29 +13,15 @@ export default class DepictionButtonView implements DepictionBaseView {
 
 	constructor(dictionary: any, ctx: RenderCtx) {
 		this.ctx = ctx;
-		this.isLink = dictionary["isLink"] ?? false;
-		this.action = dictionary["action"];
-		if (typeof this.action !== "string") {
-			return;
-		}
+		this.isLink = defaultIfNotType(dictionary["isLink"], "boolean", false);
+		this.action = guardIfNotType(dictionary["action"], "string");
 
-		this.yPadding = dictionary["yPadding"];
-		if (typeof this.yPadding !== "number") {
-			this.yPadding = 0;
-		}
-
-		// button = DepictionButton(type: .custom)
+		this.yPadding = defaultIfNotType(dictionary["yPadding"], "number", 0);
 
 		// self.action = action
-		this.backupAction = dictionary["backupAction"];
-		if (typeof this.backupAction !== "string") {
-			this.backupAction = "";
-		}
+		this.backupAction = defaultIfNotType(dictionary["backupAction"], "string", "");
 
-		this.openExternal = dictionary["openExternal"];
-		if (typeof this.openExternal !== "boolean") {
-			this.openExternal = false;
-		}
+		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 
 		let dict = dictionary["view"];
 		if (typeof dict === "object") {

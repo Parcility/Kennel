@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { makeViews, RenderCtx, renderViews } from "./_util";
+import { guardIfNotType, makeViews, RenderCtx, renderViews } from "../util";
 
 export default class DepictionLayerView implements DepictionBaseView {
 	views: DepictionBaseView[];
@@ -7,11 +7,8 @@ export default class DepictionLayerView implements DepictionBaseView {
 
 	constructor(dictionary: any, ctx: RenderCtx) {
 		this.ctx = ctx;
-		console.log(dictionary);
-		let rawViews = dictionary["views"];
-		if (!Array.isArray(rawViews)) {
-			return;
-		}
+
+		let rawViews = guardIfNotType(dictionary["views"], "array");
 		this.views = makeViews(rawViews, ctx);
 	}
 

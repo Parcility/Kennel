@@ -1,22 +1,29 @@
 import { DepictionBaseView, views } from ".";
-import { makeViews, RenderCtx, renderViews } from "./_util";
+import {
+	defaultIfNotType,
+	guardIfNotType,
+	KennelError,
+	makeViews,
+	RenderCtx,
+	renderViews,
+	undefIfNotType,
+} from "../util";
 
 export default class DepictionStackView implements DepictionBaseView {
 	views: DepictionBaseView[] = [];
 	isLandscape: boolean = false;
 	xPadding: number = 0;
-	backgroundColor: string;
+	backgroundColor?: string;
 	ctx: RenderCtx;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
 		this.ctx = ctx;
-		let viewObjs = dictionary["views"];
-		if (!Array.isArray(viewObjs)) return;
+		let viewObjs = guardIfNotType(dictionary["views"], "array");
 
 		let orientationString = dictionary["orientation"];
 		if (typeof orientationString === "string") {
 			if (orientationString !== "landscape" && orientationString !== "portrait") {
-				return;
+				throw new KennelError("Invalid orientation value: " + orientationString);
 			}
 			if (orientationString == "landscape") {
 				this.isLandscape = true;
@@ -24,22 +31,15 @@ export default class DepictionStackView implements DepictionBaseView {
 		}
 
 		this.views = makeViews(viewObjs, ctx);
-
-		let backgroundColor = dictionary["backgroundColor"];
-		if (typeof backgroundColor === "string") {
-			this.backgroundColor = backgroundColor;
-		}
-
-		let xPadding = dictionary["xPadding"];
-		if (typeof xPadding === "number") {
-			this.xPadding = xPadding;
-		}
+		this.backgroundColor = undefIfNotType(dictionary["backgroundColor"], "string");
+		this.xPadding = defaultIfNotType(dictionary["xPadding"], "number", 0);
 	}
 
 	async render(): Promise<HTMLElement> {
 		const el = document.createElement("div");
 		el.classList.add("nd-stack");
 		if (this.isLandscape) el.classList.add("nd-stack-landscape");
+		if (this.backgroundColor) el.style.backgroundColor = this.backgroundColor;
 		el.style.padding = `0 ${this.xPadding}px`;
 		const children = await renderViews(this.views, this.ctx);
 		el.append.apply(el, children);

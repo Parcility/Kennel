@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { defaultIfNotType, makeViews, RenderCtx, renderViews } from "./_util";
+import { defaultIfNotType, guardIfNotType, KennelError, makeViews, RenderCtx, renderViews } from "../util";
 
 export default class DepictionLayerView implements DepictionBaseView {
 	alignment: number;
@@ -12,20 +12,13 @@ export default class DepictionLayerView implements DepictionBaseView {
 
 	constructor(dictionary: any, ctx: RenderCtx) {
 		this.ctx = ctx;
-		let url = dictionary["URL"];
-		if (typeof url !== "string") return;
-		this.url = url;
-
+		this.url = guardIfNotType(dictionary["URL"], "string");
 		this.width = defaultIfNotType(dictionary["width"], "number", 0);
 		this.height = defaultIfNotType(dictionary["height"], "number", 0);
-		if (this.width === 0 || this.height === 0) {
-			return;
-		}
 
-		let radius = dictionary["cornerRadius"];
-		if (typeof radius !== "number") return;
-		this.borderRadius = radius;
+		if (this.width === 0 || this.height === 0) throw new KennelError("Invalid image size");
 
+		this.borderRadius = guardIfNotType(dictionary["cornerRadius"], "number");
 		this.alignment = defaultIfNotType(dictionary["alignment"], "number", 0);
 		this.xPadding = defaultIfNotType(dictionary["xPadding"], "number", 0);
 	}

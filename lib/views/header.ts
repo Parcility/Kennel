@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { RenderCtx, textAlignment } from "./_util";
+import { defaultIfNotType, RenderCtx, textAlignment } from "../util";
 
 export default class DepictionHeaderView implements DepictionBaseView {
 	title: string;
@@ -15,11 +15,10 @@ export default class DepictionHeaderView implements DepictionBaseView {
 		if (typeof dictionary["title"] === "string") {
 			this.title = dictionary.title;
 		}
-		this.useMargins = dictionary["useMargins"] ?? true;
-		this.useBottomMargin = dictionary["useBottomMargin"] ?? true;
-		let useBoldText = dictionary["useBoldText"] ?? true;
-		this.bold = useBoldText;
-		if (!useBoldText) {
+		this.useMargins = defaultIfNotType(dictionary["useMargins"], "boolean", true);
+		this.useBottomMargin = defaultIfNotType(dictionary["useBottomMargin"], "boolean", true);
+		this.bold = defaultIfNotType(dictionary["useBoldText"], "boolean", false);
+		if (!this.bold) {
 			this.textColor = "rgb(175, 175, 175)";
 		}
 

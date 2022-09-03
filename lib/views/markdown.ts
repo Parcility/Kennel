@@ -1,7 +1,7 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
 import type { DepictionBaseView } from ".";
-import { RenderCtx } from "./_util";
+import { defaultIfNotType, guardIfNotType, RenderCtx } from "../util";
 
 export default class DepictionMarkdownView implements DepictionBaseView {
 	markdown: Promise<string>;
@@ -11,13 +11,9 @@ export default class DepictionMarkdownView implements DepictionBaseView {
 
 	constructor(dictionary: any, ctx: RenderCtx) {
 		this.ctx = ctx;
-		let md = dictionary["markdown"];
-		if (typeof md !== "string") return;
-
-		let useSpacing = dictionary["useSpacing"];
-		if (typeof useSpacing !== "boolean") useSpacing = true;
-		let useMargins = dictionary["useMargins"];
-		if (typeof useMargins !== "boolean") useMargins = true;
+		let md = guardIfNotType(dictionary["markdown"], "string");
+		this.useMargins = defaultIfNotType(dictionary["useMargins"], "boolean", true);
+		this.useSpacing = defaultIfNotType(dictionary["useSpacing"], "boolean", true);
 
 		this.markdown = new Promise((resolve, reject) =>
 			marked(md, {}, (err: any, html: string) => {

@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { makeView, makeViews, RenderCtx, renderViews } from "./_util";
+import { guardIfNotType, isType, makeView, makeViews, RenderCtx, renderViews } from "../util";
 
 type DepictionTabPageView = DepictionBaseView & { tabname: string };
 
@@ -9,9 +9,7 @@ export default class DepictionTabView implements DepictionBaseView {
 
 	constructor(dictionary: any, ctx: RenderCtx) {
 		this.ctx = ctx;
-		let tabs = dictionary["tabs"];
-		if (!Array.isArray(tabs)) return;
-		console.log(tabs);
+		let tabs = guardIfNotType(dictionary["tabs"], "array");
 		this.pages = tabs
 			.map((tab) => {
 				let tabname = tab["tabname"];
@@ -52,21 +50,49 @@ export default class DepictionTabView implements DepictionBaseView {
 
 	buildTabControls(tab: DepictionTabPageView): HTMLElement {
 		let el = document.createElement("button");
+		el.className = "nd-tab-control";
 		el.innerHTML = tab.tabname;
 		el.dataset.target = tab.htmlID;
 		return el;
 	}
 
 	mounted(el: HTMLElement) {
-		console.log(el);
-		const tabControls = document.querySelectorAll<HTMLButtonElement>("[data-target]");
+		// get tab controls
+		let tabControls;
+		for (let i = 0; i < el.children.length; i++) {
+			let child = el.children[i];
+			if (child.classList.contains("nd-tab-controls")) {
+				tabControls = child.querySelectorAll<HTMLButtonElement>("[data-target]");
+				break;
+			}
+		}
+		if (!tabControls) return;
+
+		// get pages container
+		let pagesContainer;
+		for (let i = 0; i < el.children.length; i++) {
+			let child = el.children[i];
+			if (child.classList.contains(".nd-tab-pages")) {
+				pagesContainer = child;
+				break;
+			}
+		}
+		if (!pagesContainer) return;
+
+		// get tabs
 		const tabs = [...tabControls]
 			.map((el) => el.dataset.target)
 			.map((target) => {
 				if (!target) return;
-				return document.getElementById(target);
+				for (let i = 0, len = pagesContainer.children.length; i < len; i++) {
+					let child = pagesContainer.children[i];
+					if (child.id !== target) continue;
+					return child;
+				}
 			})
 			.filter(Boolean) as HTMLElement[];
+
+		// bind event
 		for (let control of tabControls) {
 			control.addEventListener("click", this.onTabClick.bind(tabs));
 		}

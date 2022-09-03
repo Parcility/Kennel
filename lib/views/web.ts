@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { RenderCtx } from "./_util";
+import { guardIfNotType, RenderCtx } from "../util";
 
 export default class DepictionSeparatorView implements DepictionBaseView {
 	url: string;
@@ -9,23 +9,9 @@ export default class DepictionSeparatorView implements DepictionBaseView {
 
 	constructor(dictionary: any, ctx: RenderCtx) {
 		this.ctx = ctx;
-		let urlStr = dictionary["URL"];
-		if (typeof urlStr !== "string") {
-			throw new Error("invalid element");
-		}
-		this.url = urlStr;
-
-		let width = dictionary["width"];
-		if (typeof width !== "number") {
-			throw new Error("invalid element");
-		}
-		this.width = width;
-
-		let height = dictionary["height"];
-		if (typeof height !== "number") {
-			throw new Error("invalid element");
-		}
-		this.height = height;
+		this.url = guardIfNotType(dictionary["URL"], "string");
+		this.width = guardIfNotType(dictionary["width"], "number");
+		this.height = guardIfNotType(dictionary["height"], "number");
 	}
 
 	render(): HTMLElement {

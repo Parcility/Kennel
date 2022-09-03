@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { RenderCtx } from "./_util";
+import { guardIfNotType, RenderCtx } from "../util";
 
 export default class DepictionSpacerView implements DepictionBaseView {
 	spacing: number;
@@ -7,11 +7,7 @@ export default class DepictionSpacerView implements DepictionBaseView {
 
 	constructor(dictionary: any, ctx: RenderCtx) {
 		this.ctx = ctx;
-		let spacing = dictionary["spacing"];
-		if (typeof spacing !== "number") {
-			return;
-		}
-		this.spacing = spacing;
+		this.spacing = guardIfNotType(dictionary["spacing"], "number");
 	}
 
 	render(): HTMLElement {

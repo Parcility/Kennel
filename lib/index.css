@@ -15,6 +15,10 @@
 	flex-direction: column;
 }
 
+.nd-stack > * {
+	flex: 1;
+}
+
 .nd-stack.nd-stack-landscape {
 	justify-content: space-between;
 	flex-direction: row;

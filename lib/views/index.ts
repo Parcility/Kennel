@@ -12,7 +12,7 @@ import SubheaderView from "./subheader";
 import TabView from "./tab";
 import WebView from "./web";
 
-import type { RenderCtx } from "./_util";
+import type { RenderCtx } from "../util";
 
 export interface DepictionBaseView {
 	htmlID?: string;
