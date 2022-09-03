@@ -4,7 +4,6 @@ import { defaultIfNotType, fontWeightParse, parseSize, RenderCtx, textAlignment 
 export default class DepictionLabelView implements DepictionBaseView {
 	text: string;
 	margins = { left: 0, right: 0, top: 0, bottom: 0 };
-	useDefaultColor: boolean;
 	textColor?: string;
 	weight: string;
 	alignment: string;
@@ -45,11 +44,9 @@ export default class DepictionLabelView implements DepictionBaseView {
 		let fontSize = dictionary["fontSize"];
 		if (typeof fontSize !== "number") fontSize = 14;
 
-		this.useDefaultColor = true;
 		let rawTextColor = dictionary["textColor"];
 		if (typeof rawTextColor === "string") {
 			this.textColor = rawTextColor;
-			this.useDefaultColor = false;
 		}
 
 		this.weight = fontWeightParse(fontWeight);
@@ -60,13 +57,14 @@ export default class DepictionLabelView implements DepictionBaseView {
 		const el = document.createElement("p");
 		el.className = "nd-label";
 		el.innerText = this.text;
+		if (this.textColor) el.style.color = this.textColor;
 		el.style.textAlign = this.alignment;
 		el.style.fontWeight = this.weight;
 		el.style.marginTop = this.margins.top + "px";
 		el.style.marginRight = this.margins.right + "px";
 		el.style.marginLeft = this.margins.left + "px";
 		el.style.marginBottom = this.margins.bottom + "px";
-		if (this.useDefaultColor) {
+		if (!this.textColor) {
 			if (this.isActionable) {
 				if (this.isHighlighted) {
 					el.style.filter = "saturation(75%)";

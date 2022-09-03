@@ -4,12 +4,18 @@ import ImageView from "./image";
 import LabelView from "./label";
 import LayerView from "./layer";
 import MarkdownView from "./markdown";
+import MinVersionForceView from "./min_version";
+import RatingView from "./rating";
+import ReviewView from "./review";
 import ScreenshotsView from "./screenshots";
 import SeparatorView from "./separator";
 import SpacerView from "./spacer";
 import StackView from "./stack";
 import SubheaderView from "./subheader";
 import TabView from "./tab";
+import TableButtonView from "./table_button";
+import TableTextView from "./table_text";
+import VideoView from "./video";
 import WebView from "./web";
 
 import type { RenderCtx } from "../util";
@@ -35,16 +41,17 @@ export const views = new Map<string, DepictionViewConstructor>([
 	["DepictionLabelView", LabelView],
 	["DepictionLayerView", LayerView],
 	["DepictionMarkdownView", MarkdownView],
-	// ["DepictionMinVersionForceView", MinVersionForceView],
-	// ["DepictionReviewView", ReviewView],
+	["DepictionMinVersionForceView", MinVersionForceView],
+	["DepictionRatingView", RatingView],
+	["DepictionReviewView", ReviewView],
 	["DepictionScreenshotsView", ScreenshotsView],
 	["DepictionSeparatorView", SeparatorView],
 	["DepictionSpacerView", SpacerView],
 	["DepictionStackView", StackView],
 	["DepictionSubheaderView", SubheaderView],
 	["DepictionTabView", TabView],
-	// ["DepictionTableButtonView", TableButtonView],
-	// ["DepictionTableTextView", TableTextView],
-	// ["DepictionVideoView", VideoView],
+	["DepictionTableButtonView", TableButtonView],
+	["DepictionTableTextView", TableTextView],
+	["DepictionVideoView", VideoView],
 	["DepictionWebView", WebView],
 ]);

@@ -16,28 +16,45 @@ export function parseSize(str: string): number[] {
 }
 
 export function fontWeightParse(fontWeight: string): string {
-	var weight: string;
 	switch (fontWeight) {
 		case "black":
-			weight = "900";
+			return "900";
 		case "bold":
-			weight = "700";
+			return "700";
 		case "heavy":
-			weight = "800";
+			return "800";
 		case "light":
-			weight = "400";
+			return "400";
 		case "medium":
-			weight = "500";
+			return "500";
 		case "semibold":
-			weight = "600";
+			return "600";
 		case "thin":
-			weight = "300";
+			return "300";
 		case "ultralight":
-			weight = "200";
+			return "200";
 		default:
-			weight = "regular";
+			return "regular";
 	}
-	return weight;
+}
+
+// Alignment
+
+export enum Alignment {
+	Left,
+	Center,
+	Right,
+}
+
+export function getAlignment(value: any): Alignment {
+	switch (value) {
+		case 1:
+			return Alignment.Center;
+		case 2:
+			return Alignment.Right;
+		default:
+			return Alignment.Left;
+	}
 }
 
 export function textAlignment(value: any): string {
@@ -48,6 +65,21 @@ export function textAlignment(value: any): string {
 			return "right";
 		default:
 			return "left";
+	}
+}
+
+export function applyAlignmentMargin(el: HTMLElement, alignment: Alignment) {
+	switch (alignment) {
+		case Alignment.Left:
+			el.style.marginRight = "auto";
+			break;
+		case Alignment.Right:
+			el.style.marginLeft = "auto";
+			break;
+		case Alignment.Center:
+			el.style.marginLeft = "auto";
+			el.style.marginRight = "auto";
+			break;
 	}
 }
 

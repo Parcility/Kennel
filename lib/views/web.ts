@@ -1,10 +1,11 @@
 import type { DepictionBaseView } from ".";
-import { guardIfNotType, RenderCtx } from "../util";
+import { Alignment, applyAlignmentMargin, defaultIfNotType, getAlignment, guardIfNotType, RenderCtx } from "../util";
 
 export default class DepictionSeparatorView implements DepictionBaseView {
 	url: string;
 	width: number;
 	height: number;
+	alignment: Alignment;
 	ctx: RenderCtx;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
@@ -12,6 +13,7 @@ export default class DepictionSeparatorView implements DepictionBaseView {
 		this.url = guardIfNotType(dictionary["URL"], "string");
 		this.width = guardIfNotType(dictionary["width"], "number");
 		this.height = guardIfNotType(dictionary["height"], "number");
+		this.alignment = getAlignment(defaultIfNotType(dictionary["alignment"], "number", 0));
 	}
 
 	render(): HTMLElement {
@@ -20,6 +22,7 @@ export default class DepictionSeparatorView implements DepictionBaseView {
 		el.src = this.url;
 		el.width = this.width.toString();
 		el.height = this.height.toString();
+		applyAlignmentMargin(el, this.alignment);
 		return el;
 	}
 }

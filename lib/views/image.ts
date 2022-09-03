@@ -1,8 +1,18 @@
 import type { DepictionBaseView } from ".";
-import { defaultIfNotType, guardIfNotType, KennelError, makeViews, RenderCtx, renderViews } from "../util";
+import {
+	Alignment,
+	applyAlignmentMargin,
+	defaultIfNotType,
+	getAlignment,
+	guardIfNotType,
+	KennelError,
+	makeViews,
+	RenderCtx,
+	renderViews,
+} from "../util";
 
 export default class DepictionLayerView implements DepictionBaseView {
-	alignment: number;
+	alignment: Alignment;
 	url: string;
 	width: number;
 	height: number;
@@ -19,7 +29,7 @@ export default class DepictionLayerView implements DepictionBaseView {
 		if (this.width === 0 || this.height === 0) throw new KennelError("Invalid image size");
 
 		this.borderRadius = guardIfNotType(dictionary["cornerRadius"], "number");
-		this.alignment = defaultIfNotType(dictionary["alignment"], "number", 0);
+		this.alignment = getAlignment(defaultIfNotType(dictionary["alignment"], "number", 0));
 		this.xPadding = defaultIfNotType(dictionary["xPadding"], "number", 0);
 	}
 
@@ -30,8 +40,10 @@ export default class DepictionLayerView implements DepictionBaseView {
 		el.style.width = `${this.width}px`;
 		el.style.height = `${this.height}px`;
 		el.style.borderRadius = `${this.borderRadius}px`;
+		el.style.objectFit = "cover";
 		el.style.padding = `0 ${this.xPadding}px`;
 		el.loading = "lazy";
+		applyAlignmentMargin(el, this.alignment);
 		return el;
 	}
 }

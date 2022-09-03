@@ -17,7 +17,7 @@ export default class DepictionHeaderView implements DepictionBaseView {
 		}
 		this.useMargins = defaultIfNotType(dictionary["useMargins"], "boolean", true);
 		this.useBottomMargin = defaultIfNotType(dictionary["useBottomMargin"], "boolean", true);
-		this.bold = defaultIfNotType(dictionary["useBoldText"], "boolean", false);
+		this.bold = defaultIfNotType(dictionary["useBoldText"], "boolean", true);
 		if (!this.bold) {
 			this.textColor = "rgb(175, 175, 175)";
 		}
@@ -30,15 +30,10 @@ export default class DepictionHeaderView implements DepictionBaseView {
 		el.className = "nd-header";
 		el.innerText = this.title;
 		el.style.textAlign = this.alignment;
-		el.style.fontWeight = this.bold ? "bold" : "normal";
 		if (this.textColor) el.style.color = this.textColor;
-		if (!this.useMargins) {
-			el.style.height = "26px";
-		} else if (!this.useBottomMargin) {
-			el.style.height = "34px";
-		} else {
-			el.style.height = "42px";
-		}
+		if (this.bold) el.classList.add("nd-bold");
+		if (this.useMargins) el.classList.add("nd-using-margins");
+		if (this.useBottomMargin) el.classList.add("nd-using-bottom-margin");
 		return el;
 	}
 }
