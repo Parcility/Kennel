@@ -1,8 +1,9 @@
 import type { DepictionBaseView } from ".";
-import { parseSize, RenderCtx } from "./_util";
+import { defaultIfNotType, parseSize, RenderCtx } from "./_util";
 
 interface Screenshot {
 	url: string;
+	fullSizeURL?: string;
 	video: boolean;
 	accessibilityText: string;
 }
@@ -12,16 +13,34 @@ export default class DepictionScreenshotsView implements DepictionBaseView {
 	itemWidth: number;
 	itemHeight: number;
 	itemBorderRadius: number;
+	isPaging: boolean;
 	ctx: RenderCtx;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		// TODO: do proper checks, like other views
 		this.ctx = ctx;
-		let [width, height] = parseSize(dictionary.itemSize);
-		this.itemWidth = width;
-		this.itemHeight = height;
-		this.itemBorderRadius = dictionary.itemCornerRadius || 0;
-		this.screenshots = dictionary.screenshots ?? [];
+		if (dictionary["iphone"]) dictionary = dictionary["iphone"];
+
+		let rawItemSize = dictionary["itemSize"];
+		if (typeof rawItemSize !== "string") return;
+
+		[this.itemWidth, this.itemHeight] = parseSize(rawItemSize);
+		this.itemBorderRadius = defaultIfNotType(dictionary["itemBorderRadius"], "number", 0);
+
+		let screenshots = dictionary["screenshots"];
+		if (!Array.isArray(screenshots)) return;
+
+		this.screenshots = screenshots.map(this.parseScreenshot).filter(Boolean) as Screenshot[];
+	}
+
+	parseScreenshot(dictionary: any): Screenshot | undefined {
+		if (typeof dictionary["url"] !== "string") return;
+		if (typeof dictionary["accessibilityText"] !== "string") return;
+		return {
+			url: dictionary.url,
+			fullSizeURL: defaultIfNotType(dictionary["fullSizeURL"], "string", undefined),
+			video: defaultIfNotType(dictionary["video"], "boolean", false),
+			accessibilityText: dictionary.accessibilityText,
+		};
 	}
 
 	render(): HTMLElement {
@@ -37,7 +56,14 @@ export default class DepictionScreenshotsView implements DepictionBaseView {
 			if (mediaEl instanceof HTMLImageElement) {
 				mediaEl.alt = screenshot.accessibilityText;
 			}
-			el.appendChild(mediaEl);
+			if (screenshot.fullSizeURL) {
+				let link = document.createElement("a");
+				link.href = screenshot.fullSizeURL;
+				link.target = "_blank";
+				el.appendChild(link);
+			} else {
+				el.appendChild(mediaEl);
+			}
 		}
 		return el;
 	}
