@@ -20,7 +20,7 @@ export default class DepictionLabelView implements DepictionBaseView {
 
 		let rawMargins = dictionary["margins"];
 		if (typeof rawMargins === "string") {
-			let [left, right, top, bottom] = parseSize(rawMargins);
+			let [top, left, bottom, right] = parseSize(rawMargins);
 			this.margins = { left, right, top, bottom };
 		}
 
@@ -66,10 +66,10 @@ export default class DepictionLabelView implements DepictionBaseView {
 		el.innerText = this.text;
 		el.style.textAlign = this.alignment;
 		el.style.fontWeight = this.weight;
-		el.style.marginTop = this.margins.top.toString();
-		el.style.marginRight = this.margins.right.toString();
-		el.style.marginLeft = this.margins.left.toString();
-		el.style.marginBottom = this.margins.bottom.toString();
+		el.style.marginTop = this.margins.top + "px";
+		el.style.marginRight = this.margins.right + "px";
+		el.style.marginLeft = this.margins.left + "px";
+		el.style.marginBottom = this.margins.bottom + "px";
 		if (this.useDefaultColor) {
 			if (this.isActionable) {
 				if (this.isHighlighted) {
