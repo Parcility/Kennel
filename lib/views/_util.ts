@@ -58,6 +58,7 @@ export type RenderCtx = Map<DepictionBaseView, HTMLElement | undefined>;
 
 export async function renderView(view: DepictionBaseView, ctx: RenderCtx): Promise<HTMLElement> {
 	let el = await view.render();
+	if (view.htmlID) el.id = view.htmlID;
 	ctx.set(view, el);
 	return el;
 }

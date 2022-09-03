@@ -3,7 +3,7 @@ import { fontWeightParse, parseSize, RenderCtx, textAlignment } from "./_util";
 
 export default class DepictionLabelView implements DepictionBaseView {
 	text: string;
-	margins: { left: number; right: number; top: number; bottom: number };
+	margins = { left: 0, right: 0, top: 0, bottom: 0 };
 	useDefaultColor: boolean;
 	textColor?: string;
 	weight: string;

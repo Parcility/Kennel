@@ -11,19 +11,19 @@ export default class DepictionSeparatorView implements DepictionBaseView {
 		this.ctx = ctx;
 		let urlStr = dictionary["URL"];
 		if (typeof urlStr !== "string") {
-			return;
+			throw new Error("invalid element");
 		}
 		this.url = urlStr;
 
 		let width = dictionary["width"];
-		if (typeof urlStr !== "number") {
-			return;
+		if (typeof width !== "number") {
+			throw new Error("invalid element");
 		}
 		this.width = width;
 
 		let height = dictionary["height"];
-		if (typeof urlStr !== "number") {
-			return;
+		if (typeof height !== "number") {
+			throw new Error("invalid element");
 		}
 		this.height = height;
 	}

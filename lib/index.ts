@@ -1,6 +1,6 @@
 import "./index.css";
 import { DepictionBaseView, views } from "./views";
-import { makeViews, RenderCtx, renderViews } from "./views/_util";
+import { makeView, makeViews, RenderCtx, renderViews } from "./views/_util";
 
 export default class Kennel {
 	#depiction: any;
@@ -10,7 +10,13 @@ export default class Kennel {
 	constructor(depiction: any) {
 		this.#depiction = depiction;
 		console.time("process");
-		if (Array.isArray(this.#depiction.views)) {
+		if (Array.isArray(this.#depiction.tabs)) {
+			console.log("TAB VIEW");
+			this.#depiction.className = "DepictionTabView";
+			let view = makeView(this.#depiction, this.#ctx);
+			if (!view) return;
+			this.#processed = [view];
+		} else if (Array.isArray(this.#depiction.views)) {
 			this.#processed = makeViews(this.#depiction.views, this.#ctx);
 		}
 		console.timeEnd("process");

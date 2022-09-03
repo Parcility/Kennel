@@ -9,10 +9,13 @@ import SeparatorView from "./separator";
 import SpacerView from "./spacer";
 import StackView from "./stack";
 import SubheaderView from "./subheader";
+import TabView from "./tab";
 import WebView from "./web";
+
 import type { RenderCtx } from "./_util";
 
 export interface DepictionBaseView {
+	htmlID?: string;
 	isActionable?: boolean;
 	isHighlighted?: boolean;
 	ctx: RenderCtx;
@@ -39,7 +42,7 @@ export const views = new Map<string, DepictionViewConstructor>([
 	["DepictionSpacerView", SpacerView],
 	["DepictionStackView", StackView],
 	["DepictionSubheaderView", SubheaderView],
-	// ["DepictionTabView", TabView],
+	["DepictionTabView", TabView],
 	// ["DepictionTableButtonView", TableButtonView],
 	// ["DepictionTableTextView", TableTextView],
 	// ["DepictionVideoView", VideoView],
