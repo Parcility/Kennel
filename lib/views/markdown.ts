@@ -1,3 +1,4 @@
+import { sanitize } from "dompurify";
 import { marked } from "marked";
 import type { DepictionBaseView } from ".";
 import { RenderCtx } from "./_util";
@@ -52,7 +53,7 @@ class MarkdownElement extends HTMLElement {
 		super();
 		let shadow = this.attachShadow({ mode: "open" });
 		this.root = shadow;
-		if (md) this.root.innerHTML = md;
+		if (md) this.root.innerHTML = sanitize(md);
 	}
 }
 
