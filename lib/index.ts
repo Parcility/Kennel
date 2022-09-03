@@ -11,7 +11,6 @@ export default class Kennel {
 		this.#depiction = depiction;
 		console.time("process");
 		if (Array.isArray(this.#depiction.tabs)) {
-			console.log("TAB VIEW");
 			this.#depiction.className = "DepictionTabView";
 			let view = makeView(this.#depiction, this.#ctx);
 			if (!view) return;

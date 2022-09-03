@@ -72,7 +72,7 @@ export default class DepictionTabView implements DepictionBaseView {
 		let pagesContainer;
 		for (let i = 0; i < el.children.length; i++) {
 			let child = el.children[i];
-			if (child.classList.contains(".nd-tab-pages")) {
+			if (child.classList.contains("nd-tab-pages")) {
 				pagesContainer = child;
 				break;
 			}
