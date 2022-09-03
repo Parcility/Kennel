@@ -1,0 +1,36 @@
+.nd-screenshots {
+	display: flex;
+	overflow-x: scroll;
+	max-width: 100vw;
+}
+
+.nd-screenshot-item {
+	border-radius: var(--screenshot-item-radius);
+	width: var(--screenshot-item-width);
+	height: var(--screenshot-item-height);
+}
+
+.nd-stack {
+	display: flex;
+	flex-direction: column;
+}
+
+.nd-stack.nd-stack-landscape {
+	justify-content: space-between;
+	flex-direction: row;
+}
+
+.nd-spacer {
+	display: block;
+	content: " ";
+}
+
+.nd-layer {
+	position: relative;
+}
+
+.nd-layer > * {
+	position: absolute;
+	top: 0;
+	left: 0;
+}

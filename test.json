@@ -1,0 +1,151 @@
+{
+	"minVersion": "0.7.1",
+	"headerImage": "https://cdn.chariz.cloud/sileo-banner/watermelon.jpg",
+	"tintColor": "#38476c",
+	"class": "DepictionStackView",
+	"views": [
+		{
+			"class": "DepictionScreenshotsView",
+			"itemCornerRadius": 8,
+			"itemSize": "{160, 346}",
+			"screenshots": [
+				{
+					"url": "https://cdn.chariz.cloud/screenshot/watermelon/watermelon-1.jpg",
+					"accessibilityText": "",
+					"video": false
+				},
+				{
+					"url": "https://cdn.chariz.cloud/screenshot/watermelon/watermelon-2.jpg",
+					"accessibilityText": "",
+					"video": false
+				},
+				{
+					"url": "https://cdn.chariz.cloud/screenshot/watermelon/watermelon-3.jpg",
+					"accessibilityText": "",
+					"video": false
+				}
+			]
+		},
+		{ "class": "DepictionSeparatorView" },
+		{
+			"class": "DepictionMarkdownView",
+			"useSpacing": true,
+			"useRawFormat": true,
+			"markdown": "<base href=\"https://chariz.com/\" /><style>html,body{font:-apple-system-body;line-height:1.4}p,h1,h2,h3,h4,h5,h6,ol,ul{margin:0 0 1rem 0}h1,h2,h3,h4,h5,h6{font-family:ui-rounded,-apple-system}pre,code{font-family:ui-monospace,Menlo,monospace;font-size:.8em}.small{font-size:.85em}ul{list-style-type:disc}ul ul,ol ul{list-style-type:circle}ul ul ul,ol ul ul,ol ol ul,ol ul ul{list-style-type:square}</style><div><h1>\nWatermelon</h1>\n<h3>\nWatchOS inspired lockscreen widgets for iOS 13.</h3>\n<p>\nWatermelon places round widgets below the clock on the lockscreen.</p>\n<p>\nWatermelon supports the following widgets:</p>\n<ol>\n<li>\nActivity</li>\n<li>\nAlarm</li>\n<li>\nAir Quality Index</li>\n<li>\nApp Shortcut (Selectable via Preferences)</li>\n<li>\nBattery</li>\n<li>\nBluetooth Battery (Headphones, AirPods etc)</li>\n<li>\nDate</li>\n<li>\nMusic (Play / Pause and Progress)</li>\n<li>\nRain</li>\n<li>\nHumidity</li>\n<li>\nTimer</li>\n<li>\nUV Index</li>\n<li>\nWeather Conditions</li>\n<li>\nWeather Temperature</li>\n<li>\nWind</li>\n<li>\nVolume (Current Audio Route)</li>\n<li>\nWatch Battery</li>\n<li>\nTorch Shortcut</li>\n<li>\nSunrise</li>\n<li>\nSunset</li>\n</ol>\n<div></div><p>\nTo select the widget in a particular location simply long press on the widget until the  editor appears. Select widgets as desired, tap an active widget to focus it.</p>\n</div>"
+		},
+		{ "class": "DepictionSeparatorView" },
+		{
+			"class": "DepictionStackView",
+			"orientation": "landscape",
+			"views": [
+				{
+					"class": "DepictionSubheaderView",
+					"title": "New in Version 1.4.2",
+					"useBoldText": true,
+					"useBottomMargin": false
+				},
+				{
+					"class": "DepictionButtonView",
+					"action": "https://chariz.com/get/watermelon/changelog",
+					"openExternal": false,
+					"isLink": true,
+					"view": {
+						"class": "DepictionLabelView",
+						"text": "Version History",
+						"fontSize": 12,
+						"alignment": 2,
+						"margins": "{21, 15, 6, 15}"
+					}
+				}
+			]
+		},
+		{
+			"class": "DepictionLabelView",
+			"text": "Released March 14, 2021",
+			"fontSize": 12,
+			"margins": "{0, 15, 0, 15}"
+		},
+		{
+			"class": "DepictionMarkdownView",
+			"useSpacing": true,
+			"useRawFormat": true,
+			"markdown": "<base href=\"https://chariz.com/\" /><style>html,body{font:-apple-system-body;line-height:1.4}p,h1,h2,h3,h4,h5,h6,ol,ul{margin:0 0 1rem 0}h1,h2,h3,h4,h5,h6{font-family:ui-rounded,-apple-system}pre,code{font-family:ui-monospace,Menlo,monospace;font-size:.8em}.small{font-size:.85em}ul{list-style-type:disc}ul ul,ol ul{list-style-type:circle}ul ul ul,ol ul ul,ol ol ul,ol ul ul{list-style-type:square}body{font:inherit;font-size:.9em}</style><div><ul>\n<li>\nFixed safe mode crash on iOS 14</li>\n</ul>\n<div></div></div>"
+		},
+		{ "class": "DepictionSeparatorView" },
+		{ "class": "DepictionSubheaderView", "title": "Released by", "useBoldText": true, "useBottomMargin": false },
+		{ "class": "DepictionSpacerView", "spacing": 10 },
+		{
+			"class": "DepictionStackView",
+			"xPadding": 15,
+			"views": [
+				{
+					"class": "DepictionLayerView",
+					"views": [
+						{ "class": "DepictionSpacerView", "spacing": 32 },
+						{
+							"class": "DepictionLabelView",
+							"text": "LaughingQuoll",
+							"fontSize": 14,
+							"fontWeight": "semibold",
+							"margins": "{2, 32, 2, 15}"
+						},
+						{
+							"class": "DepictionImageView",
+							"URL": "https://img.chariz.cloud/user/profile-image/zSgfmWtfzgZV284CAHEJ6VWP8R0XO2jdf9OXwO1ePQvuKADD82vyHex-EE8jCZVIlqDttCYyNAr8bH7ao4ozrg@3x.jpg?s=32",
+							"width": 24,
+							"height": 24,
+							"cornerRadius": 12
+						}
+					]
+				}
+			]
+		},
+		{
+			"class": "DepictionButtonView",
+			"action": "mailto:me%40laughingquoll.net?subject=Watermelon%20%E2%80%93%20Chariz%20Support",
+			"openExternal": true,
+			"isLink": true,
+			"view": {
+				"class": "DepictionLabelView",
+				"text": "Email Support",
+				"fontSize": 12,
+				"margins": "{4, 15, 10, 15}"
+			}
+		},
+		{ "class": "DepictionSeparatorView" },
+		{ "class": "DepictionSubheaderView", "title": "Compatibility", "useBoldText": true, "useBottomMargin": false },
+		{
+			"class": "DepictionMarkdownView",
+			"useRawFormat": true,
+			"markdown": "<base href=\"https://chariz.com/\" /><style>html,body{font:-apple-system-body;line-height:1.4}p,h1,h2,h3,h4,h5,h6,ol,ul{margin:0 0 1rem 0}h1,h2,h3,h4,h5,h6{font-family:ui-rounded,-apple-system}pre,code{font-family:ui-monospace,Menlo,monospace;font-size:.8em}.small{font-size:.85em}ul{list-style-type:disc}ul ul,ol ul{list-style-type:circle}ul ul ul,ol ul ul,ol ol ul,ol ul ul{list-style-type:square}</style><p class=\"small\">Supports iPhone, iPad, and iPod touch running iOS 12.0 – 14.5.</p>"
+		},
+		{ "class": "DepictionSeparatorView" },
+		{
+			"class": "DepictionMarkdownView",
+			"useRawFormat": true,
+			"markdown": "<style>html,body{font:-apple-system-body;line-height:1.4}p,h1,h2,h3,h4,h5,h6,ol,ul{margin:0 0 1rem 0}h1,h2,h3,h4,h5,h6{font-family:ui-rounded,-apple-system}pre,code{font-family:ui-monospace,Menlo,monospace;font-size:.8em}.small{font-size:.85em}ul{list-style-type:disc}ul ul,ol ul{list-style-type:circle}ul ul ul,ol ul ul,ol ol ul,ol ul ul{list-style-type:square}</style><p class=\"small\">Prices are in US Dollars. Sales tax may apply depending on your location.</p>"
+		},
+		{
+			"class": "DepictionButtonView",
+			"action": "https://chariz.com/",
+			"isLink": true,
+			"yPadding": 8,
+			"text": "Chariz",
+			"view": {
+				"class": "DepictionImageView",
+				"URL": "https://chariz.com/img/chariz-logo-head@3x.png",
+				"width": 83,
+				"height": 30,
+				"cornerRadius": 0,
+				"alignment": 1,
+				"accessibilityText": "Chariz"
+			}
+		},
+		{
+			"class": "DepictionMarkdownView",
+			"useRawFormat": true,
+			"useSpacing": false,
+			"markdown": "<style>html,body{font:-apple-system-body;line-height:1.4}p,h1,h2,h3,h4,h5,h6,ol,ul{margin:0 0 1rem 0}h1,h2,h3,h4,h5,h6{font-family:ui-rounded,-apple-system}pre,code{font-family:ui-monospace,Menlo,monospace;font-size:.8em}.small{font-size:.85em}ul{list-style-type:disc}ul ul,ol ul{list-style-type:circle}ul ul ul,ol ul ul,ol ol ul,ol ul ul{list-style-type:square}html,body{background:red;text-align:center}#links{display:inline-block;text-align:center;font-size:.8em}.sileo-is-broken{font-size:0}</style><div><div id=\"links\"><a href=\"https://twitter.com/CharizTeam\" aria-label=\"@CharizTeam on Twitter\">  @CharizTeam  </a><a href=\"https://discord.gg/sEzwNF9\" aria-label=\"Join Chariz Discord server\">  Discord  </a></div></div><div class=\"sileo-is-broken\"></div>"
+		}
+	]
+}
