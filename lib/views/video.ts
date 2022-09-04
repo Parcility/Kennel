@@ -1,13 +1,5 @@
 import type { DepictionBaseView } from ".";
-import {
-	Alignment,
-	applyAlignmentMargin,
-	defaultIfNotType,
-	getAlignment,
-	guardIfNotType,
-	RenderCtx,
-	textAlignment,
-} from "../util";
+import { Alignment, applyAlignmentMargin, defaultIfNotType, getAlignment, guardIfNotType, RenderCtx } from "../util";
 
 export default class DepictionRatingView implements DepictionBaseView {
 	ctx: RenderCtx;

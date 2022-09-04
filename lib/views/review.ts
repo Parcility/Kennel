@@ -1,10 +1,10 @@
 import DOMPurify from "dompurify";
 import type { DepictionBaseView } from ".";
-import { Alignment, getAlignment, guardIfNotType, RenderCtx, textAlignment, undefIfNotType } from "../util";
+import { guardIfNotType, RenderCtx, undefIfNotType } from "../util";
 import { callMarked } from "./markdown";
 import { makeRatingElement } from "./rating";
 
-export default class DepictionRatingView implements DepictionBaseView {
+export default class DepictionReviewView implements DepictionBaseView {
 	ctx: RenderCtx;
 	title: string;
 	author: string;

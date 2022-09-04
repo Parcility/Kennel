@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { guardIfNotType, isType, makeView, makeViews, RenderCtx, renderViews } from "../util";
+import { guardIfNotType, makeView, RenderCtx, renderViews } from "../util";
 
 type DepictionTabPageView = DepictionBaseView & { tabname: string };
 

@@ -1,4 +1,4 @@
-import { DepictionBaseView, views } from ".";
+import type { DepictionBaseView } from ".";
 import {
 	defaultIfNotType,
 	guardIfNotType,

@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { Alignment, getAlignment, guardIfNotType, RenderCtx, textAlignment } from "../util";
+import { guardIfNotType, RenderCtx, textAlignment } from "../util";
 
 export function makeRatingElement(progress: number, alignment: string): HTMLElement {
 	const el = document.createElement("div");

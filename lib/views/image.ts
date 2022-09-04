@@ -6,9 +6,7 @@ import {
 	getAlignment,
 	guardIfNotType,
 	KennelError,
-	makeViews,
 	RenderCtx,
-	renderViews,
 } from "../util";
 
 export default class DepictionLayerView implements DepictionBaseView {

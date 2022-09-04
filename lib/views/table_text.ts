@@ -1,5 +1,5 @@
 import type { DepictionBaseView } from ".";
-import { guardIfNotType, KennelError, makeView, RenderCtx, renderView } from "../util";
+import { guardIfNotType, RenderCtx } from "../util";
 
 export default class DepictionTableTextView implements DepictionBaseView {
 	ctx: RenderCtx;
