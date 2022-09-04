@@ -1,4 +1,4 @@
-import { createElement, RenderableElement } from "../renderable";
+import { createElement, RenderableElement, setStyles } from "../renderable";
 import { defaultIfNotType, guardIfNotType, makeView, RenderCtx } from "../util";
 import DepictionBaseView from "./base";
 
@@ -37,11 +37,12 @@ export default class DepictionButtonView extends DepictionBaseView {
 	}
 
 	async make(): Promise<RenderableElement> {
-		let el = createElement(this.isLink ? "a" : "button");
-		// let el = this.isLink ? document.createElement("a") : document.createElement("button");
-		el.attributes.class = "nd-button";
+		let el = createElement(this.isLink ? "a" : "button", { class: "nd-button" });
+		let styles: any = {};
+		if (this.tintColor) styles["--kennel-tint-color"] = this.tintColor;
 		if (this.isLink) {
 			el.attributes.href = this.action;
+			styles.color = "var(--kennel-tint-color)";
 		}
 
 		if (this.children) {
@@ -52,6 +53,7 @@ export default class DepictionButtonView extends DepictionBaseView {
 		} else if (this.text) {
 			el.children = [this.text];
 		}
+		setStyles(el, styles);
 		return el;
 	}
 }

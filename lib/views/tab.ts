@@ -1,4 +1,4 @@
-import { createElement, RenderableElement } from "../renderable";
+import { createElement, RenderableElement, setStyles } from "../renderable";
 import { guardIfNotType, makeView, RenderCtx } from "../util";
 import DepictionBaseView from "./base";
 
@@ -43,6 +43,10 @@ export default class DepictionTabView extends DepictionBaseView {
 		const control = createElement("label", { class: "nd-tab-control", for: id }, [tab.tabname]);
 		const page = createElement("div", { class: "nd-tab-page" }, [tab.view && (await tab.view.make())]);
 		const el = createElement("div", { class: "nd-tab" }, [input, control, page]);
+		if (this.tintColor)
+			setStyles(el, {
+				"--kennel-tint-color": this.tintColor,
+			});
 		return el;
 	}
 }

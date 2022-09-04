@@ -188,6 +188,7 @@ nd-markdown.nd-raw-markdown {
 	margin: 0 1rem;
 	font-size: 1rem;
 	justify-content: space-between;
+	color: var(--kennel-tint-color);
 }
 
 .nd-table-button-text {
@@ -228,7 +229,7 @@ nd-markdown.nd-raw-markdown {
 }
 
 .nd-tab > input:checked ~ label {
-	color: #00f;
+	color: var(--kennel-tint-color);
 	border-bottom: solid 1px;
 }
 

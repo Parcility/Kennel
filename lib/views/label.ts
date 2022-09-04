@@ -64,10 +64,13 @@ export default class DepictionLabelView extends DepictionBaseView {
 			"margin-bottom": this.margins.bottom + "px",
 		};
 		if (this.textColor) styles.color = this.textColor;
+		if (this.tintColor) styles["--kennel-tint-color"] = this.tintColor;
 		if (!this.textColor) {
 			if (this.isActionable) {
 				if (this.isHighlighted) {
 					styles.filter = "saturation(75%)";
+				} else {
+					styles.color = "var(--kennel-tint-color)";
 				}
 			}
 		}

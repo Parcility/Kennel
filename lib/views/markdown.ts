@@ -71,11 +71,14 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 		let spacing = this.useSpacing ? 13 : 0;
 		let bottomSpacing = this.useSpacing ? 13 : 0;
 		let el = createShadowedElement({ class: "nd-markdown" }, [createRawNode(DOMPurify.sanitize(resp))]);
-		setStyles(el, {
+		let styles = {
 			margin: margins + "px",
 			"padding-top": spacing + "px",
 			"padding-bottom": (bottomSpacing ? bottomSpacing : spacing) + "px",
-		});
+		};
+		// TODO: none of the links actually use this; we need to mutate the markdown rendering to use this.
+		if (this.tintColor) styles["--kennel-tint-color"] = this.tintColor;
+		setStyles(el, styles);
 		return el;
 	}
 }
