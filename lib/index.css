@@ -212,3 +212,32 @@ nd-markdown.nd-raw-markdown {
 	vertical-align: top;
 	width: 0.45em;
 }
+
+.nd-tabs {
+	position: relative;
+	clear: both;
+	max-width: 100%;
+}
+
+.nd-tab > input {
+	display: none;
+}
+
+.nd-tab > label {
+	cursor: pointer;
+}
+
+.nd-tab > input:checked ~ label {
+	color: #00f;
+	border-bottom: solid 1px;
+}
+
+.nd-tab > input:checked ~ label ~ .nd-tab-page {
+	display: block;
+}
+
+.nd-tab-page {
+	display: none;
+	padding-top: 3rem;
+	max-width: 100%;
+}

@@ -15,7 +15,8 @@ class DepictionTabPageView extends DepictionBaseView {
 
 export default class DepictionTabView extends DepictionBaseView {
 	pages: DepictionTabPageView[];
-	ctx: RenderCtx;
+	static tabID = 0;
+	static tabControlID = 0;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
 		super(dictionary, ctx);
@@ -24,15 +25,25 @@ export default class DepictionTabView extends DepictionBaseView {
 	}
 
 	async make() {
-		const children = await Promise.all(this.pages.map((tab) => this.makeTab(tab)));
-		const el = createElement("div", { class: "nd-tabs" }, children);
+		DepictionTabView.tabControlID++;
+		const children = await Promise.all(this.pages.map((tab, i) => this.makeTab(tab, i === 0)));
+		const el = createElement("form", { class: "nd-tabs" }, children);
 		return el;
 	}
 
-	async makeTab(tab: DepictionTabPageView): Promise<RenderableElement> {
-		const control = createElement("button", { class: "nd-tab-control" }, [tab.tabname]);
+	async makeTab(tab: DepictionTabPageView, isActive: boolean): Promise<RenderableElement> {
+		let numericControlID = DepictionTabView.tabControlID++;
+		let id = "kennel-tab-" + numericControlID;
+		console.log("tab id:", id, isActive);
+		const input = createElement("input", {
+			type: "radio",
+			id,
+			name: "kennel-tab-id-" + DepictionTabView.tabID,
+			checked: isActive,
+		});
+		const control = createElement("label", { class: "nd-tab-control", for: id }, [tab.tabname]);
 		const page = createElement("div", { class: "nd-tab-page" }, [tab.view && (await tab.view.make())]);
-		const el = createElement("div", { class: "nd-tab-page-container" }, [control, page]);
+		const el = createElement("div", { class: "nd-tab" }, [input, control, page]);
 		return el;
 	}
 }

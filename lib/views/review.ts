@@ -1,8 +1,7 @@
-import DOMPurify from "dompurify";
-import { createElement, createShadowedElement, RenderableElement } from "../renderable";
+import { createElement, RenderableElement } from "../renderable";
 import { guardIfNotType, RenderCtx, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
-import DepictionMarkdownView, { callMarked } from "./markdown";
+import DepictionMarkdownView from "./markdown";
 import { makeRatingElement } from "./rating";
 
 export default class DepictionReviewView extends DepictionBaseView {

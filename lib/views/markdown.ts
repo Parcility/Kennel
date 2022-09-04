@@ -5,7 +5,7 @@ import { defaultIfNotType, guardIfNotType, RenderCtx } from "../util";
 import DepictionBaseView from "./base";
 import DepictionSeparatorView from "./separator";
 
-export function callMarked(str: string, opt?: any): Promise<string> {
+function callMarked(str: string, opt?: any): Promise<string> {
 	return new Promise((resolve, reject) =>
 		marked(str, opt, (err: any, html: string) => {
 			if (err) reject(err);
