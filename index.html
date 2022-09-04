@@ -2,17 +2,24 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Kennel Testing</title>
 	</head>
 	<body>
-		<div id="example-depiction" style="max-width: 32rem; margin: auto"></div>
+		<details open>
+			<summary>Client-side</summary>
+			<div id="example-depiction" style="max-width: 32rem; margin: auto"></div>
+		</details>
+		<details>
+			<summary>SSR</summary>
+			<div id="example-ssr-depiction" style="max-width: 32rem; margin: auto"></div>
+		</details>
 		<script type="module">
 			import Kennel from "/lib/index.ts";
 			import depiction from "./test.json";
 
 			const target = document.getElementById("example-depiction");
+			const ssrTarget = document.getElementById("example-ssr-depiction");
 
 			let k = new Kennel(depiction);
 			k.render()
@@ -20,8 +27,7 @@
 				.then(() => k.mounted());
 
 			let ssrK = new Kennel(depiction, true);
-			ssrK.render().then((resp) => console.log(resp));
-			// .then(() => ssrK.mounted());
+			ssrK.render().then((resp) => (ssrTarget.innerHTML = resp));
 		</script>
 	</body>
 </html>
