@@ -1,6 +1,7 @@
 import type { RenderCtx } from "../util";
 export type { default as DepictionBaseView } from "./base";
 
+import AutoStackView from "./auto_stack";
 import ButtonView from "./button";
 import HeaderView from "./header";
 import ImageView from "./image";
@@ -26,7 +27,7 @@ import DepictionBaseView from "./base";
 export type DepictionViewConstructor<T extends DepictionBaseView> = { new (dictionary: any, ctx: RenderCtx): T };
 
 export const views = new Map<string, DepictionViewConstructor<any>>([
-	// ["DepictionAutoStackView", AutoStackView],
+	["DepictionAutoStackView", AutoStackView],
 	["DepictionButtonView", ButtonView],
 	// ["DepictionFormViewController", FormViewController],
 	["DepictionHeaderView", HeaderView],

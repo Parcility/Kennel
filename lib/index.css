@@ -242,3 +242,7 @@ nd-markdown.nd-raw-markdown {
 	padding-top: 3rem;
 	max-width: 100%;
 }
+
+.nd-auto-stack {
+	display: grid;
+}
