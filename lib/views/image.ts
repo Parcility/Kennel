@@ -1,4 +1,4 @@
-import type { DepictionBaseView } from ".";
+import { createElement, RenderableElement, setStyles } from "../renderable";
 import {
 	Alignment,
 	applyAlignmentMargin,
@@ -8,18 +8,18 @@ import {
 	KennelError,
 	RenderCtx,
 } from "../util";
+import DepictionBaseView from "./base";
 
-export default class DepictionLayerView implements DepictionBaseView {
+export default class DepictionImageView extends DepictionBaseView {
 	alignment: Alignment;
 	url: string;
 	width: number;
 	height: number;
 	xPadding: number;
 	borderRadius: number;
-	ctx: RenderCtx;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		this.url = guardIfNotType(dictionary["URL"], "string");
 		this.width = defaultIfNotType(dictionary["width"], "number", 0);
 		this.height = defaultIfNotType(dictionary["height"], "number", 0);
@@ -31,16 +31,15 @@ export default class DepictionLayerView implements DepictionBaseView {
 		this.xPadding = defaultIfNotType(dictionary["xPadding"], "number", 0);
 	}
 
-	async render(): Promise<HTMLElement> {
-		const el = document.createElement("img");
-		el.className = "nd-image";
-		el.src = this.url;
-		el.style.width = `${this.width}px`;
-		el.style.height = `${this.height}px`;
-		el.style.borderRadius = `${this.borderRadius}px`;
-		el.style.objectFit = "cover";
-		el.style.padding = `0 ${this.xPadding}px`;
-		el.loading = "lazy";
+	async make(): Promise<RenderableElement> {
+		const el = createElement("img", { class: "nd-image", src: this.url, loading: "lazy" });
+		setStyles(el, {
+			width: `${this.width}px`,
+			height: `${this.height}px`,
+			"border-radius": `${this.borderRadius}px`,
+			"object-fit": "cover",
+			padding: `0 ${this.xPadding}px`,
+		});
 		applyAlignmentMargin(el, this.alignment);
 		return el;
 	}

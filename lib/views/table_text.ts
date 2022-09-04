@@ -1,28 +1,21 @@
-import type { DepictionBaseView } from ".";
+import { createElement } from "../renderable";
 import { guardIfNotType, RenderCtx } from "../util";
+import DepictionBaseView from "./base";
 
-export default class DepictionTableTextView implements DepictionBaseView {
-	ctx: RenderCtx;
+export default class DepictionTableTextView extends DepictionBaseView {
 	title: string;
 	text: string;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		this.title = guardIfNotType(dictionary["title"], "string");
 		this.text = guardIfNotType(dictionary["text"], "string");
 	}
 
-	render(): HTMLElement {
-		let el = document.createElement("div");
-		el.className = "nd-table-text";
-		let titleEl = document.createElement("p");
-		titleEl.className = "nd-table-text-title";
-		titleEl.innerHTML = this.title;
-		el.appendChild(titleEl);
-		let textEl = document.createElement("p");
-		textEl.className = "nd-table-text-text";
-		textEl.innerHTML = this.text;
-		el.appendChild(textEl);
+	async make() {
+		let titleEl = createElement("p", { class: "nd-table-text-title" }, [this.title]);
+		let textEl = createElement("p", { class: "nd-table-text-text" }, [this.text]);
+		let el = createElement("div", { class: "nd-table-text" }, [titleEl, textEl]);
 		return el;
 	}
 }

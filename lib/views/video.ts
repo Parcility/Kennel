@@ -1,8 +1,8 @@
-import type { DepictionBaseView } from ".";
+import { createElement, setStyles } from "../renderable";
 import { Alignment, applyAlignmentMargin, defaultIfNotType, getAlignment, guardIfNotType, RenderCtx } from "../util";
+import DepictionBaseView from "./base";
 
-export default class DepictionRatingView implements DepictionBaseView {
-	ctx: RenderCtx;
+export default class DepictionRatingView extends DepictionBaseView {
 	width: number;
 	height: number;
 	url: string;
@@ -14,8 +14,7 @@ export default class DepictionRatingView implements DepictionBaseView {
 	cornerRadius: number;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		console.log("Video VIEw", dictionary);
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		this.url = guardIfNotType(dictionary["URL"], "string");
 		this.width = guardIfNotType(dictionary["width"], "number");
 		this.height = guardIfNotType(dictionary["height"], "number");
@@ -28,17 +27,20 @@ export default class DepictionRatingView implements DepictionBaseView {
 		this.cornerRadius = defaultIfNotType(dictionary["cornerRadius"], "number", 0);
 	}
 
-	render(): HTMLElement {
-		const el = document.createElement("video");
-		el.className = "nd-video";
-		el.style.borderRadius = this.cornerRadius + "px";
+	async make() {
+		const el = createElement("video", {
+			class: "nd-video",
+			src: this.url,
+			controls: this.showPlaybackControls,
+			loop: this.loopEnabled,
+			autoplay: this.autoPlayEnabled,
+		});
+		setStyles(el, {
+			width: `${this.width}px`,
+			height: `${this.height}px`,
+			"border-radius": `${this.cornerRadius}px`,
+		});
 		applyAlignmentMargin(el, this.alignment);
-		el.style.width = this.width + "px";
-		el.style.height = this.height + "px";
-		el.loop = this.loopEnabled;
-		el.controls = this.showPlaybackControls;
-		el.autoplay = this.autoPlayEnabled;
-		el.src = this.url;
 		return el;
 	}
 }

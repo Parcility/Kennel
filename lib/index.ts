@@ -1,13 +1,16 @@
 import "./index.css";
+import { createElement, renderElement } from "./renderable";
 import { makeView, makeViews, RenderCtx, renderViews } from "./util";
-import { DepictionBaseView, views } from "./views";
+import type { DepictionBaseView } from "./views";
+import { views } from "./views";
 
 export default class Kennel {
 	#depiction: any;
 	#processed: DepictionBaseView[];
-	#ctx: RenderCtx = new Map();
+	#ctx: RenderCtx;
 
-	constructor(depiction: any) {
+	constructor(depiction: any, ssr = false) {
+		this.#ctx = { ssr, els: new Map() };
 		this.#depiction = depiction;
 		console.time("process");
 		if (Array.isArray(this.#depiction.tabs)) {
@@ -21,21 +24,33 @@ export default class Kennel {
 		console.timeEnd("process");
 	}
 
-	async render(target?: HTMLElement): Promise<HTMLElement> {
-		console.time("render");
-		let el = document.createElement("div");
-		const views = await renderViews(this.#processed, this.#ctx);
-		el.append.apply(el, views);
-		console.timeEnd("render");
-		if (target) {
-			target.appendChild(el);
-			this.mounted();
-		}
-		return el;
+	async render(): Promise<HTMLElement | string> {
+		let el = createElement("div");
+		el.children = await Promise.all(this.#processed.map((view) => view.make()));
+		return renderElement(el, this.#ctx);
 	}
 
 	mounted() {
-		for (let [view, el] of this.#ctx) {
+		if (this.#ctx.ssr) return;
+
+		self.customElements.define(
+			"nd-shadowed-content",
+			class ShadowedElement extends HTMLElement {
+				constructor() {
+					super();
+					let tmpl = this.querySelector("template");
+					if (!tmpl) return;
+					console.log(tmpl.content);
+					let content = tmpl.content.cloneNode(true);
+					console.log(content.childNodes);
+					console.log(content);
+					let shadow = this.attachShadow({ mode: "open" });
+					shadow.appendChild(content);
+				}
+			}
+		);
+
+		for (let [view, el] of this.#ctx.els) {
 			if (!view || !el || !view.mounted) continue;
 			view.mounted(el);
 		}

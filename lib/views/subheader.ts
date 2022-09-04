@@ -1,14 +1,15 @@
-import { RenderCtx } from "../util";
+import { setClassList } from "../renderable";
 import DepictionHeaderView from "./header";
 
 export default class DepictionSubheaderView extends DepictionHeaderView {
-	constructor(dictionary: any, ctx: RenderCtx) {
-		super(dictionary, ctx);
-	}
-
-	render(): HTMLElement {
-		let el = super.render();
-		el.className = "nd-subheader";
+	async make() {
+		let el = await super.make();
+		setClassList(el, [
+			"nd-subheader",
+			this.bold && "nd-subheader-bold",
+			this.useMargins && "nd-subheader-margins",
+			this.useBottomMargin && "nd-subheader-bottom-margin",
+		]);
 		return el;
 	}
 }

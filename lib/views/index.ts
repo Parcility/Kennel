@@ -1,3 +1,6 @@
+import type { RenderCtx } from "../util";
+export type { default as DepictionBaseView } from "./base";
+
 import ButtonView from "./button";
 import HeaderView from "./header";
 import ImageView from "./image";
@@ -18,21 +21,11 @@ import TableTextView from "./table_text";
 import VideoView from "./video";
 import WebView from "./web";
 
-import type { RenderCtx } from "../util";
+import DepictionBaseView from "./base";
 
-export interface DepictionBaseView {
-	htmlID?: string;
-	isActionable?: boolean;
-	isHighlighted?: boolean;
-	ctx: RenderCtx;
+export type DepictionViewConstructor<T extends DepictionBaseView> = { new (dictionary: any, ctx: RenderCtx): T };
 
-	render(): HTMLElement | Promise<HTMLElement>;
-	mounted?(el: HTMLElement): void;
-}
-
-export type DepictionViewConstructor = { new (dictionary: any, ctx: RenderCtx): DepictionBaseView };
-
-export const views = new Map<string, DepictionViewConstructor>([
+export const views = new Map<string, DepictionViewConstructor<any>>([
 	// ["DepictionAutoStackView", AutoStackView],
 	["DepictionButtonView", ButtonView],
 	// ["DepictionFormViewController", FormViewController],

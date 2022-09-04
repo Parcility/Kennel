@@ -1,5 +1,6 @@
-import type { DepictionBaseView } from ".";
+import { createElement, setStyles } from "../renderable";
 import { defaultIfNotType, guardIfNotType, parseSize, RenderCtx, undefIfNotType } from "../util";
+import DepictionBaseView from "./base";
 
 interface Screenshot {
 	url: string;
@@ -8,16 +9,15 @@ interface Screenshot {
 	accessibilityText: string;
 }
 
-export default class DepictionScreenshotsView implements DepictionBaseView {
+export default class DepictionScreenshotsView extends DepictionBaseView {
 	screenshots: Screenshot[];
 	itemWidth: number;
 	itemHeight: number;
 	itemBorderRadius: number;
 	isPaging: boolean;
-	ctx: RenderCtx;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		if (dictionary["iphone"]) dictionary = dictionary["iphone"];
 
 		let rawItemSize = guardIfNotType(dictionary["itemSize"], "string");
@@ -42,26 +42,28 @@ export default class DepictionScreenshotsView implements DepictionBaseView {
 		};
 	}
 
-	render(): HTMLElement {
-		const el = document.createElement("div");
-		el.className = "nd-screenshots";
-		el.style.setProperty("--screenshot-item-width", `${this.itemWidth}px`);
-		el.style.setProperty("--screenshot-item-height", `${this.itemHeight}px`);
-		el.style.setProperty("--screenshot-item-radius", `${this.itemBorderRadius}px`);
+	async make() {
+		const el = createElement("div", { class: "nd-screenshots" });
+		setStyles(el, {
+			"--screenshot-item-width": `${this.itemWidth}px`,
+			"--screenshot-item-height": `${this.itemHeight}px`,
+			"--screenshot-item-radius": `${this.itemBorderRadius}px`,
+		});
 		for (let screenshot of this.screenshots) {
-			let mediaEl = screenshot.video ? document.createElement("video") : document.createElement("img");
-			mediaEl.className = "nd-screenshot-item";
-			mediaEl.src = screenshot.url;
-			if (mediaEl instanceof HTMLImageElement) {
-				mediaEl.alt = screenshot.accessibilityText;
+			let mediaEl = screenshot.video ? createElement("video") : createElement("img");
+			mediaEl.attributes.class = "nd-screenshot-item";
+			mediaEl.attributes.src = screenshot.url;
+			if (!screenshot.video) {
+				mediaEl.attributes.alt = screenshot.accessibilityText;
 			}
 			if (screenshot.fullSizeURL) {
-				let link = document.createElement("a");
-				link.href = screenshot.fullSizeURL;
-				link.target = "_blank";
-				el.appendChild(link);
+				let link = createElement("a", {
+					href: screenshot.fullSizeURL,
+					target: "_blank",
+				});
+				el.children.push(link);
 			} else {
-				el.appendChild(mediaEl);
+				el.children.push(mediaEl);
 			}
 		}
 		return el;

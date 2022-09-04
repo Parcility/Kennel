@@ -1,30 +1,29 @@
-import type { DepictionBaseView } from ".";
+import { createElement, RenderableElement, setStyles } from "../renderable";
 import { guardIfNotType, RenderCtx, textAlignment } from "../util";
+import DepictionBaseView from "./base";
 
-export function makeRatingElement(progress: number, alignment: string): HTMLElement {
-	const el = document.createElement("div");
-	el.className = "nd-rating";
-	el.style.textAlign = alignment;
-	el.style.setProperty("--kennel-rating-progress", progress * 20 + "%");
-	const textEl = document.createElement("span");
-	textEl.innerHTML = "★★★★★";
-	el.appendChild(textEl);
+export function makeRatingElement(progress: number, alignment: string): RenderableElement {
+	const el = createElement("div", { class: "nd-rating" });
+	setStyles(el, {
+		"text-align": alignment,
+		"--kennel-rating-progress": progress * 20 + "%",
+	});
+	el.children = [createElement("span", {}, ["★★★★★"])];
 	return el;
 }
 
-export default class DepictionRatingView implements DepictionBaseView {
-	ctx: RenderCtx;
+export default class DepictionRatingView extends DepictionBaseView {
 	rating: number;
 	alignment: string;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		console.log("RATING VIEw", dictionary);
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		this.rating = guardIfNotType(dictionary["rating"], "number");
 		this.alignment = textAlignment(guardIfNotType(dictionary["alignment"], "number"));
+		console.log(this.alignment, dictionary["alignment"]);
 	}
 
-	render(): HTMLElement {
+	async make() {
 		return makeRatingElement(this.rating, this.alignment);
 	}
 }

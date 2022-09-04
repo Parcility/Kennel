@@ -1,7 +1,8 @@
-import type { DepictionBaseView } from ".";
+import { createElement, RenderableElement, setClassList } from "../renderable";
 import { defaultIfNotType, guardIfNotType, makeView, RenderCtx, renderView } from "../util";
+import DepictionBaseView from "./base";
 
-export default class DepictionButtonView implements DepictionBaseView {
+export default class DepictionButtonView extends DepictionBaseView {
 	text?: string;
 	children?: DepictionBaseView;
 	action: string;
@@ -9,10 +10,9 @@ export default class DepictionButtonView implements DepictionBaseView {
 	yPadding: number;
 	openExternal: boolean;
 	backupAction: string;
-	ctx: RenderCtx;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		this.isLink = defaultIfNotType(dictionary["isLink"], "boolean", false);
 		this.action = guardIfNotType(dictionary["action"], "string");
 
@@ -36,20 +36,21 @@ export default class DepictionButtonView implements DepictionBaseView {
 		}
 	}
 
-	async render(): Promise<HTMLElement> {
-		let el = this.isLink ? document.createElement("a") : document.createElement("button");
-		el.className = "nd-button";
-
-		if (this.isLink && el instanceof HTMLAnchorElement) {
-			el.href = this.action;
+	async make(): Promise<RenderableElement> {
+		let el = createElement(this.isLink ? "a" : "button");
+		// let el = this.isLink ? document.createElement("a") : document.createElement("button");
+		el.attributes.class = "nd-button";
+		if (this.isLink) {
+			el.attributes.href = this.action;
 		}
 
 		if (this.children) {
-			let child = await renderView(this.children, this.ctx);
-			child.style.pointerEvents = "none";
-			el.appendChild(child);
+			this.children;
+			let child = await this.children.make();
+			child.attributes.pointerEvents = "none";
+			el.children = [child];
 		} else if (this.text) {
-			el.innerHTML = this.text;
+			el.children = [this.text];
 		}
 		return el;
 	}

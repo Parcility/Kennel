@@ -1,15 +1,8 @@
-import type { DepictionBaseView } from ".";
-import { RenderCtx } from "../util";
+import { createElement } from "../renderable";
+import DepictionBaseView from "./base";
 
-export default class DepictionSeparatorView implements DepictionBaseView {
-	ctx: RenderCtx;
-	constructor(_: any, ctx: RenderCtx) {
-		this.ctx = ctx;
-	}
-
-	render(): HTMLElement {
-		const el = document.createElement("hr");
-		el.className = "nd-separator";
-		return el;
+export default class DepictionSeparatorView extends DepictionBaseView {
+	async make() {
+		return createElement("hr", { class: "nd-separator" });
 	}
 }

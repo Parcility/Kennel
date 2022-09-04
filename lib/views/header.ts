@@ -1,17 +1,17 @@
-import type { DepictionBaseView } from ".";
+import { createElement, setClassList, setStyles } from "../renderable";
 import { defaultIfNotType, RenderCtx, textAlignment } from "../util";
+import DepictionBaseView from "./base";
 
-export default class DepictionHeaderView implements DepictionBaseView {
+export default class DepictionHeaderView extends DepictionBaseView {
 	title: string;
 	useMargins: boolean;
 	useBottomMargin: boolean;
 	bold: boolean;
 	textColor?: string;
 	alignment: string;
-	ctx: RenderCtx;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		if (typeof dictionary["title"] === "string") {
 			this.title = dictionary.title;
 		}
@@ -25,15 +25,17 @@ export default class DepictionHeaderView implements DepictionBaseView {
 		this.alignment = textAlignment(dictionary["alignment"]);
 	}
 
-	render(): HTMLElement {
-		const el = document.createElement("p");
-		el.className = "nd-header";
-		el.innerText = this.title;
-		el.style.textAlign = this.alignment;
-		if (this.textColor) el.style.color = this.textColor;
-		if (this.bold) el.classList.add("nd-bold");
-		if (this.useMargins) el.classList.add("nd-using-margins");
-		if (this.useBottomMargin) el.classList.add("nd-using-bottom-margin");
+	async make() {
+		const el = createElement("p", {}, [this.title]);
+		setClassList(el, [
+			"nd-header",
+			this.bold && "nd-header-bold",
+			this.useMargins && "nd-header-margins",
+			this.useBottomMargin && "nd-header-bottom-margin",
+		]);
+		let styles = { "text-align": this.alignment };
+		if (this.textColor) styles["color"] = this.textColor;
+		setStyles(el, styles);
 		return el;
 	}
 }

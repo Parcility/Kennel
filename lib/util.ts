@@ -1,3 +1,4 @@
+import { RenderableElement, renderElement, setStyles } from "./renderable";
 import { DepictionBaseView, views } from "./views";
 
 export class KennelError extends Error {
@@ -68,19 +69,20 @@ export function textAlignment(value: any): string {
 	}
 }
 
-export function applyAlignmentMargin(el: HTMLElement, alignment: Alignment) {
+export function applyAlignmentMargin(el: RenderableElement, alignment: Alignment) {
+	let styles;
 	switch (alignment) {
 		case Alignment.Left:
-			el.style.marginRight = "auto";
+			styles = { "margin-right": "auto" };
 			break;
 		case Alignment.Right:
-			el.style.marginLeft = "auto";
+			styles = { "margin-left": "auto" };
 			break;
 		case Alignment.Center:
-			el.style.marginLeft = "auto";
-			el.style.marginRight = "auto";
+			styles = { "margin-left": "auto", "margin-right": "auto" };
 			break;
 	}
+	setStyles(el, styles, typeof el.attributes.style === "boolean" ? "" : el.attributes.style || "");
 }
 
 // Processing
@@ -100,16 +102,25 @@ export function makeViews(views: any[], ctx: RenderCtx): DepictionBaseView[] {
 
 // Rendering
 
-export type RenderCtx = Map<DepictionBaseView, HTMLElement | undefined>;
+export type RenderCtx = {
+	ssr: boolean;
+	els: Map<DepictionBaseView, HTMLElement | undefined>;
+};
 
-export async function renderView(view: DepictionBaseView, ctx: RenderCtx): Promise<HTMLElement> {
-	let el = await view.render();
-	if (view.htmlID) el.id = view.htmlID;
-	ctx.set(view, el);
+export async function renderView<T extends RenderCtx>(
+	view: DepictionBaseView,
+	ctx: T
+): Promise<T["ssr"] extends true ? string : HTMLElement> {
+	let madeView = await view.make();
+	let el = renderElement(madeView, ctx);
+	if (!ctx.ssr) ctx.els.set(view, el as HTMLElement);
 	return el;
 }
 
-export function renderViews(views: DepictionBaseView[], ctx: RenderCtx): Promise<HTMLElement[]> {
+export function renderViews<T extends RenderCtx>(
+	views: DepictionBaseView[],
+	ctx: T
+): Promise<(T["ssr"] extends true ? string : HTMLElement)[]> {
 	return Promise.all(views.map((view) => renderView(view, ctx)));
 }
 

@@ -1,7 +1,8 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
-import type { DepictionBaseView } from ".";
+import { createRawNode, createShadowedElement, renderElementString, setStyles } from "../renderable";
 import { defaultIfNotType, guardIfNotType, RenderCtx } from "../util";
+import DepictionBaseView from "./base";
 import DepictionSeparatorView from "./separator";
 
 export function callMarked(str: string, opt?: any): Promise<string> {
@@ -13,15 +14,14 @@ export function callMarked(str: string, opt?: any): Promise<string> {
 	);
 }
 
-export default class DepictionMarkdownView implements DepictionBaseView {
+export default class DepictionMarkdownView extends DepictionBaseView {
 	markdown: Promise<string>;
 	useSpacing: boolean;
 	useMargins: boolean;
 	useRawFormat: boolean;
-	ctx: RenderCtx;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		let md = guardIfNotType(dictionary["markdown"], "string");
 		this.useMargins = defaultIfNotType(dictionary["useMargins"], "boolean", true);
 		this.useSpacing = defaultIfNotType(dictionary["useSpacing"], "boolean", true);
@@ -31,12 +31,12 @@ export default class DepictionMarkdownView implements DepictionBaseView {
 			// Unfortunately, this is a design flaw with the spec.
 			// TODO: Just disable link parsing. This is non-trivial to do, so for now, we just disable GFM-flavored Markdown for useRawFormat.
 
-			this.markdown = callMarked(md, { gfm: false }).then((rendered) => {
+			this.markdown = callMarked(md, { gfm: false }).then(async (rendered) => {
 				let didWarnXSS = false;
 				let xssWarn = `<p style="opacity:0.3">[Warning: This depiction may be trying to maliciously run code in your browser.]</p><br>`;
 				rendered = rendered.replace(
 					/<hr>/gi,
-					new DepictionSeparatorView(undefined, new Map()).render().outerHTML
+					renderElementString(await new DepictionSeparatorView(undefined, this.ctx).make())
 				);
 				if (
 					rendered.toLowerCase().indexOf("<script>") !== -1 ||
@@ -65,32 +65,17 @@ export default class DepictionMarkdownView implements DepictionBaseView {
 		this.markdown = callMarked(new Option(md).innerHTML, { xhtml: true, gfm: true });
 	}
 
-	async render(): Promise<HTMLElement> {
+	async make() {
 		const resp = await this.markdown;
-		const el = new MarkdownElement(resp);
 		let margins = this.useMargins ? 16 : 0;
 		let spacing = this.useSpacing ? 13 : 0;
 		let bottomSpacing = this.useSpacing ? 13 : 0;
-		el.style.margin = margins + "px";
-		el.style.paddingTop = spacing + "px";
-		el.style.paddingBottom = (bottomSpacing ? bottomSpacing : spacing) + "px";
+		let el = createShadowedElement({ class: "nd-markdown" }, [createRawNode(DOMPurify.sanitize(resp))]);
+		setStyles(el, {
+			margin: margins + "px",
+			"padding-top": spacing + "px",
+			"padding-bottom": (bottomSpacing ? bottomSpacing : spacing) + "px",
+		});
 		return el;
 	}
 }
-
-class MarkdownElement extends HTMLElement {
-	root: HTMLElement | ShadowRoot;
-
-	set content(newValue) {
-		this.root.innerHTML = newValue;
-	}
-
-	constructor(md?: string) {
-		super();
-		let shadow = this.attachShadow({ mode: "open" });
-		this.root = shadow;
-		if (md) this.root.innerHTML = DOMPurify.sanitize(md);
-	}
-}
-
-self.customElements.define("nd-markdown", MarkdownElement);

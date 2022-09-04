@@ -1,48 +1,35 @@
 import DOMPurify from "dompurify";
-import type { DepictionBaseView } from ".";
+import { createElement, createShadowedElement, RenderableElement } from "../renderable";
 import { guardIfNotType, RenderCtx, undefIfNotType } from "../util";
-import { callMarked } from "./markdown";
+import DepictionBaseView from "./base";
+import DepictionMarkdownView, { callMarked } from "./markdown";
 import { makeRatingElement } from "./rating";
 
-export default class DepictionReviewView implements DepictionBaseView {
-	ctx: RenderCtx;
+export default class DepictionReviewView extends DepictionBaseView {
 	title: string;
 	author: string;
 	rating?: number;
-	markdown: Promise<string>;
+	markdown: DepictionMarkdownView;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		console.log("RATING VIEw", dictionary);
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		this.title = guardIfNotType(dictionary["title"], "string");
 		this.author = guardIfNotType(dictionary["author"], "string");
-		this.markdown = callMarked(guardIfNotType(dictionary["markdown"], "string"));
+		let markdown = guardIfNotType(dictionary["markdown"], "string");
+		this.markdown = new DepictionMarkdownView({ markdown, useSpacing: false, useMargins: false }, this.ctx);
 		this.rating = undefIfNotType(dictionary["rating"], "number");
 	}
 
-	async render(): Promise<HTMLElement> {
-		const el = document.createElement("div");
-		el.className = "nd-review";
-		const titleEl = document.createElement("p");
-		titleEl.className = "nd-review-title";
-		titleEl.innerHTML = this.title;
-		const subtitleEl = document.createElement("div");
-		subtitleEl.className = "nd-review-subtitle";
-		const authorEl = document.createElement("p");
-		authorEl.className = "nd-review-author";
-		authorEl.innerHTML = "by " + this.author;
-		const contentEl = document.createElement("p");
-		contentEl.className = "nd-review-content";
+	async make() {
+		const titleEl = createElement("p", { class: "nd-review-title" }, [this.title]);
+		const subtitleEl = createElement("div", { class: "nd-review-subtitle" });
+		const authorEl = createElement("p", { class: "nd-review-author" }, ["by " + this.author]);
 		let md = await this.markdown;
-		contentEl.innerHTML = DOMPurify.sanitize(md);
-		el.appendChild(titleEl);
-		subtitleEl.appendChild(authorEl);
-		if (this.rating) {
-			const ratingEl = makeRatingElement(this.rating, "right");
-			subtitleEl.appendChild(ratingEl);
-		}
-		el.appendChild(subtitleEl);
-		el.appendChild(contentEl);
+		const contentEl = createElement("p", { class: "nd-review-content" }, [await md.make()]);
+		subtitleEl.children = [authorEl, this.rating && makeRatingElement(this.rating, "left")].filter(
+			Boolean
+		) as RenderableElement[];
+		const el = createElement("div", { class: "nd-review" }, [titleEl, subtitleEl, contentEl]);
 		return el;
 	}
 }

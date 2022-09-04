@@ -1,20 +1,21 @@
-import type { DepictionBaseView } from ".";
+import { createElement, setStyles } from "../renderable";
 import { guardIfNotType, RenderCtx } from "../util";
+import DepictionBaseView from "./base";
 
-export default class DepictionSpacerView implements DepictionBaseView {
+export default class DepictionSpacerView extends DepictionBaseView {
 	spacing: number;
-	ctx: RenderCtx;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		this.spacing = guardIfNotType(dictionary["spacing"], "number");
 	}
 
-	render(): HTMLElement {
-		const el = document.createElement("br");
-		el.className = "nd-spacer";
-		el.style.minHeight = `${this.spacing}px`;
-		el.style.minWidth = `${this.spacing}px`;
+	async make() {
+		const el = createElement("br", { class: "nd-spacer" });
+		setStyles(el, {
+			"min-height": `${this.spacing}px`,
+			"min-width": `${this.spacing}px`,
+		});
 		return el;
 	}
 }

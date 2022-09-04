@@ -15,7 +15,13 @@
 			const target = document.getElementById("example-depiction");
 
 			let k = new Kennel(depiction);
-			k.render(target);
+			k.render()
+				.then((resp) => target.appendChild(resp))
+				.then(() => k.mounted());
+
+			let ssrK = new Kennel(depiction, true);
+			ssrK.render().then((resp) => console.log(resp));
+			// .then(() => ssrK.mounted());
 		</script>
 	</body>
 </html>

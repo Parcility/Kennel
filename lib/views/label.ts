@@ -1,7 +1,8 @@
-import type { DepictionBaseView } from ".";
+import { createElement, RenderableElement, setStyles } from "../renderable";
 import { defaultIfNotType, fontWeightParse, parseSize, RenderCtx, textAlignment } from "../util";
+import DepictionBaseView from "./base";
 
-export default class DepictionLabelView implements DepictionBaseView {
+export default class DepictionLabelView extends DepictionBaseView {
 	text: string;
 	margins = { left: 0, right: 0, top: 0, bottom: 0 };
 	textColor?: string;
@@ -12,7 +13,7 @@ export default class DepictionLabelView implements DepictionBaseView {
 	ctx: RenderCtx;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		if (typeof dictionary["text"] === "string") {
 			this.text = dictionary.text;
 		}
@@ -53,26 +54,25 @@ export default class DepictionLabelView implements DepictionBaseView {
 		this.alignment = textAlignment(dictionary["alignment"]);
 	}
 
-	render(): HTMLElement {
-		const el = document.createElement("p");
-		el.className = "nd-label";
-		el.innerText = this.text;
-		if (this.textColor) el.style.color = this.textColor;
-		el.style.textAlign = this.alignment;
-		el.style.fontWeight = this.weight;
-		el.style.marginTop = this.margins.top + "px";
-		el.style.marginRight = this.margins.right + "px";
-		el.style.marginLeft = this.margins.left + "px";
-		el.style.marginBottom = this.margins.bottom + "px";
+	async make(): Promise<RenderableElement> {
+		const el = createElement("p", { class: "nd-label" }, [this.text]);
+		let styles: Record<string, string> = {
+			"text-align": this.alignment,
+			"font-weight": this.weight,
+			"margin-top": this.margins.top + "px",
+			"margin-right": this.margins.right + "px",
+			"margin-left": this.margins.left + "px",
+			"margin-bottom": this.margins.bottom + "px",
+		};
+		if (this.textColor) styles.color = this.textColor;
 		if (!this.textColor) {
 			if (this.isActionable) {
 				if (this.isHighlighted) {
-					el.style.filter = "saturation(75%)";
-				} else if (this.textColor) {
-					el.style.color = this.textColor;
+					styles.filter = "saturation(75%)";
 				}
 			}
 		}
+		setStyles(el, styles);
 		return el;
 	}
 }

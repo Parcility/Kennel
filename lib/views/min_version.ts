@@ -1,12 +1,11 @@
-import type { DepictionBaseView } from ".";
 import { guardIfNotType, KennelError, makeView, RenderCtx, renderView } from "../util";
+import DepictionBaseView from "./base";
 
-export default class DepictionMinVersionForceView implements DepictionBaseView {
-	ctx: RenderCtx;
+export default class DepictionMinVersionForceView extends DepictionBaseView {
 	view: DepictionBaseView;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
-		this.ctx = ctx;
+		super(dictionary, ctx);
 		// TODO: actually check the version Kennel supports against this
 		let view = guardIfNotType(dictionary["view"], "object");
 		let madeView = makeView(view, ctx);
@@ -14,7 +13,7 @@ export default class DepictionMinVersionForceView implements DepictionBaseView {
 		this.view = madeView;
 	}
 
-	render(): Promise<HTMLElement> {
-		return renderView(this.view, this.ctx);
+	async make() {
+		return this.view.make();
 	}
 }
