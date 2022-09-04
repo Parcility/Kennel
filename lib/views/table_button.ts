@@ -3,7 +3,6 @@ import { defaultIfNotType, guardIfNotType, RenderCtx } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionTableTextView extends DepictionBaseView {
-	ctx: RenderCtx;
 	title: string;
 	// repoIcon?: string;
 

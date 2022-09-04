@@ -20,7 +20,6 @@ export default class DepictionRatingView extends DepictionBaseView {
 		super(dictionary, ctx);
 		this.rating = guardIfNotType(dictionary["rating"], "number");
 		this.alignment = textAlignment(guardIfNotType(dictionary["alignment"], "number"));
-		console.log(this.alignment, dictionary["alignment"]);
 	}
 
 	async make() {

@@ -4,7 +4,7 @@ import { RenderCtx } from "../util";
 export default class DepictionBaseView {
 	ctx: RenderCtx;
 
-	constructor(dictionary: any, ctx: RenderCtx) {
+	constructor(_: any, ctx: RenderCtx) {
 		this.ctx = ctx;
 	}
 

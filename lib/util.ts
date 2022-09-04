@@ -94,6 +94,7 @@ export function makeView(view: any, ctx: RenderCtx): DepictionBaseView | undefin
 	} catch (error) {
 		console.error(error);
 	}
+	return undefined;
 }
 
 export function makeViews(views: any[], ctx: RenderCtx): DepictionBaseView[] {

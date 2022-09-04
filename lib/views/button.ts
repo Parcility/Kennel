@@ -1,5 +1,5 @@
-import { createElement, RenderableElement, setClassList } from "../renderable";
-import { defaultIfNotType, guardIfNotType, makeView, RenderCtx, renderView } from "../util";
+import { createElement, RenderableElement } from "../renderable";
+import { defaultIfNotType, guardIfNotType, makeView, RenderCtx } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionButtonView extends DepictionBaseView {

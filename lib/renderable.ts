@@ -1,4 +1,3 @@
-import DOMPurify from "dompurify";
 import { RenderCtx } from "./util";
 
 export interface RenderableElement {
@@ -48,7 +47,7 @@ export function renderElementDOM(el: RenderableElement): HTMLElement {
 		} else if ((child as RenderableNode).raw) {
 			let el = document.createElement("div");
 			el.innerHTML = (child as RenderableNode).contents;
-			target.append.apply(target, el.children);
+			target.append.apply(target, Array.from(el.children));
 		} else {
 			target.appendChild(renderElementDOM(child as RenderableElement));
 		}

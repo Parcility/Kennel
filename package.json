@@ -1,8 +1,31 @@
 {
-	"name": "kennel",
-	"private": true,
-	"version": "0.0.0",
+	"name": "@zenithdevs/kennel",
+	"version": "2.0.0",
+	"description": "A comprehensive, easy-to-use native depiction renderer.",
 	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Parcility/Kennel.git"
+	},
+	"keywords": [
+		"sileo",
+		"jailbreak",
+		"depiction",
+		"typescript"
+	],
+	"author": "Zenith",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Parcility/Kennel/issues"
+	},
+	"homepage": "https://github.com/Parcility/Kennel#readme",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.umd.cjs"
+		},
+		"./style.css": "./dist/style.css"
+	},
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
@@ -10,8 +33,10 @@
 	},
 	"devDependencies": {
 		"@types/dompurify": "^2.3.4",
+		"@types/marked": "^4.0.6",
 		"typescript": "^4.6.4",
-		"vite": "^3.0.7"
+		"vite": "^3.0.7",
+		"vite-plugin-dts": "^1.4.1"
 	},
 	"dependencies": {
 		"dompurify": "^2.4.0",

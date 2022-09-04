@@ -14,7 +14,6 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 	itemWidth: number;
 	itemHeight: number;
 	itemBorderRadius: number;
-	isPaging: boolean;
 
 	constructor(dictionary: any, ctx: RenderCtx) {
 		super(dictionary, ctx);
@@ -25,10 +24,9 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 		[this.itemWidth, this.itemHeight] = parseSize(rawItemSize);
 		this.itemBorderRadius = defaultIfNotType(dictionary["itemBorderRadius"], "number", 0);
 
-		let screenshots = dictionary["screenshots"];
-		if (!Array.isArray(screenshots)) return;
-
-		this.screenshots = screenshots.map(this.parseScreenshot).filter(Boolean) as Screenshot[];
+		this.screenshots = guardIfNotType(dictionary["screenshots"], "array")
+			.map(this.parseScreenshot)
+			.filter(Boolean) as Screenshot[];
 	}
 
 	parseScreenshot(dictionary: any): Screenshot | undefined {

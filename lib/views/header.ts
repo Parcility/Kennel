@@ -3,7 +3,7 @@ import { defaultIfNotType, RenderCtx, textAlignment } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionHeaderView extends DepictionBaseView {
-	title: string;
+	title?: string;
 	useMargins: boolean;
 	useBottomMargin: boolean;
 	bold: boolean;
@@ -33,7 +33,7 @@ export default class DepictionHeaderView extends DepictionBaseView {
 			this.useMargins && "nd-header-margins",
 			this.useBottomMargin && "nd-header-bottom-margin",
 		]);
-		let styles = { "text-align": this.alignment };
+		let styles: any = { "text-align": this.alignment };
 		if (this.textColor) styles["color"] = this.textColor;
 		setStyles(el, styles);
 		return el;

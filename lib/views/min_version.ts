@@ -1,4 +1,4 @@
-import { guardIfNotType, KennelError, makeView, RenderCtx, renderView } from "../util";
+import { guardIfNotType, KennelError, makeView, RenderCtx } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionMinVersionForceView extends DepictionBaseView {

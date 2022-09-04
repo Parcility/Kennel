@@ -1,12 +1,11 @@
 import "./index.css";
 import { createElement, renderElement } from "./renderable";
-import { makeView, makeViews, RenderCtx, renderViews } from "./util";
+import { makeView, makeViews, RenderCtx } from "./util";
 import type { DepictionBaseView } from "./views";
-import { views } from "./views";
 
 export default class Kennel {
 	#depiction: any;
-	#processed: DepictionBaseView[];
+	#processed: DepictionBaseView[] = [];
 	#ctx: RenderCtx;
 
 	constructor(depiction: any, ssr = false) {
@@ -40,10 +39,7 @@ export default class Kennel {
 					super();
 					let tmpl = this.querySelector("template");
 					if (!tmpl) return;
-					console.log(tmpl.content);
 					let content = tmpl.content.cloneNode(true);
-					console.log(content.childNodes);
-					console.log(content);
 					let shadow = this.attachShadow({ mode: "open" });
 					shadow.appendChild(content);
 				}

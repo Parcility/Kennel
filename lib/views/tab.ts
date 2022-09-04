@@ -1,5 +1,5 @@
 import { createElement, RenderableElement } from "../renderable";
-import { guardIfNotType, makeView, RenderCtx, renderViews } from "../util";
+import { guardIfNotType, makeView, RenderCtx } from "../util";
 import DepictionBaseView from "./base";
 
 class DepictionTabPageView extends DepictionBaseView {
@@ -34,7 +34,6 @@ export default class DepictionTabView extends DepictionBaseView {
 	async makeTab(tab: DepictionTabPageView, isActive: boolean): Promise<RenderableElement> {
 		let numericControlID = DepictionTabView.tabControlID++;
 		let id = "kennel-tab-" + numericControlID;
-		console.log("tab id:", id, isActive);
 		const input = createElement("input", {
 			type: "radio",
 			id,

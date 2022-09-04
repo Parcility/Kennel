@@ -1,5 +1,5 @@
 import { createElement } from "../renderable";
-import { guardIfNotType, makeViews, RenderCtx, renderViews } from "../util";
+import { guardIfNotType, makeViews, RenderCtx } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionLayerView extends DepictionBaseView {
