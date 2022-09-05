@@ -33,7 +33,7 @@ Kennel was written to be as easy to interact with as possible.
 
 ```ts
 // Import Kennel
-import { render, hydrate } from "@zenithdevs/kennel";
+import { render, hydrate } from "@parcility/kennel";
 
 // Assumes the `depiction` variables exists elsewhere. The second argument (options) can be omitted.
 let output = await render(depiction, { ssr: true });
