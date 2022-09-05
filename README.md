@@ -1,4 +1,5 @@
 # Kennel
+
 A complete implementation of Sileo's native depictions in TypeScript.
 
 ---
@@ -6,95 +7,67 @@ A complete implementation of Sileo's native depictions in TypeScript.
 ### Get Started
 
 ```shell script
-$ npm i @zenithdevs/kennel
-```
-
-You will also need to put the following lines of HTML code into the `<head>` of any page you render depictions on:
-
-```html
-<!--Update the href link to the path to Kennel's CSS file. -->
-<link rel="stylesheet" type="text/css" href="kennel.css">
-<script>
-    function ndChangeTab(show, hide) {
-        let i;
-        // Hide elements.
-        for (i = 0; i < document.querySelectorAll(`${hide}.nd_tab`).length; i++) {
-            document.querySelectorAll(`${hide}.nd_tab`)[i].classList.add("nd_hidden");
-            document.querySelectorAll(`${hide}.nd_nav_btn`)[i].classList.remove("nd_active");
-        }
-        // Show elements.
-        for (i = 0; i < document.querySelectorAll(`${show}.nd_tab`).length; i++) {
-            document.querySelectorAll(`${show}.nd_tab`)[i].classList.remove("nd_hidden");
-            document.querySelectorAll(`${show}.nd_nav_btn`)[i].classList.add("nd_active");
-        }
-    }
-</script>
+$ npm i @parcility/kennel
 ```
 
 ### API
+
 Kennel was written to be as easy to interact with as possible.
 
-> `Kennel(depiction: object, options: object)`
->
-> The class that stores and renders a native depiction.
+`render(depiction: any, options?: Parital<RenderOptions>): Promise<HTMLElement | string>`
+
+> Render a depiction to either a HTMLElement or a string.
 >
 > `depiction`: An object that stores the native depiction's contents.
 >
-> `options`: An object that stores various options to pass to Kennel.
+> `options`: The settings used for rendering.
+> `options.ssr`: Output a string instead of a DOM element.
+> `options.defaultTintColor`: The css color used for the tint.
 
-These are the options that can be set:
-> `proxyURL`: A URL to prepend to all images, ideal for an image proxy server. Empty by default.
->
-> `useShadowDom` A boolean that enables the insecure shadow DOM implementation for DepictionMarkdownView. False by default (recommended).
->
-> `iframeHeader`: An HTML string to inject into DepictionMarkdownView IFrames. Will set text to white if dark mode (via \<style />) by default.
->
-> `silenceErrors`: A boolean to silence any syntax errors from the depiction. False by default.
->
-> `packagePrefix`: A URL to prepend to all package references. Uses the Parcility API by default.
->
-> `defaultTint`: A CSS-compatible string to use as the default tint color.
+`hydrate(target?: ParentNode): void`
 
-All arguments are optional, but `depiction` is highly suggested for proper usage.
+> Runs the hydrate function on views that need to be hydrate. Can only be ran on the client side.
+> `target`: The root element for hydration. Defaults to `document.body`.
 
 #### Example
 
 ```ts
 // Import Kennel
-const Kennel = require("@zenithdevs/kennel");
+import { render, hydrate } from "@zenithdevs/kennel";
 
-// Set options.
-const options = {
-    "iframeStyle": "",
-    "useShadowDom": false
-};
+// Assumes the `depiction` variables exists elsewhere. The second argument (options) can be omitted.
+let output = await render(depiction, { ssr: true });
 
-// Assumes the `depiction` variables exists elsewhere. Either could be omitted.
-const nd = new Kennel(depiction, options);
-
-// Renders the HTML code for the depiction.
-const nd_out = nd.render();
+// sometime on the client.
+hydrate();
 ```
 
-A full demo is available in the `demo` folder.
+A full demo is available by running `yarn dev`.
 
 ---
 
+### Development
+
+### Testing
+
+Run the test page, which loads depictions from the `test/` directory.
+
+```shell script
+yarn dev
+```
+
 ### Building
+
 This is not required if you installed Kennel through NPM.
 
 1: Install dependencies
+
 ```shell script
-npm i
+yarn install
 ```
 
 2: Build module
-```shell script
-rollup -c
-```
 
-3 (optional): Build the demo.
 ```shell script
-cd demo
-node index.js
+yarn build
 ```
