@@ -188,7 +188,7 @@ const ESCAPE_ATTRIBUTE_MAP: Record<string, string> = {
 	"<": "&lt;",
 	">": "&gt;",
 	'"': "&quot;",
-	"'": "&#39;",
+	// "'": "&#39;",
 	"`": "&#x60;",
 };
 
@@ -199,7 +199,7 @@ export function escapeHTML(potentialHTML: string, isAttribute: boolean = false):
 	}
 
 	let map = isAttribute ? ESCAPE_ATTRIBUTE_MAP : ESCAPE_HTML_MAP;
-	let charset = isAttribute ? /[<>"'`]/g : /[&<>"'`=\/]/g;
+	let charset = isAttribute ? /[<>"`]/g : /[&<>"'`=\/]/g;
 	return potentialHTML.replace(charset, function (s) {
 		return map[s];
 	});

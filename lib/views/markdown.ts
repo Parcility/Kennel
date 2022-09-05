@@ -66,8 +66,8 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 		let spacing = this.useSpacing ? 13 : 0;
 		let bottomSpacing = this.useSpacing ? 13 : 0;
 		let el = createShadowedElement({ class: "nd-markdown" }, [
-			createRawNode(resp),
 			createElement("style", {}, [markdownStyles]),
+			createRawNode(resp),
 		]);
 		let styles: any = {
 			margin: "0 " + margins + "px",
