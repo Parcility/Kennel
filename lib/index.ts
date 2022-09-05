@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import "./index.css";
 import { createElement, renderElement } from "./renderable";
 import { makeView, makeViews, RenderCtx } from "./util";

@@ -1,4 +1,4 @@
-import { createElement, RenderableElement } from "../renderable";
+import { createElement, RenderableElement, setStyles } from "../renderable";
 import { guardIfNotType, RenderCtx, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 import DepictionMarkdownView from "./markdown";
@@ -25,6 +25,7 @@ export default class DepictionReviewView extends DepictionBaseView {
 		const authorEl = createElement("p", { class: "nd-review-author" }, ["by " + this.author]);
 		let md = await this.markdown;
 		const contentEl = createElement("p", { class: "nd-review-content" }, [await md.make()]);
+		if (this.tintColor) setStyles(contentEl, { "--kennel-tint-color": this.tintColor });
 		subtitleEl.children = [authorEl, this.rating && makeRatingElement(this.rating, "left")].filter(
 			Boolean
 		) as RenderableElement[];

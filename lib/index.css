@@ -32,10 +32,6 @@ hr.nd-separator {
 	margin-right: 0;
 }
 
-nd-markdown.nd-raw-markdown {
-	font-family: monospace;
-}
-
 .nd-stack.nd-stack-landscape {
 	justify-content: space-between;
 	flex-direction: row;

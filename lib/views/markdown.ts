@@ -1,6 +1,7 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
-import { createRawNode, createShadowedElement, renderElementString, setStyles } from "../renderable";
+import markdownStyles from "../markdown.css?raw";
+import { createElement, createRawNode, createShadowedElement, renderElementString, setStyles } from "../renderable";
 import { defaultIfNotType, guardIfNotType, RenderCtx } from "../util";
 import DepictionBaseView from "./base";
 import DepictionSeparatorView from "./separator";
@@ -70,7 +71,10 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 		let margins = this.useMargins ? 16 : 0;
 		let spacing = this.useSpacing ? 13 : 0;
 		let bottomSpacing = this.useSpacing ? 13 : 0;
-		let el = createShadowedElement({ class: "nd-markdown" }, [createRawNode(DOMPurify.sanitize(resp))]);
+		let el = createShadowedElement({ class: "nd-markdown" }, [
+			createRawNode(DOMPurify.sanitize(resp)),
+			createElement("style", {}, [markdownStyles]),
+		]);
 		let styles: any = {
 			margin: margins + "px",
 			"padding-top": spacing + "px",
