@@ -21,7 +21,7 @@ export default class DepictionAutoStackView extends DepictionBaseView {
 			this.views.push(v);
 		}
 
-		this.viewWidths = this.views.map((view) => view["preferredWidth"]);
+		this.viewWidths = views.map((view) => view["preferredWidth"] as number);
 		this.backgroundColor = undefIfNotType(depiction["backgroundColor"], "string");
 	}
 
