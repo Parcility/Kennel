@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 import "./index.css";
-import { createElement, renderElement } from "./renderable";
-import { constructView, constructViews, defaultIfNotType, KennelError, makeViews, undefIfNotType } from "./util";
+import { createElement, renderElement, setStyles } from "./renderable";
+import { constructView, constructViews, defaultIfNotType, KennelError, makeViews } from "./util";
 import { DepictionBaseView, views } from "./views";
 
 interface RenderOptions {
@@ -26,7 +26,12 @@ export async function render(depiction: any, options?: Partial<RenderOptions>): 
 	}
 	console.timeEnd("process");
 	if (!processed) throw new KennelError("Unable to process depiction. No child was found.");
-	let el = createElement("div", { style: `--kennel-tint-color: ${tintColor};` });
+	let el = createElement("div");
+	if (tintColor) {
+		setStyles(el, {
+			"--kennel-tint-color": tintColor,
+		});
+	}
 	el.children = await makeViews(processed);
 	return renderElement(el, options?.ssr || false);
 }
