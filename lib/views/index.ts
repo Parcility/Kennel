@@ -29,7 +29,6 @@ export type DepictionViewConstructor<T extends DepictionBaseView> = { new (dicti
 export const views = new Map<string, DepictionViewConstructor<any>>([
 	["DepictionAutoStackView", AutoStackView],
 	["DepictionButtonView", ButtonView],
-	// ["DepictionFormViewController", FormViewController],
 	["DepictionHeaderView", HeaderView],
 	["DepictionImageView", ImageView],
 	["DepictionLabelView", LabelView],
