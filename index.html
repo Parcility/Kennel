@@ -18,7 +18,6 @@
 
 			async function renderDepiction([name, depictionImport]) {
 				const { default: depiction } = await depictionImport();
-				console.log(depiction);
 				let [dom, ssr] = await Promise.all([render(depiction), render(depiction, { ssr: true })]);
 				const details = document.createElement("div");
 				const content = document.createElement("div");

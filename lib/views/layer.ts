@@ -18,7 +18,6 @@ export default class DepictionLayerView extends DepictionBaseView {
 	}
 
 	static hydrate(el: HTMLElement) {
-		console.log("hydrating", el);
 		let arr = Array.from(el.children);
 		let maxHeight = arr.reduce((max, el) => {
 			let height = el.getBoundingClientRect().height;

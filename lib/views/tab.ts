@@ -57,7 +57,6 @@ export default class DepictionTabView extends DepictionBaseView {
 	}
 
 	async make() {
-		console.log("tab make");
 		const children = (await makeViews(this.pages)).map((el, i) => {
 			let control = el.children.find((el) => (el as RenderableElement | undefined)?.tag === "label") as
 				| RenderableElement

@@ -1,4 +1,16 @@
 import DOMPurify from "dompurify";
+import { escapeHTML } from "./util";
+
+const PURIFY_OPTIONS: DOMPurify.Config = {
+	RETURN_DOM_FRAGMENT: false,
+	RETURN_DOM: false,
+	FORCE_BODY: true,
+	ADD_TAGS: ["iframe", "template", "style", "video"],
+	ADD_ATTR: ["frameborder", "style"],
+	CUSTOM_ELEMENT_HANDLING: {
+		tagNameCheck: /^nd-shadowed-content$/,
+	},
+};
 
 export interface RenderableElement {
 	tag: string;
@@ -14,7 +26,7 @@ export interface RenderableNode {
 export function createRawNode(contents: string): RenderableNode {
 	return {
 		raw: true,
-		contents: DOMPurify.sanitize(contents),
+		contents: DOMPurify.sanitize(contents, PURIFY_OPTIONS) as string,
 	};
 }
 
@@ -37,7 +49,7 @@ export function renderElementDOM(el: RenderableElement): HTMLElement {
 	const element = document.createElement(el.tag);
 	for (const [key, value] of Object.entries(el.attributes)) {
 		if (typeof value === "boolean") element.toggleAttribute(key, value);
-		else element.setAttribute(key, value);
+		else element.setAttribute(key, escapeHTML(value));
 	}
 	for (const child of el.children) {
 		let target = el.tag === "template" ? (element as HTMLTemplateElement).content : element;
@@ -58,20 +70,24 @@ export function renderElementDOM(el: RenderableElement): HTMLElement {
 export function renderElementString(el: RenderableElement): string {
 	let result = `<${el.tag} `;
 	result += Object.entries(el.attributes)
-		.map(([key, value]) => (typeof value === "boolean" ? `${value ? key : ""}` : `${key}="${value}"`))
+		.map(([key, value]) => (typeof value === "boolean" ? `${value ? key : ""}` : `${key}="${escapeHTML(value)}"`))
 		.join(" ");
-	result += `>${el.children
+	let children = el.children
 		.map((child) => {
 			if (!child) return "";
 			if (typeof child === "string") {
-				return child;
+				return escapeHTML(child);
 			} else if ((child as RenderableNode).raw) {
 				return (child as RenderableNode).contents;
 			}
 			return renderElementString(child as RenderableElement);
 		})
-		.join("")}</${el.tag}>`;
-	return DOMPurify.sanitize(result);
+		.join("");
+	result += `>${children}</${el.tag}>`;
+
+	let res = DOMPurify.sanitize(result, PURIFY_OPTIONS) as string;
+	if (el.tag === "template") console.log("template, or not...", res, result);
+	return res;
 }
 
 export function renderElement<T extends boolean, U extends T extends true ? string : HTMLElement>(

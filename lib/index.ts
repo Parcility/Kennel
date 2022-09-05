@@ -13,10 +13,11 @@ export async function render<T extends Partial<RenderOptions>, U extends T["ssr"
 	depiction: any,
 	options?: T
 ): Promise<U> {
-	console.time("process");
 	let tintColor = defaultIfNotType(depiction["tintColor"], "color", options?.defaultTintColor as string) as
 		| string
 		| undefined;
+
+	// process the depiction
 	let processed: DepictionBaseView[] | undefined;
 	if (Array.isArray(depiction.tabs)) {
 		depiction.className = "DepictionTabView";
@@ -27,8 +28,9 @@ export async function render<T extends Partial<RenderOptions>, U extends T["ssr"
 	} else if (Array.isArray(depiction.views)) {
 		processed = constructViews(depiction.views);
 	}
-	console.timeEnd("process");
 	if (!processed) throw new KennelError("Unable to process depiction. No child was found.");
+
+	// build an element to render
 	let el = createElement("div");
 	if (tintColor) {
 		setStyles(el, {
@@ -36,6 +38,8 @@ export async function render<T extends Partial<RenderOptions>, U extends T["ssr"
 		});
 	}
 	el.children = await makeViews(processed);
+
+	// return rendered element
 	return renderElement(el, options?.ssr || false) as unknown as U;
 }
 
@@ -61,10 +65,8 @@ export async function hydrate(el?: ParentNode) {
 	for (let i = 0, len = mountableEls.length; i < len; i++) {
 		let el = mountableEls[i];
 		let viewName = el.dataset.kennelView;
-		console.log(viewName);
 		if (typeof viewName !== "string") continue;
 		let view = views.get(viewName);
-		console.log(view, view?.prototype);
 		if (!view || !view.hydrate) continue;
 		view.hydrate(el);
 	}
