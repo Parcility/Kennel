@@ -72,7 +72,7 @@ export default class DepictionTabView extends DepictionBaseView {
 			.repeat(this.pages.length)
 			.trim()}'`;
 		const el = createElement(
-			"form",
+			"div",
 			{
 				class: "nd-tabs",
 				style: `--kennel-tab-page-count: ${this.pages.length}; --kennel-tab-areas: ${tabAreas}`,
