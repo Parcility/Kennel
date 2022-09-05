@@ -86,7 +86,6 @@ export function renderElementString(el: RenderableElement): string {
 	result += `>${children}</${el.tag}>`;
 
 	let res = DOMPurify.sanitize(result, PURIFY_OPTIONS) as string;
-	if (el.tag === "template") console.log("template, or not...", res, result);
 	return res;
 }
 
