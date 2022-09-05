@@ -20,6 +20,9 @@
 	},
 	"homepage": "https://github.com/Parcility/Kennel#readme",
 	"types": "./dist/index.d.ts",
+	"main": "./dist/index.umd.cjs",
+	"module": "./dist/index.js",
+	"browser": "./dist/index.js",
 	"exports": {
 		".": {
 			"import": "./dist/index.js",
