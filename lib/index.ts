@@ -31,7 +31,7 @@ export async function render<T extends Partial<RenderOptions>, U extends T["ssr"
 	if (!processed) throw new KennelError("Unable to process depiction. No child was found.");
 
 	// build an element to render
-	let el = createElement("form");
+	let el = createElement("form", { class: "nd-root" });
 	if (tintColor) {
 		setStyles(el, {
 			"--kennel-tint-color": tintColor,

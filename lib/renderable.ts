@@ -98,12 +98,10 @@ export function renderElement<T extends boolean, U extends T extends true ? stri
 }
 
 export function setStyles(el: RenderableElement, styles: Record<string, string>, original: string = "") {
-	let resp =
-		original +
-		" " +
-		Object.entries(styles)
-			.map(([key, value]) => `${key}: ${value}`)
-			.join(";");
+	let resp = [original, Object.entries(styles).map(([key, value]) => `${key}: ${value}`)]
+		.filter(Boolean)
+		.flat()
+		.join(";");
 	el.attributes["style"] = resp;
 }
 
