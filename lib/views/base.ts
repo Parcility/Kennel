@@ -6,7 +6,7 @@ export default abstract class DepictionBaseView {
 
 	constructor(depiction: any) {
 		if (depiction) {
-			this.tintColor = undefIfNotType(depiction["tintColor"], "string");
+			this.tintColor = undefIfNotType(depiction["tintColor"], "color");
 		}
 	}
 

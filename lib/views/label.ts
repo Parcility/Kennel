@@ -41,7 +41,7 @@ export default class DepictionLabelView extends DepictionBaseView {
 
 		this.fontSize = defaultIfNotType(dictionary["fontSize"], "number", 14);
 
-		this.textColor = undefIfNotType(dictionary["textColor"], "string");
+		this.textColor = undefIfNotType(dictionary["textColor"], "color");
 
 		this.weight = fontWeightParse(fontWeight);
 		this.alignment = textAlignment(dictionary["alignment"]);

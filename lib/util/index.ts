@@ -1,5 +1,6 @@
-import { RenderableElement, setStyles } from "./renderable";
-import { DepictionBaseView, views } from "./views";
+import { RenderableElement, setStyles } from "../renderable";
+import { DepictionBaseView, views } from "../views";
+import { isValidColor } from "./colors";
 
 export class KennelError extends Error {
 	constructor(message: string) {
@@ -131,7 +132,7 @@ export function makeViews(views: DepictionBaseView[]): Promise<RenderableElement
 
 // Type handling & validation
 
-export interface JSTypes {
+export interface ValidTypes {
 	undefined: undefined;
 	object: null | ArrayLike<any> | Record<string | number | symbol, any>;
 	array: any[];
@@ -141,18 +142,24 @@ export interface JSTypes {
 	string: string;
 	symbol: symbol;
 	function: Function;
+	color: string;
 }
 
-export function isType<T extends keyof JSTypes>(value: any, type: T): boolean {
-	return (type === "array" && Array.isArray(value)) || typeof value === type;
+export function isType<T extends keyof ValidTypes>(value: any, type: T): boolean {
+	return (
+		(type === "array" && Array.isArray(value)) || (type === "color" && isValidColor(value)) || typeof value === type
+	);
 }
 
-export function undefIfNotType<T extends keyof JSTypes, U extends JSTypes[T]>(value: any, type: T): U | undefined {
+export function undefIfNotType<T extends keyof ValidTypes, U extends ValidTypes[T]>(
+	value: any,
+	type: T
+): U | undefined {
 	if (isType(value, type)) return value;
 	return undefined;
 }
 
-export function defaultIfNotType<T extends keyof JSTypes, U extends JSTypes[T]>(
+export function defaultIfNotType<T extends keyof ValidTypes, U extends ValidTypes[T]>(
 	value: any,
 	type: T,
 	defaultValue: U
@@ -161,7 +168,7 @@ export function defaultIfNotType<T extends keyof JSTypes, U extends JSTypes[T]>(
 	return defaultValue;
 }
 
-export function guardIfNotType<T extends keyof JSTypes, U extends JSTypes[T]>(value: any, type: T): U {
+export function guardIfNotType<T extends keyof ValidTypes, U extends ValidTypes[T]>(value: any, type: T): U {
 	if (!isType(value, type)) throw new KennelError(`Expected type ${type} but got ${typeof value}`);
 	return value;
 }

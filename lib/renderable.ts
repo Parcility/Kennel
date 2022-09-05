@@ -74,24 +74,21 @@ export function renderElementString(el: RenderableElement): string {
 	return result;
 }
 
-export function renderElement<T extends boolean>(
+export function renderElement<T extends boolean, U extends T extends true ? string : HTMLElement>(
 	el: RenderableElement,
-	ssr: boolean
-): T extends true ? string : HTMLElement {
-	// @ts-ignore: a truthy SSR will always result in a string
-	if (ssr) return renderElementString(el);
-	// @ts-ignore: this will be a HTMLElement
-	return renderElementDOM(el);
+	ssr: T
+): U {
+	if (ssr) return renderElementString(el) as unknown as U;
+	return renderElementDOM(el) as unknown as U;
 }
 
 export function setStyles(el: RenderableElement, styles: Record<string, string>, original: string = "") {
-	// TODO(XSS): This is likely vulnerable to XSS
 	let resp =
 		original +
 		" " +
 		Object.entries(styles)
-			.map(([key, value]) => `${key}: ${value};`)
-			.join("");
+			.map(([key, value]) => `${key}: ${value}`)
+			.join(";");
 	el.attributes["style"] = resp;
 }
 

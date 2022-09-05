@@ -23,7 +23,7 @@ export default class DepictionStackView extends DepictionBaseView {
 		}
 
 		this.views = constructViews(viewObjs);
-		this.backgroundColor = undefIfNotType(dictionary["backgroundColor"], "string");
+		this.backgroundColor = undefIfNotType(dictionary["backgroundColor"], "color");
 		this.xPadding = defaultIfNotType(dictionary["xPadding"], "number", 0);
 	}
 

@@ -22,7 +22,7 @@ export default class DepictionAutoStackView extends DepictionBaseView {
 		}
 
 		this.viewWidths = views.map((view) => view["preferredWidth"] as number);
-		this.backgroundColor = undefIfNotType(depiction["backgroundColor"], "string");
+		this.backgroundColor = undefIfNotType(depiction["backgroundColor"], "color");
 	}
 
 	async make(): Promise<RenderableElement> {

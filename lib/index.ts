@@ -9,9 +9,12 @@ interface RenderOptions {
 	defaultTintColor: string;
 }
 
-export async function render(depiction: any, options?: Partial<RenderOptions>): Promise<HTMLElement | string> {
+export async function render<T extends Partial<RenderOptions>, U extends T["ssr"] extends true ? string : HTMLElement>(
+	depiction: any,
+	options?: T
+): Promise<U> {
 	console.time("process");
-	let tintColor = defaultIfNotType(depiction["tintColor"], "string", options?.defaultTintColor as string) as
+	let tintColor = defaultIfNotType(depiction["tintColor"], "color", options?.defaultTintColor as string) as
 		| string
 		| undefined;
 	let processed: DepictionBaseView[] | undefined;
@@ -33,7 +36,7 @@ export async function render(depiction: any, options?: Partial<RenderOptions>): 
 		});
 	}
 	el.children = await makeViews(processed);
-	return renderElement(el, options?.ssr || false);
+	return renderElement(el, options?.ssr || false) as unknown as U;
 }
 
 export async function hydrate(el?: ParentNode) {
