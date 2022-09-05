@@ -31,19 +31,11 @@ hr.nd-separator {
 .nd-stack {
 	display: flex;
 	flex-direction: column;
+	gap: 1rem;
 }
 
 .nd-stack.nd-stack-landscape > * {
 	flex: 1;
-	margin: 0 0.5rem;
-}
-
-.nd-stack.nd-stack-landscape > *:first-child {
-	margin-left: 0;
-}
-
-.nd-stack.nd-stack-landscape > *:last-child {
-	margin-right: 0;
 }
 
 .nd-stack.nd-stack-landscape {
@@ -86,7 +78,7 @@ hr.nd-separator {
 	text-overflow: ellipsis;
 }
 
-.nd-subheader.nd-header-bold,
+.nd-subheader.nd-subheader-bold,
 .nd-header.nd-header-bold {
 	font-weight: bold;
 }
