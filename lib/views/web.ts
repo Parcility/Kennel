@@ -22,6 +22,7 @@ export default class DepictionSeparatorView extends DepictionBaseView {
 			src: this.url,
 			width: `${this.width}px`,
 			height: `${this.height}px`,
+			frameborder: "0",
 		});
 		applyAlignmentMargin(el, this.alignment);
 		return el;

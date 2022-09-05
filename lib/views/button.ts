@@ -37,8 +37,8 @@ export default class DepictionButtonView extends DepictionBaseView {
 	}
 
 	async make(): Promise<RenderableElement> {
-		let el = createElement("a", { type: "button" });
-		setClassList(el, ["nd-button", this.isLink && "nd-button-link"]);
+		let el = createElement("a");
+		setClassList(el, ["nd-button", this.isLink ? "nd-button-link" : "nd-button-not-link"]);
 		let styles: any = {};
 		if (this.tintColor) styles["--kennel-tint-color"] = this.tintColor;
 		el.attributes.href = buttonLinkHandler(this.action, this.text);

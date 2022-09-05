@@ -1,5 +1,10 @@
 hr.nd-separator {
 	margin: 0 1rem;
+	margin-bottom: 0.25rem;
+	display: block;
+	height: 1px;
+	border: none;
+	background-color: rgba(121, 121, 121, 0.5);
 }
 
 .nd-screenshots {
@@ -20,7 +25,7 @@ hr.nd-separator {
 }
 
 .nd-stack.nd-stack-landscape > * {
-	flex: 1 1 auto;
+	flex: 1;
 	margin: 0 0.5rem;
 }
 
@@ -35,6 +40,7 @@ hr.nd-separator {
 .nd-stack.nd-stack-landscape {
 	justify-content: space-between;
 	flex-direction: row;
+	align-items: center;
 }
 
 .nd-spacer {
@@ -76,22 +82,14 @@ hr.nd-separator {
 	font-weight: bold;
 }
 
-.nd-header.nd-header-margins {
+.nd-header.nd-header-margins,
+.nd-subheader.nd-subheader-margins {
 	margin-top: 0.5rem;
 	margin-left: 1rem;
 	margin-right: 1rem;
 }
 
-.nd-header.nd-header-bottom-margin {
-	margin-bottom: 0.5rem;
-}
-
-.nd-subheader.nd-subhearder-margins {
-	margin-top: 0.5rem;
-	margin-left: 1rem;
-	margin-right: 1rem;
-}
-
+.nd-header.nd-header-bottom-margin,
 .nd-subheader.nd-subheader-bottom-margin {
 	margin-bottom: 0.5rem;
 }
@@ -136,6 +134,10 @@ hr.nd-separator {
 	align-items: center;
 }
 
+.nd-review-content {
+	margin: 0;
+}
+
 .nd-tab-controls {
 	display: flex;
 }
@@ -145,15 +147,22 @@ hr.nd-separator {
 }
 
 .nd-button {
+	box-sizing: border-box;
 	margin: 0.5rem 0;
+	display: block;
 	text-decoration: none;
+}
+
+.nd-button > p {
+	margin: 0;
 }
 
 .nd-button.nd-button-link {
 	color: var(--kennel-tint-color);
+	margin: 0;
 }
 
-.nd-button {
+.nd-button.nd-button-not-link {
 	box-sizing: border-box;
 	text-align: center;
 	display: block;
@@ -161,6 +170,7 @@ hr.nd-separator {
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	padding: 0.5rem 1rem;
+	margin: 0.5rem 0.5rem;
 	font: inherit;
 	border-radius: 0.5rem;
 	appearance: none;

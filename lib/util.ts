@@ -35,7 +35,7 @@ export function fontWeightParse(fontWeight: string): string {
 		case "ultralight":
 			return "200";
 		default:
-			return "regular";
+			return "400";
 	}
 }
 

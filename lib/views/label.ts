@@ -1,5 +1,5 @@
 import { createElement, RenderableElement, setStyles } from "../renderable";
-import { defaultIfNotType, fontWeightParse, parseSize, textAlignment } from "../util";
+import { defaultIfNotType, fontWeightParse, parseSize, textAlignment, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionLabelView extends DepictionBaseView {
@@ -10,6 +10,7 @@ export default class DepictionLabelView extends DepictionBaseView {
 	alignment: string;
 	isActionable: any;
 	isHighlighted: any;
+	fontSize: number;
 
 	constructor(dictionary: any) {
 		super(dictionary);
@@ -36,18 +37,11 @@ export default class DepictionLabelView extends DepictionBaseView {
 			this.margins.bottom = 0;
 		}
 
-		var fontWeight = "normal";
-		let rawFontWeight = dictionary["fontWeight"];
-		if (typeof rawFontWeight === "string") {
-			fontWeight = rawFontWeight.toLowerCase();
-		}
-		let fontSize = dictionary["fontSize"];
-		if (typeof fontSize !== "number") fontSize = 14;
+		let fontWeight = defaultIfNotType(dictionary["fontWeight"], "string", "normal");
 
-		let rawTextColor = dictionary["textColor"];
-		if (typeof rawTextColor === "string") {
-			this.textColor = rawTextColor;
-		}
+		this.fontSize = defaultIfNotType(dictionary["fontSize"], "number", 14);
+
+		this.textColor = undefIfNotType(dictionary["textColor"], "string");
 
 		this.weight = fontWeightParse(fontWeight);
 		this.alignment = textAlignment(dictionary["alignment"]);
@@ -58,6 +52,7 @@ export default class DepictionLabelView extends DepictionBaseView {
 		let styles: Record<string, string> = {
 			"text-align": this.alignment,
 			"font-weight": this.weight,
+			"font-size": `${this.fontSize}px`,
 			"margin-top": this.margins.top + "px",
 			"margin-right": this.margins.right + "px",
 			"margin-left": this.margins.left + "px",
