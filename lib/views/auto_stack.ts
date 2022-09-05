@@ -1,4 +1,4 @@
-import { createElement, RenderableElement, setStyles } from "../renderable";
+import { createElement, RenderableElement } from "../renderable";
 import { guardIfNotType, makeView, RenderCtx, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
