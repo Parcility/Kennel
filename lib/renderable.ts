@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 export interface RenderableElement {
 	tag: string;
 	attributes: Record<string, string | boolean>;
@@ -12,7 +14,7 @@ export interface RenderableNode {
 export function createRawNode(contents: string): RenderableNode {
 	return {
 		raw: true,
-		contents,
+		contents: DOMPurify.sanitize(contents),
 	};
 }
 
@@ -32,7 +34,6 @@ export function createShadowedElement(
 }
 
 export function renderElementDOM(el: RenderableElement): HTMLElement {
-	// TODO(XSS): This is likely vulnerable to XSS
 	const element = document.createElement(el.tag);
 	for (const [key, value] of Object.entries(el.attributes)) {
 		if (typeof value === "boolean") element.toggleAttribute(key, value);
@@ -55,7 +56,6 @@ export function renderElementDOM(el: RenderableElement): HTMLElement {
 }
 
 export function renderElementString(el: RenderableElement): string {
-	// TODO(XSS): This is likely vulnerable to XSS
 	let result = `<${el.tag} `;
 	result += Object.entries(el.attributes)
 		.map(([key, value]) => (typeof value === "boolean" ? `${value ? key : ""}` : `${key}="${value}"`))
@@ -71,7 +71,7 @@ export function renderElementString(el: RenderableElement): string {
 			return renderElementString(child as RenderableElement);
 		})
 		.join("")}</${el.tag}>`;
-	return result;
+	return DOMPurify.sanitize(result);
 }
 
 export function renderElement<T extends boolean, U extends T extends true ? string : HTMLElement>(

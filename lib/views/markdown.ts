@@ -1,8 +1,7 @@
-import DOMPurify from "dompurify";
 import { marked } from "marked";
 import markdownStyles from "../markdown.css?raw";
 import { createElement, createRawNode, createShadowedElement, renderElementString, setStyles } from "../renderable";
-import { defaultIfNotType, guardIfNotType, makeView } from "../util";
+import { defaultIfNotType, escapeHTML, guardIfNotType, makeView } from "../util";
 import DepictionBaseView from "./base";
 import DepictionSeparatorView from "./separator";
 
@@ -28,7 +27,6 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 		this.useSpacing = defaultIfNotType(dictionary["useSpacing"], "boolean", true);
 		this.useRawFormat = defaultIfNotType(dictionary["useRawFormat"], "boolean", false);
 		if (this.useRawFormat) {
-			// TODO(XSS): this is very definately vulnerable to XSS attacks.
 			this.markdown = callMarked(md, { gfm: false }).then(async (rendered) => {
 				let didWarnXSS = false;
 				let xssWarn = `<p style="opacity:0.3">[Warning: This depiction may be trying to maliciously run code in your browser.]</p><br>`;
@@ -58,8 +56,7 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 				return rendered;
 			});
 		} else {
-			// TODO(XSS): this should be XSS-safe
-			this.markdown = callMarked(new Option(md).innerHTML, { xhtml: true, gfm: true });
+			this.markdown = callMarked(escapeHTML(md), { xhtml: true, gfm: true });
 		}
 	}
 
@@ -69,7 +66,7 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 		let spacing = this.useSpacing ? 13 : 0;
 		let bottomSpacing = this.useSpacing ? 13 : 0;
 		let el = createShadowedElement({ class: "nd-markdown" }, [
-			createRawNode(DOMPurify.sanitize(resp)),
+			createRawNode(resp),
 			createElement("style", {}, [markdownStyles]),
 		]);
 		let styles: any = {

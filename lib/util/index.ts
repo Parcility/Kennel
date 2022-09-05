@@ -172,3 +172,25 @@ export function guardIfNotType<T extends keyof ValidTypes, U extends ValidTypes[
 	if (!isType(value, type)) throw new KennelError(`Expected type ${type} but got ${typeof value}`);
 	return value;
 }
+
+const ESCAPE_HTML_MAP: Record<string, string> = {
+	"&": "&amp;",
+	"<": "&lt;",
+	">": "&gt;",
+	'"': "&quot;",
+	"'": "&#39;",
+	"/": "&#x2F;",
+	"`": "&#x60;",
+	"=": "&#x3D;",
+};
+
+export function escapeHTML(potentialHTML: string): string {
+	// if we're in the browser, we can use the Option object to escape HTML.
+	if ("HTMLOptionElement" in globalThis && "Option" in globalThis) {
+		return new Option(potentialHTML).innerHTML;
+	}
+
+	return potentialHTML.replace(/[&<>"'`=\/]/g, function (s) {
+		return ESCAPE_HTML_MAP[s];
+	});
+}
