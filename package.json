@@ -19,6 +19,7 @@
 		"url": "https://github.com/Parcility/Kennel/issues"
 	},
 	"homepage": "https://github.com/Parcility/Kennel#readme",
+	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
 			"import": "./dist/index.js",
