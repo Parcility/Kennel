@@ -39,6 +39,24 @@ export function fontWeightParse(fontWeight: string): string {
 	}
 }
 
+export function buttonLinkHandler(el: RenderableElement, url: string, label?: string) {
+	let link = url;
+	// javascript: links should do nothing.
+	const jsXssIndex = url.indexOf("javascript:");
+	if (jsXssIndex !== -1) {
+		link = url.substring(0, jsXssIndex) + encodeURIComponent(url.substring(jsXssIndex));
+		// depiction- links should link to a depiction. Use Parcility's API for this.
+	} else if (url.indexOf("depiction-") == 0) {
+		url = url.substring(10);
+		if (!label) label = "Depiction";
+		link = `https://api.parcility.co/render/headerless?url=${encodeURIComponent(url)}&name=${label}`;
+	} else if (url.indexOf("form-") == 0) {
+		url = url.substring(5);
+		link = `https://api.parcility.co/render/form?url=${encodeURIComponent(url)}`;
+	}
+	el.attributes.href = link;
+}
+
 // Alignment
 
 export enum Alignment {
@@ -146,22 +164,4 @@ export function defaultIfNotType<T extends keyof JSTypes, U extends JSTypes[T]>(
 export function guardIfNotType<T extends keyof JSTypes, U extends JSTypes[T]>(value: any, type: T): U {
 	if (!isType(value, type)) throw new KennelError(`Expected type ${type} but got ${typeof value}`);
 	return value;
-}
-
-export function buttonLinkHandler(el: RenderableElement, url: string, label?: string) {
-	let link = url;
-	// javascript: links should do nothing.
-	const jsXssIndex = url.indexOf("javascript:");
-	if (jsXssIndex !== -1) {
-		link = url.substring(0, jsXssIndex) + encodeURIComponent(url.substring(jsXssIndex));
-		// depiction- links should link to a depiction. Use Parcility's API for this.
-	} else if (url.indexOf("depiction-") == 0) {
-		url = url.substring(10);
-		if (!label) label = "Depiction";
-		link = `https://api.parcility.co/render/headerless?url=${encodeURIComponent(url)}&name=${label}`;
-	} else if (url.indexOf("form-") == 0) {
-		url = url.substring(5);
-		link = `https://api.parcility.co/render/form?url=${encodeURIComponent(url)}`;
-	}
-	el.attributes.href = link;
 }
