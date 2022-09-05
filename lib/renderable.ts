@@ -1,5 +1,3 @@
-import { RenderCtx } from "./util";
-
 export interface RenderableElement {
 	tag: string;
 	attributes: Record<string, string | boolean>;
@@ -74,12 +72,12 @@ export function renderElementString(el: RenderableElement): string {
 	return result;
 }
 
-export function renderElement<T extends RenderCtx>(
+export function renderElement<T extends boolean>(
 	el: RenderableElement,
-	ctx: T
-): T["ssr"] extends true ? string : HTMLElement {
+	ssr: boolean
+): T extends true ? string : HTMLElement {
 	// @ts-ignore: a truthy SSR will always result in a string
-	if (ctx.ssr) return renderElementString(el);
+	if (ssr) return renderElementString(el);
 	// @ts-ignore: this will be a HTMLElement
 	return renderElementDOM(el);
 }

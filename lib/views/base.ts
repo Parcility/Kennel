@@ -1,12 +1,10 @@
 import { RenderableElement } from "../renderable";
-import { RenderCtx, undefIfNotType } from "../util";
+import { undefIfNotType } from "../util";
 
 export default class DepictionBaseView {
-	ctx: RenderCtx;
 	tintColor?: string;
 
-	constructor(depiction: any, ctx: RenderCtx) {
-		this.ctx = ctx;
+	constructor(depiction: any) {
 		if (depiction) {
 			this.tintColor = undefIfNotType(depiction["tintColor"], "string");
 		}
@@ -16,5 +14,5 @@ export default class DepictionBaseView {
 		throw new Error("Not implemented");
 	}
 
-	mounted?: (el: HTMLElement) => void;
+	mounted?(el: HTMLElement): void;
 }

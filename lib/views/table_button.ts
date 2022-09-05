@@ -1,5 +1,5 @@
 import { createElement, setStyles } from "../renderable";
-import { defaultIfNotType, guardIfNotType, RenderCtx } from "../util";
+import { defaultIfNotType, guardIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionTableTextView extends DepictionBaseView {
@@ -11,8 +11,8 @@ export default class DepictionTableTextView extends DepictionBaseView {
 
 	openExternal: boolean;
 
-	constructor(dictionary: any, ctx: RenderCtx) {
-		super(dictionary, ctx);
+	constructor(dictionary: any) {
+		super(dictionary);
 		this.title = guardIfNotType(dictionary["title"], "string");
 		this.action = guardIfNotType(dictionary["action"], "string");
 		this.backupAction = defaultIfNotType(dictionary["backupAction"], "string", "");

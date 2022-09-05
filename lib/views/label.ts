@@ -1,5 +1,5 @@
 import { createElement, RenderableElement, setStyles } from "../renderable";
-import { defaultIfNotType, fontWeightParse, parseSize, RenderCtx, textAlignment } from "../util";
+import { defaultIfNotType, fontWeightParse, parseSize, textAlignment } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionLabelView extends DepictionBaseView {
@@ -11,8 +11,8 @@ export default class DepictionLabelView extends DepictionBaseView {
 	isActionable: any;
 	isHighlighted: any;
 
-	constructor(dictionary: any, ctx: RenderCtx) {
-		super(dictionary, ctx);
+	constructor(dictionary: any) {
+		super(dictionary);
 		if (typeof dictionary["text"] === "string") {
 			this.text = dictionary.text;
 		}

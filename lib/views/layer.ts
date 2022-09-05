@@ -1,28 +1,29 @@
 import { createElement } from "../renderable";
-import { guardIfNotType, makeViews, RenderCtx } from "../util";
+import { constructViews, guardIfNotType, makeViews } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionLayerView extends DepictionBaseView {
 	views: DepictionBaseView[];
 
-	constructor(dictionary: any, ctx: RenderCtx) {
-		super(dictionary, ctx);
+	constructor(dictionary: any) {
+		super(dictionary);
 		let rawViews = guardIfNotType(dictionary["views"], "array");
-		this.views = makeViews(rawViews, ctx);
+		this.views = constructViews(rawViews);
 	}
 
 	async make() {
 		const el = createElement("div", { class: "nd-layer" });
-		el.children = await Promise.all(this.views.map((v) => v.make()));
+		el.children = await makeViews(this.views);
 		return el;
 	}
 
-	mounted = (el: HTMLElement) => {
+	mounted(el: HTMLElement) {
+		console.log("layer mounted?", el);
 		let arr = Array.from(el.children);
 		let maxHeight = arr.reduce((max, el) => {
 			let height = el.getBoundingClientRect().height;
 			return height > max ? height : max;
 		}, 0);
 		el.style.height = maxHeight + "px";
-	};
+	}
 }

@@ -1,5 +1,5 @@
 import { createElement, setClassList, setStyles } from "../renderable";
-import { defaultIfNotType, guardIfNotType, KennelError, makeViews, RenderCtx, undefIfNotType } from "../util";
+import { constructViews, defaultIfNotType, guardIfNotType, KennelError, makeViews, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionStackView extends DepictionBaseView {
@@ -8,8 +8,8 @@ export default class DepictionStackView extends DepictionBaseView {
 	xPadding: number = 0;
 	backgroundColor?: string;
 
-	constructor(dictionary: any, ctx: RenderCtx) {
-		super(dictionary, ctx);
+	constructor(dictionary: any) {
+		super(dictionary);
 		let viewObjs = guardIfNotType(dictionary["views"], "array");
 
 		let orientationString = dictionary["orientation"];
@@ -22,7 +22,7 @@ export default class DepictionStackView extends DepictionBaseView {
 			}
 		}
 
-		this.views = makeViews(viewObjs, ctx);
+		this.views = constructViews(viewObjs);
 		this.backgroundColor = undefIfNotType(dictionary["backgroundColor"], "string");
 		this.xPadding = defaultIfNotType(dictionary["xPadding"], "number", 0);
 	}
@@ -35,7 +35,7 @@ export default class DepictionStackView extends DepictionBaseView {
 		};
 		if (this.backgroundColor) styles["background-color"] = this.backgroundColor;
 		setStyles(el, styles);
-		el.children = await Promise.all(this.views.map((view) => view.make()));
+		el.children = await makeViews(this.views);
 		return el;
 	}
 }

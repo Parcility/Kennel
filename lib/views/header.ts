@@ -1,5 +1,5 @@
 import { createElement, setClassList, setStyles } from "../renderable";
-import { defaultIfNotType, RenderCtx, textAlignment } from "../util";
+import { defaultIfNotType, textAlignment } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionHeaderView extends DepictionBaseView {
@@ -10,8 +10,8 @@ export default class DepictionHeaderView extends DepictionBaseView {
 	textColor?: string;
 	alignment: string;
 
-	constructor(dictionary: any, ctx: RenderCtx) {
-		super(dictionary, ctx);
+	constructor(dictionary: any) {
+		super(dictionary);
 		if (typeof dictionary["title"] === "string") {
 			this.title = dictionary.title;
 		}

@@ -1,4 +1,3 @@
-import type { RenderCtx } from "../util";
 export type { default as DepictionBaseView } from "./base";
 
 import AutoStackView from "./auto_stack";
@@ -24,7 +23,7 @@ import WebView from "./web";
 
 import DepictionBaseView from "./base";
 
-export type DepictionViewConstructor<T extends DepictionBaseView> = { new (dictionary: any, ctx: RenderCtx): T };
+export type DepictionViewConstructor<T extends DepictionBaseView> = { new (dictionary: any): T };
 
 export const views = new Map<string, DepictionViewConstructor<any>>([
 	["DepictionAutoStackView", AutoStackView],

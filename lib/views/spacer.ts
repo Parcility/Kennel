@@ -1,12 +1,12 @@
 import { createElement, setStyles } from "../renderable";
-import { guardIfNotType, RenderCtx } from "../util";
+import { guardIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionSpacerView extends DepictionBaseView {
 	spacing: number;
 
-	constructor(dictionary: any, ctx: RenderCtx) {
-		super(dictionary, ctx);
+	constructor(dictionary: any) {
+		super(dictionary);
 		this.spacing = guardIfNotType(dictionary["spacing"], "number");
 	}
 

@@ -16,7 +16,7 @@
 			<summary>Client-side</summary>
 			<div id="example-depiction" style="max-width: 32rem; margin: auto"></div>
 		</details>
-		<details>
+		<details open>
 			<summary>SSR</summary>
 			<div id="example-ssr-depiction" style="max-width: 32rem; margin: auto"></div>
 		</details>
@@ -32,8 +32,7 @@
 				.then((resp) => target.appendChild(resp))
 				.then(() => k.mounted());
 
-			let ssrK = new Kennel(depiction, true);
-			ssrK.render().then((resp) => (ssrTarget.innerHTML = resp));
+			k.render(true).then((resp) => (ssrTarget.innerHTML = resp));
 		</script>
 	</body>
 </html>

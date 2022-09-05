@@ -1,5 +1,5 @@
 import { createElement, setStyles } from "../renderable";
-import { Alignment, applyAlignmentMargin, defaultIfNotType, getAlignment, guardIfNotType, RenderCtx } from "../util";
+import { Alignment, applyAlignmentMargin, defaultIfNotType, getAlignment, guardIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionRatingView extends DepictionBaseView {
@@ -13,8 +13,8 @@ export default class DepictionRatingView extends DepictionBaseView {
 	alignment: Alignment;
 	cornerRadius: number;
 
-	constructor(dictionary: any, ctx: RenderCtx) {
-		super(dictionary, ctx);
+	constructor(dictionary: any) {
+		super(dictionary);
 		this.url = guardIfNotType(dictionary["URL"], "string");
 		this.width = guardIfNotType(dictionary["width"], "number");
 		this.height = guardIfNotType(dictionary["height"], "number");

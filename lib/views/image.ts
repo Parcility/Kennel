@@ -1,13 +1,5 @@
 import { createElement, RenderableElement, setStyles } from "../renderable";
-import {
-	Alignment,
-	applyAlignmentMargin,
-	defaultIfNotType,
-	getAlignment,
-	guardIfNotType,
-	KennelError,
-	RenderCtx,
-} from "../util";
+import { Alignment, applyAlignmentMargin, defaultIfNotType, getAlignment, guardIfNotType, KennelError } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionImageView extends DepictionBaseView {
@@ -18,8 +10,8 @@ export default class DepictionImageView extends DepictionBaseView {
 	xPadding: number;
 	borderRadius: number;
 
-	constructor(dictionary: any, ctx: RenderCtx) {
-		super(dictionary, ctx);
+	constructor(dictionary: any) {
+		super(dictionary);
 		this.url = guardIfNotType(dictionary["URL"], "string");
 		this.width = defaultIfNotType(dictionary["width"], "number", 0);
 		this.height = defaultIfNotType(dictionary["height"], "number", 0);

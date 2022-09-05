@@ -1,4 +1,4 @@
-import { RenderableElement, renderElement, setStyles } from "./renderable";
+import { RenderableElement, setStyles } from "./renderable";
 import { DepictionBaseView, views } from "./views";
 
 export class KennelError extends Error {
@@ -87,42 +87,28 @@ export function applyAlignmentMargin(el: RenderableElement, alignment: Alignment
 
 // Processing
 
-export function makeView(view: any, ctx: RenderCtx): DepictionBaseView | undefined {
+export function constructView(view: any): DepictionBaseView | undefined {
 	let v = views.get(view.class);
 	try {
-		if (v) return new v(view, ctx);
+		if (v) return new v(view);
 	} catch (error) {
 		console.error(error);
 	}
 	return undefined;
 }
 
-export function makeViews(views: any[], ctx: RenderCtx): DepictionBaseView[] {
-	return views.map((view) => makeView(view, ctx)).filter(Boolean) as DepictionBaseView[];
+export function constructViews(views: any[]): DepictionBaseView[] {
+	return views.map(constructView).filter(Boolean) as DepictionBaseView[];
 }
 
-// Rendering
-
-export type RenderCtx = {
-	ssr: boolean;
-	els: Map<DepictionBaseView, HTMLElement | undefined>;
-};
-
-export async function renderView<T extends RenderCtx>(
-	view: DepictionBaseView,
-	ctx: T
-): Promise<T["ssr"] extends true ? string : HTMLElement> {
+export async function makeView(view: DepictionBaseView): Promise<RenderableElement> {
 	let madeView = await view.make();
-	let el = renderElement(madeView, ctx);
-	if (!ctx.ssr) ctx.els.set(view, el as HTMLElement);
-	return el;
+	if (view.mounted) madeView.attributes["data-kennel-view"] = view.constructor.name;
+	return madeView;
 }
 
-export function renderViews<T extends RenderCtx>(
-	views: DepictionBaseView[],
-	ctx: T
-): Promise<(T["ssr"] extends true ? string : HTMLElement)[]> {
-	return Promise.all(views.map((view) => renderView(view, ctx)));
+export function makeViews(views: DepictionBaseView[]): Promise<RenderableElement[]> {
+	return Promise.all(views.map(async (view) => makeView(view)));
 }
 
 // Type handling & validation

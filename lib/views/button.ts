@@ -1,5 +1,5 @@
 import { createElement, RenderableElement, setStyles } from "../renderable";
-import { defaultIfNotType, guardIfNotType, makeView, RenderCtx } from "../util";
+import { constructView, defaultIfNotType, guardIfNotType, makeView } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionButtonView extends DepictionBaseView {
@@ -11,8 +11,8 @@ export default class DepictionButtonView extends DepictionBaseView {
 	openExternal: boolean;
 	backupAction: string;
 
-	constructor(dictionary: any, ctx: RenderCtx) {
-		super(dictionary, ctx);
+	constructor(dictionary: any) {
+		super(dictionary);
 		this.isLink = defaultIfNotType(dictionary["isLink"], "boolean", false);
 		this.action = guardIfNotType(dictionary["action"], "string");
 
@@ -25,7 +25,7 @@ export default class DepictionButtonView extends DepictionBaseView {
 
 		let dict = dictionary["view"];
 		if (typeof dict === "object") {
-			this.children = makeView(dict, ctx);
+			this.children = constructView(dict);
 		}
 
 		if (!this.children) {
@@ -43,11 +43,14 @@ export default class DepictionButtonView extends DepictionBaseView {
 		if (this.isLink) {
 			el.attributes.href = this.action;
 			styles.color = "var(--kennel-tint-color)";
+		} else {
+			styles["background-color"] = "var(--kennel-tint-color)";
+			styles["color"] = "white";
 		}
 
 		if (this.children) {
 			this.children;
-			let child = await this.children.make();
+			let child = await makeView(this.children);
 			child.attributes.pointerEvents = "none";
 			el.children = [child];
 		} else if (this.text) {

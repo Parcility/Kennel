@@ -1,5 +1,5 @@
 import { createElement, setStyles } from "../renderable";
-import { defaultIfNotType, guardIfNotType, parseSize, RenderCtx, undefIfNotType } from "../util";
+import { defaultIfNotType, guardIfNotType, parseSize, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
 interface Screenshot {
@@ -15,8 +15,8 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 	itemHeight: number;
 	itemBorderRadius: number;
 
-	constructor(dictionary: any, ctx: RenderCtx) {
-		super(dictionary, ctx);
+	constructor(dictionary: any) {
+		super(dictionary);
 		if (dictionary["iphone"]) dictionary = dictionary["iphone"];
 
 		let rawItemSize = guardIfNotType(dictionary["itemSize"], "string");

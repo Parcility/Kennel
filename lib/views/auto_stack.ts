@@ -1,5 +1,5 @@
 import { createElement, RenderableElement } from "../renderable";
-import { guardIfNotType, makeView, RenderCtx, undefIfNotType } from "../util";
+import { constructView, guardIfNotType, makeViews, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionAutoStackView extends DepictionBaseView {
@@ -8,15 +8,15 @@ export default class DepictionAutoStackView extends DepictionBaseView {
 	horizontalSpacing: number;
 	backgroundColor?: string;
 
-	constructor(depiction: any, ctx: RenderCtx) {
-		super(depiction, ctx);
+	constructor(depiction: any) {
+		super(depiction);
 
 		let views = guardIfNotType(depiction["views"], "array");
 		this.horizontalSpacing = guardIfNotType(depiction["horizontalSpacing"], "number");
 		for (let view of views) {
 			guardIfNotType(view["class"], "string");
 			guardIfNotType(view["preferredWidth"], "number");
-			let v = makeView(view, ctx);
+			let v = constructView(view);
 			if (!v) throw new Error("Invalid view");
 			this.views.push(v);
 		}
@@ -26,7 +26,7 @@ export default class DepictionAutoStackView extends DepictionBaseView {
 	}
 
 	async make(): Promise<RenderableElement> {
-		let children = await Promise.all(this.views.map(async (view) => view.make()));
+		let children = await makeViews(this.views);
 		let el = createElement(
 			"div",
 			{

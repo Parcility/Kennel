@@ -1,37 +1,38 @@
 /// <reference types="vite/client" />
 import "./index.css";
-import { createElement, renderElement } from "./renderable";
-import { makeView, makeViews, RenderCtx } from "./util";
-import type { DepictionBaseView } from "./views";
+import { createElement, RenderableElement, renderElement } from "./renderable";
+import { constructView, constructViews, makeViews, undefIfNotType } from "./util";
+import { DepictionBaseView, views } from "./views";
 
 export default class Kennel {
 	#depiction: any;
 	#processed: DepictionBaseView[] = [];
-	#ctx: RenderCtx;
+	#tintColor?: string;
 
-	constructor(depiction: any, ssr = false) {
-		this.#ctx = { ssr, els: new Map() };
+	constructor(depiction: any) {
 		this.#depiction = depiction;
 		console.time("process");
+		this.#tintColor = undefIfNotType(depiction["tintColor"], "string");
 		if (Array.isArray(this.#depiction.tabs)) {
 			this.#depiction.className = "DepictionTabView";
-			let view = makeView(this.#depiction, this.#ctx);
+			let view = constructView(this.#depiction);
 			if (!view) return;
 			this.#processed = [view];
 		} else if (Array.isArray(this.#depiction.views)) {
-			this.#processed = makeViews(this.#depiction.views, this.#ctx);
+			this.#processed = constructViews(this.#depiction.views);
 		}
 		console.timeEnd("process");
 	}
 
-	async render(): Promise<HTMLElement | string> {
-		let el = createElement("div");
-		el.children = await Promise.all(this.#processed.map((view) => view.make()));
-		return renderElement(el, this.#ctx);
+	async render(ssr: boolean = false): Promise<HTMLElement | string> {
+		let el = createElement("div", { style: `--kennel-tint-color: ${this.#tintColor};` });
+		el.children = await makeViews(this.#processed);
+		return renderElement(el, ssr);
 	}
 
 	mounted() {
-		if (this.#ctx.ssr) return;
+		if (!("HTMLElement" in globalThis)) return;
+		let mountableEls = document.querySelectorAll<HTMLElement>("[data-kennel-view]");
 
 		self.customElements.define(
 			"nd-shadowed-content",
@@ -47,9 +48,15 @@ export default class Kennel {
 			}
 		);
 
-		for (let [view, el] of this.#ctx.els) {
-			if (!view || !el || !view.mounted) continue;
-			view.mounted(el);
+		for (let i = 0, len = mountableEls.length; i < len; i++) {
+			let el = mountableEls[i];
+			let viewName = el.dataset.kennelView;
+			console.log(viewName);
+			if (typeof viewName !== "string") continue;
+			let view = views.get(viewName);
+			console.log(view, view?.prototype);
+			if (!view || !view.prototype.mounted) continue;
+			view.prototype.mounted(el);
 		}
 	}
 }
