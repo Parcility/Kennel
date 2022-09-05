@@ -149,11 +149,13 @@ hr.nd-separator {
 	text-decoration: none;
 }
 
-a.nd-button {
+.nd-button.nd-button-link {
 	color: var(--kennel-tint-color);
 }
 
-button.nd-button {
+.nd-button {
+	box-sizing: border-box;
+	text-align: center;
 	display: block;
 	border: none;
 	-webkit-appearance: none;
@@ -259,8 +261,8 @@ button.nd-button {
 .nd-tab-page {
 	grid-area: content;
 	display: none;
-	padding-top: 3rem;
 	max-width: 100%;
+	padding-top: 1rem;
 	grid-column: 1 / -1;
 }
 
