@@ -7,7 +7,7 @@ A complete implementation of Sileo's native depictions in TypeScript.
 ### Get Started
 
 ```shell script
-$ npm i @zenithdevs/kennel
+$ npm i @parcility/kennel
 ```
 
 ### API
