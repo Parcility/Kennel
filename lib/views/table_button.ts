@@ -4,18 +4,13 @@ import DepictionBaseView from "./base";
 
 export default class DepictionTableTextView extends DepictionBaseView {
 	title: string;
-	// repoIcon?: string;
-
 	action: string;
-	backupAction: string;
-
 	openExternal: boolean;
 
 	constructor(dictionary: any) {
 		super(dictionary);
 		this.title = guardIfNotType(dictionary["title"], "string");
 		this.action = guardIfNotType(dictionary["action"], "string");
-		this.backupAction = defaultIfNotType(dictionary["backupAction"], "string", "");
 		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 	}
 
@@ -26,6 +21,7 @@ export default class DepictionTableTextView extends DepictionBaseView {
 			titleEl,
 			chevronEl,
 		]);
+		if (this.openExternal) el.attributes.target = "_blank";
 		if (this.tintColor)
 			setStyles(el, {
 				"--kennel-tint-color": this.tintColor,

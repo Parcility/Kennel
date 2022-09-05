@@ -22,7 +22,7 @@ export default class DepictionReviewView extends DepictionBaseView {
 	async make() {
 		const titleEl = createElement("p", { class: "nd-review-title" }, [this.title]);
 		const subtitleEl = createElement("div", { class: "nd-review-subtitle" });
-		const authorEl = createElement("p", { class: "nd-review-author" }, ["by " + this.author]);
+		const authorEl = createElement("p", { class: "nd-review-author" }, ["by ", this.author]);
 		let md = await this.markdown;
 		const contentEl = createElement("p", { class: "nd-review-content" }, [await makeView(md)]);
 		if (this.tintColor) setStyles(contentEl, { "--kennel-tint-color": this.tintColor });

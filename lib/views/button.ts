@@ -9,18 +9,12 @@ export default class DepictionButtonView extends DepictionBaseView {
 	isLink: boolean;
 	yPadding: number;
 	openExternal: boolean;
-	backupAction: string;
 
 	constructor(dictionary: any) {
 		super(dictionary);
 		this.isLink = defaultIfNotType(dictionary["isLink"], "boolean", false);
-		this.action = guardIfNotType(dictionary["action"], "string");
-
 		this.yPadding = defaultIfNotType(dictionary["yPadding"], "number", 0);
-
-		// self.action = action
-		this.backupAction = defaultIfNotType(dictionary["backupAction"], "string", "");
-
+		this.action = guardIfNotType(dictionary["action"], "string");
 		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 
 		let dict = dictionary["view"];
@@ -47,6 +41,10 @@ export default class DepictionButtonView extends DepictionBaseView {
 		} else {
 			styles["background-color"] = "var(--kennel-tint-color)";
 			styles["color"] = "white";
+		}
+
+		if (this.openExternal) {
+			el.attributes.target = "_blank";
 		}
 
 		if (this.children) {

@@ -48,12 +48,12 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 			"--screenshot-item-radius": `${this.itemBorderRadius}px`,
 		});
 		for (let screenshot of this.screenshots) {
-			let mediaEl = screenshot.video ? createElement("video") : createElement("img");
-			mediaEl.attributes.class = "nd-screenshot-item";
-			mediaEl.attributes.src = screenshot.url;
-			if (!screenshot.video) {
-				mediaEl.attributes.alt = screenshot.accessibilityText;
-			}
+			let attributes = {
+				class: "nd-screenshot-item",
+				src: screenshot.url,
+				alt: screenshot.accessibilityText,
+			};
+			let mediaEl = screenshot.video ? createElement("video", attributes) : createElement("img", attributes);
 			if (screenshot.fullSizeURL) {
 				let link = createElement("a", {
 					href: screenshot.fullSizeURL,
