@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 import "./index.css";
-import { createElement, RenderableElement, renderElement } from "./renderable";
+import { createElement, renderElement } from "./renderable";
 import { constructView, constructViews, makeViews, undefIfNotType } from "./util";
 import { DepictionBaseView, views } from "./views";
 

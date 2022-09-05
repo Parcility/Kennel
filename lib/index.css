@@ -230,31 +230,38 @@ button.nd-button {
 
 .nd-tabs {
 	position: relative;
-	clear: both;
 	max-width: 100%;
+	display: grid;
+	grid-template-columns: repeat(var(--kennel-tab-page-count), 1fr);
+	grid-template-areas: var(--kennel-tab-areas);
 }
 
-.nd-tab > input {
+.nd-tabs > input {
 	display: none;
 }
 
-.nd-tab > label {
+.nd-tabs > .nd-tab-control {
 	cursor: pointer;
+	grid-area: tab;
+	text-align: center;
+	padding: 0.5rem 1rem;
 }
 
-.nd-tab > input:checked ~ label {
+.nd-tabs > input:checked + label {
 	color: var(--kennel-tint-color);
 	border-bottom: solid 1px;
 }
 
-.nd-tab > input:checked ~ label ~ .nd-tab-page {
+.nd-tabs > input:checked + label + .nd-tab-page {
 	display: block;
 }
 
 .nd-tab-page {
+	grid-area: content;
 	display: none;
 	padding-top: 3rem;
 	max-width: 100%;
+	grid-column: 1 / -1;
 }
 
 .nd-auto-stack {

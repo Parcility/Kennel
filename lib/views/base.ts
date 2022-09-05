@@ -1,7 +1,7 @@
 import { RenderableElement } from "../renderable";
 import { undefIfNotType } from "../util";
 
-export default class DepictionBaseView {
+export default abstract class DepictionBaseView {
 	tintColor?: string;
 
 	constructor(depiction: any) {
@@ -10,9 +10,6 @@ export default class DepictionBaseView {
 		}
 	}
 
-	async make(): Promise<RenderableElement> {
-		throw new Error("Not implemented");
-	}
-
+	abstract make(): Promise<RenderableElement>;
 	mounted?(el: HTMLElement): void;
 }
