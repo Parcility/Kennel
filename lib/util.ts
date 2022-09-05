@@ -147,3 +147,21 @@ export function guardIfNotType<T extends keyof JSTypes, U extends JSTypes[T]>(va
 	if (!isType(value, type)) throw new KennelError(`Expected type ${type} but got ${typeof value}`);
 	return value;
 }
+
+export function buttonLinkHandler(url: string, label?: string) {
+	// javascript: links should do nothing.
+	const jsXssIndex = url.indexOf("javascript:");
+	if (jsXssIndex !== -1) {
+		return url.substring(0, jsXssIndex) + encodeURIComponent(url.substring(jsXssIndex));
+		// depiction- links should link to a depiction. Use Parcility's API for this.
+	} else if (url.indexOf("depiction-") == 0) {
+		url = url.substring(10);
+		if (!label) label = "Depiction";
+		return `https://api.parcility.co/render/headerless?url=${encodeURIComponent(url)}&name=${label}`;
+	} else if (url.indexOf("form-") == 0) {
+		url = url.substring(5);
+		return `https://api.parcility.co/render/form?url=${encodeURIComponent(url)}`;
+	} else {
+		return url;
+	}
+}

@@ -1,5 +1,5 @@
 import { createElement, RenderableElement, setStyles } from "../renderable";
-import { constructView, defaultIfNotType, guardIfNotType, makeView } from "../util";
+import { buttonLinkHandler, constructView, defaultIfNotType, guardIfNotType, makeView } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionButtonView extends DepictionBaseView {
@@ -41,7 +41,7 @@ export default class DepictionButtonView extends DepictionBaseView {
 		let styles: any = {};
 		if (this.tintColor) styles["--kennel-tint-color"] = this.tintColor;
 		if (this.isLink) {
-			el.attributes.href = this.action;
+			el.attributes.href = buttonLinkHandler(this.action, this.text);
 			styles.color = "var(--kennel-tint-color)";
 		} else {
 			styles["background-color"] = "var(--kennel-tint-color)";

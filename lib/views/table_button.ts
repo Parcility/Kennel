@@ -1,5 +1,5 @@
 import { createElement, setStyles } from "../renderable";
-import { defaultIfNotType, guardIfNotType } from "../util";
+import { buttonLinkHandler, defaultIfNotType, guardIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionTableTextView extends DepictionBaseView {
@@ -22,7 +22,10 @@ export default class DepictionTableTextView extends DepictionBaseView {
 	async make() {
 		let titleEl = createElement("p", { class: "nd-table-button-title" }, [this.title]);
 		let chevronEl = createElement("span", { class: "nd-table-button-chevron" });
-		let el = createElement("a", { class: "nd-table-button", href: this.action }, [titleEl, chevronEl]);
+		let el = createElement("a", { class: "nd-table-button", href: buttonLinkHandler(this.action, this.title) }, [
+			titleEl,
+			chevronEl,
+		]);
 		if (this.tintColor)
 			setStyles(el, {
 				"--kennel-tint-color": this.tintColor,
