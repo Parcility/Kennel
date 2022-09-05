@@ -103,7 +103,7 @@ export function constructViews(views: any[]): DepictionBaseView[] {
 
 export async function makeView(view: DepictionBaseView): Promise<RenderableElement> {
 	let madeView = await view.make();
-	if (view.mounted) madeView.attributes["data-kennel-view"] = view.constructor.name;
+	if ("hydrate" in view.constructor) madeView.attributes["data-kennel-view"] = view.constructor.name;
 	return madeView;
 }
 

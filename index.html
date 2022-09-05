@@ -13,27 +13,54 @@
 		</style>
 	</head>
 	<body>
-		<details open>
-			<summary>Client-side</summary>
-			<div id="example-depiction" style="max-width: 32rem; margin: auto"></div>
-		</details>
-		<details open>
-			<summary>SSR</summary>
-			<div id="example-ssr-depiction" style="max-width: 32rem; margin: auto"></div>
-		</details>
 		<script type="module">
-			import Kennel from "/lib/index.ts";
-			import depiction from "./test.json";
+			import { render, hydrate } from "/lib/index.ts";
 
-			const target = document.getElementById("example-depiction");
-			const ssrTarget = document.getElementById("example-ssr-depiction");
+			async function renderDepiction([name, depictionImport]) {
+				const { default: depiction } = await depictionImport();
+				console.log(depiction);
+				let [dom, ssr] = await Promise.all([render(depiction), render(depiction, { ssr: true })]);
+				const details = document.createElement("div");
+				const content = document.createElement("div");
+				const summary = document.createElement("h3");
+				summary.innerHTML = name;
+				details.appendChild(summary);
 
-			let k = new Kennel(depiction);
-			k.render()
-				.then((resp) => target.appendChild(resp))
-				.then(() => k.mounted());
+				// add dom el
+				const domDetails = document.createElement("details");
+				const domSummary = document.createElement("summary");
+				domSummary.innerHTML = "Client Side";
+				const domContent = document.createElement("div");
+				domContent.style.maxWidth = "32rem";
+				domContent.style.margin = "auto";
+				domContent.appendChild(dom);
+				domDetails.append(domSummary, domContent);
 
-			k.render(true).then((resp) => (ssrTarget.innerHTML = resp));
+				// add ssr el
+				const ssrDetails = document.createElement("details");
+				const ssrSummary = document.createElement("summary");
+				ssrSummary.innerHTML = "SSR";
+				const ssrContent = document.createElement("div");
+				ssrContent.style.maxWidth = "32rem";
+				ssrContent.style.margin = "auto";
+				ssrContent.innerHTML = ssr;
+				ssrDetails.append(ssrSummary, ssrContent);
+
+				content.append(domDetails, ssrDetails);
+				details.appendChild(content);
+
+				// add to body
+				document.body.appendChild(details);
+			}
+
+			// let k = new Kennel(depiction);
+			// k.render()
+			// 	.then((resp) => target.appendChild(resp))
+			// 	.then(() => k.mounted());
+
+			// k.render(true).then((resp) => (ssrTarget.innerHTML = resp));
+			let depictions = import.meta.glob("./test/*.json");
+			Promise.all(Object.entries(depictions).map(renderDepiction)).then(() => hydrate());
 		</script>
 	</body>
 </html>

@@ -23,7 +23,10 @@ import WebView from "./web";
 
 import DepictionBaseView from "./base";
 
-export type DepictionViewConstructor<T extends DepictionBaseView> = { new (dictionary: any): T };
+export type DepictionViewConstructor<T extends DepictionBaseView> = {
+	new (dictionary: any): T;
+	hydrate?(el: HTMLElement): void;
+};
 
 export const views = new Map<string, DepictionViewConstructor<any>>([
 	["DepictionAutoStackView", AutoStackView],

@@ -11,5 +11,4 @@ export default abstract class DepictionBaseView {
 	}
 
 	abstract make(): Promise<RenderableElement>;
-	mounted?(el: HTMLElement): void;
 }
