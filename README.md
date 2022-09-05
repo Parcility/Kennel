@@ -14,32 +14,47 @@ $ npm i @zenithdevs/kennel
 
 Kennel was written to be as easy to interact with as possible.
 
-> `Kennel(depiction: any, ssr: boolean)`
->
-> The class that stores and renders a native depiction.
+`render(depiction: any, options?: Parital<RenderOptions>): Promise<HTMLElement | string>`
+
+> Render a depiction to either a HTMLElement or a string.
 >
 > `depiction`: An object that stores the native depiction's contents.
 >
-> `ssr`: An optional boolean that determines whether the rendering step will generate DOM objects or strings.
+> `options`: The settings used for rendering.
+> `options.ssr`: Output a string instead of a DOM element.
+> `options.defaultTintColor`: The css color used for the tint.
+
+`hydrate(target?: ParentNode): void`
+
+> Runs the hydrate function on views that need to be hydrate. Can only be ran on the client side.
+> `target`: The root element for hydration. Defaults to `document.body`.
 
 #### Example
 
 ```ts
 // Import Kennel
-import Kennel from "@zenithdevs/kennel";
+import { render, hydrate } from "@zenithdevs/kennel";
 
 // Assumes the `depiction` variables exists elsewhere. The second argument (options) can be omitted.
-const nd = new Kennel(depiction, {
-	ssr: true,
-});
+let output = await render(depiction, { ssr: true });
 
-// Renders the HTML code for the depiction.
-const nd_out = await nd.render();
+// sometime on the client.
+hydrate();
 ```
 
 A full demo is available by running `yarn dev`.
 
 ---
+
+### Development
+
+### Testing
+
+Run the test page, which loads depictions from the `test/` directory.
+
+```shell script
+yarn dev
+```
 
 ### Building
 
@@ -55,10 +70,4 @@ yarn install
 
 ```shell script
 yarn build
-```
-
-3 (optional): Test the demo.
-
-```shell script
-yarn dev
 ```
