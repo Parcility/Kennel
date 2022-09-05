@@ -49,7 +49,7 @@ export function renderElementDOM(el: RenderableElement): HTMLElement {
 	const element = document.createElement(el.tag);
 	for (const [key, value] of Object.entries(el.attributes)) {
 		if (typeof value === "boolean") element.toggleAttribute(key, value);
-		else element.setAttribute(key, escapeHTML(value));
+		else element.setAttribute(key, escapeHTML(value, true));
 	}
 	for (const child of el.children) {
 		let target = el.tag === "template" ? (element as HTMLTemplateElement).content : element;
@@ -70,7 +70,9 @@ export function renderElementDOM(el: RenderableElement): HTMLElement {
 export function renderElementString(el: RenderableElement): string {
 	let result = `<${el.tag} `;
 	result += Object.entries(el.attributes)
-		.map(([key, value]) => (typeof value === "boolean" ? `${value ? key : ""}` : `${key}="${escapeHTML(value)}"`))
+		.map(([key, value]) =>
+			typeof value === "boolean" ? `${value ? key : ""}` : `${key}="${escapeHTML(value, true)}"`
+		)
 		.join(" ");
 	let children = el.children
 		.map((child) => {

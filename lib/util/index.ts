@@ -184,13 +184,23 @@ const ESCAPE_HTML_MAP: Record<string, string> = {
 	"=": "&#x3D;",
 };
 
-export function escapeHTML(potentialHTML: string): string {
+const ESCAPE_ATTRIBUTE_MAP: Record<string, string> = {
+	"<": "&lt;",
+	">": "&gt;",
+	'"': "&quot;",
+	"'": "&#39;",
+	"`": "&#x60;",
+};
+
+export function escapeHTML(potentialHTML: string, isAttribute: boolean = false): string {
 	// if we're in the browser, we can use the Option object to escape HTML.
-	if ("HTMLOptionElement" in globalThis && "Option" in globalThis) {
+	if (!isAttribute && "HTMLOptionElement" in globalThis && "Option" in globalThis) {
 		return new Option(potentialHTML).innerHTML;
 	}
 
-	return potentialHTML.replace(/[&<>"'`=\/]/g, function (s) {
-		return ESCAPE_HTML_MAP[s];
+	let map = isAttribute ? ESCAPE_ATTRIBUTE_MAP : ESCAPE_HTML_MAP;
+	let charset = isAttribute ? /[<>"'`]/g : /[&<>"'`=\/]/g;
+	return potentialHTML.replace(charset, function (s) {
+		return map[s];
 	});
 }
