@@ -1,6 +1,6 @@
 {
 	"name": "@parcility/kennel",
-	"version": "2.0.0",
+	"version": "2.0.2",
 	"description": "A comprehensive, easy-to-use native depiction renderer.",
 	"type": "module",
 	"repository": {
@@ -12,6 +12,9 @@
 		"jailbreak",
 		"depiction",
 		"typescript"
+	],
+	"files": [
+		"dist"
 	],
 	"author": "Zenith",
 	"license": "MIT",
