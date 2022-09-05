@@ -17,10 +17,8 @@ export default class DepictionTableTextView extends DepictionBaseView {
 	async make() {
 		let titleEl = createElement("p", { class: "nd-table-button-title" }, [this.title]);
 		let chevronEl = createElement("span", { class: "nd-table-button-chevron" });
-		let el = createElement("a", { class: "nd-table-button", href: buttonLinkHandler(this.action, this.title) }, [
-			titleEl,
-			chevronEl,
-		]);
+		let el = createElement("a", { class: "nd-table-button" }, [titleEl, chevronEl]);
+		buttonLinkHandler(el, this.action, this.title);
 		if (this.openExternal) el.attributes.target = "_blank";
 		if (this.tintColor)
 			setStyles(el, {
