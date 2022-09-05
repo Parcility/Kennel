@@ -28,10 +28,7 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 		this.useSpacing = defaultIfNotType(dictionary["useSpacing"], "boolean", true);
 		this.useRawFormat = defaultIfNotType(dictionary["useRawFormat"], "boolean", false);
 		if (this.useRawFormat) {
-			// ! BEWARE OF XSS ! //
-			// Unfortunately, this is a design flaw with the spec.
-			// TODO: Just disable link parsing. This is non-trivial to do, so for now, we just disable GFM-flavored Markdown for useRawFormat.
-
+			// TODO(XSS): this is very definately vulnerable to XSS attacks.
 			this.markdown = callMarked(md, { gfm: false }).then(async (rendered) => {
 				let didWarnXSS = false;
 				let xssWarn = `<p style="opacity:0.3">[Warning: This depiction may be trying to maliciously run code in your browser.]</p><br>`;
@@ -60,10 +57,10 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 
 				return rendered;
 			});
-			return;
+		} else {
+			// TODO(XSS): this should be XSS-safe
+			this.markdown = callMarked(new Option(md).innerHTML, { xhtml: true, gfm: true });
 		}
-
-		this.markdown = callMarked(new Option(md).innerHTML, { xhtml: true, gfm: true });
 	}
 
 	async make() {

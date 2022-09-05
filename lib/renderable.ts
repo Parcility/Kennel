@@ -32,6 +32,7 @@ export function createShadowedElement(
 }
 
 export function renderElementDOM(el: RenderableElement): HTMLElement {
+	// TODO(XSS): This is likely vulnerable to XSS
 	const element = document.createElement(el.tag);
 	for (const [key, value] of Object.entries(el.attributes)) {
 		if (typeof value === "boolean") element.toggleAttribute(key, value);
@@ -54,6 +55,7 @@ export function renderElementDOM(el: RenderableElement): HTMLElement {
 }
 
 export function renderElementString(el: RenderableElement): string {
+	// TODO(XSS): This is likely vulnerable to XSS
 	let result = `<${el.tag} `;
 	result += Object.entries(el.attributes)
 		.map(([key, value]) => (typeof value === "boolean" ? `${value ? key : ""}` : `${key}="${value}"`))
@@ -83,6 +85,7 @@ export function renderElement<T extends boolean>(
 }
 
 export function setStyles(el: RenderableElement, styles: Record<string, string>, original: string = "") {
+	// TODO(XSS): This is likely vulnerable to XSS
 	let resp =
 		original +
 		" " +
