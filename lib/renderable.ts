@@ -1,7 +1,7 @@
-import DOMPurify from "dompurify";
+import createDOMPurify, { DOMPurifyI } from "dompurify";
 import { escapeHTML } from "./util";
 
-const PURIFY_OPTIONS: DOMPurify.Config = {
+const PURIFY_OPTIONS: createDOMPurify.Config = {
 	RETURN_DOM_FRAGMENT: false,
 	RETURN_DOM: false,
 	FORCE_BODY: true,
@@ -11,6 +11,15 @@ const PURIFY_OPTIONS: DOMPurify.Config = {
 		tagNameCheck: /^nd-shadowed-content$/,
 	},
 };
+
+let DOMPurify: Promise<DOMPurifyI> = (async function () {
+	if (!("window" in globalThis)) {
+		const { JSDOM } = await import("jsdom");
+		const window = new JSDOM("").window;
+		return createDOMPurify(window as any);
+	}
+	return createDOMPurify;
+})();
 
 export interface RenderableElement {
 	tag: string;
@@ -23,10 +32,10 @@ export interface RenderableNode {
 	contents: string;
 }
 
-export function createRawNode(contents: string): RenderableNode {
+export async function createRawNode(contents: string): Promise<RenderableNode> {
 	return {
 		raw: true,
-		contents: DOMPurify.sanitize(contents, PURIFY_OPTIONS) as string,
+		contents: (await DOMPurify).sanitize(contents, PURIFY_OPTIONS) as string,
 	};
 }
 
@@ -67,15 +76,15 @@ export function renderElementDOM(el: RenderableElement): HTMLElement {
 	return element;
 }
 
-export function renderElementString(el: RenderableElement): string {
+export async function renderElementString(el: RenderableElement): Promise<string> {
 	let result = `<${el.tag} `;
 	result += Object.entries(el.attributes)
 		.map(([key, value]) =>
 			typeof value === "boolean" ? `${value ? key : ""}` : `${key}="${escapeHTML(value, true)}"`
 		)
 		.join(" ");
-	let children = el.children
-		.map((child) => {
+	let children = await Promise.all(
+		el.children.map(async (child) => {
 			if (!child) return "";
 			if (typeof child === "string") {
 				return escapeHTML(child);
@@ -84,19 +93,19 @@ export function renderElementString(el: RenderableElement): string {
 			}
 			return renderElementString(child as RenderableElement);
 		})
-		.join("");
-	result += `>${children}</${el.tag}>`;
+	);
+	result += `>${children.join("")}</${el.tag}>`;
 
-	let res = DOMPurify.sanitize(result, PURIFY_OPTIONS) as string;
+	let res = (await DOMPurify).sanitize(result, PURIFY_OPTIONS) as string;
 	return res;
 }
 
 export function renderElement<T extends boolean, U extends T extends true ? string : HTMLElement>(
 	el: RenderableElement,
 	ssr: T
-): U {
-	if (ssr) return renderElementString(el) as unknown as U;
-	return renderElementDOM(el) as unknown as U;
+): Promise<U> {
+	if (ssr) return renderElementString(el) as unknown as Promise<U>;
+	return Promise.resolve(renderElementDOM(el) as unknown as U);
 }
 
 export function setStyles(el: RenderableElement, styles: Record<string, string>, original: string = "") {
