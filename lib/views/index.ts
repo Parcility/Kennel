@@ -50,3 +50,7 @@ export const views = new Map<string, DepictionViewConstructor<any>>([
 	["DepictionVideoView", VideoView],
 	["DepictionWebView", WebView],
 ]);
+
+export const mountable = new Map<string, DepictionViewConstructor<any>>(
+	Array.from(views.values()).map((v) => [v.name, v])
+);

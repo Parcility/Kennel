@@ -2,7 +2,7 @@
 import "./index.scss";
 import { createElement, renderElement, setStyles } from "./renderable";
 import { constructView, constructViews, defaultIfNotType, KennelError, makeViews } from "./util";
-import { DepictionBaseView, views } from "./views";
+import { DepictionBaseView, mountable } from "./views";
 
 interface RenderOptions {
 	ssr: boolean;
@@ -66,7 +66,7 @@ export async function hydrate(el?: ParentNode) {
 		let el = mountableEls[i];
 		let viewName = el.dataset.kennelView;
 		if (typeof viewName !== "string") continue;
-		let view = views.get(viewName);
+		let view = mountable.get(viewName);
 		if (!view || !view.hydrate) continue;
 		view.hydrate(el);
 	}
