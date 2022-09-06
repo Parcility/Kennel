@@ -11,6 +11,10 @@ export default defineConfig({
 			// the proper extensions will be added
 			fileName: "index",
 		},
+		sourcemap: "inline",
+		rollupOptions: {
+			external: ["fs", "jsdom"],
+		},
 	},
 	plugins: [dts()],
 });

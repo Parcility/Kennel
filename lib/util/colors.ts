@@ -1,5 +1,6 @@
 // This validates CSS colors according to Sileo, though for speed purporses we try to use the CSS.supports API.
 export function isValidColor(color: string): boolean {
+	if (typeof color !== "string") return false;
 	if ("CSS" in globalThis && "supports" in CSS) return CSS.supports("color", color);
 	return isHex(color) || isRGB(color) || isHSL(color) || isNamed(color);
 }

@@ -32,7 +32,7 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 				let xssWarn = `<p style="opacity:0.3">[Warning: This depiction may be trying to maliciously run code in your browser.]</p><br>`;
 				rendered = rendered.replace(
 					/<hr>/gi,
-					renderElementString(await makeView(new DepictionSeparatorView(undefined)))
+					await renderElementString(await makeView(new DepictionSeparatorView(undefined)))
 				);
 				if (
 					rendered.toLowerCase().indexOf("<script>") !== -1 ||
@@ -67,7 +67,7 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 		let bottomSpacing = this.useSpacing ? 13 : 0;
 		let el = createShadowedElement({ class: "nd-markdown" }, [
 			createElement("style", {}, [markdownStyles]),
-			createRawNode(resp),
+			await createRawNode(resp),
 		]);
 		let styles: any = {
 			margin: "0 " + margins + "px",
