@@ -7,6 +7,7 @@ export default class DepictionAutoStackView extends DepictionBaseView {
 	viewWidths: number[];
 	horizontalSpacing: number;
 	backgroundColor?: string;
+	static viewName = "DepictionAutoStackView";
 
 	constructor(depiction: any) {
 		super(depiction);

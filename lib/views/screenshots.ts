@@ -14,6 +14,7 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 	itemWidth: number;
 	itemHeight: number;
 	itemBorderRadius: number;
+	static viewName = "DepictionScreenshotsView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

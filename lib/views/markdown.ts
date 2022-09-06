@@ -19,6 +19,7 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 	useSpacing: boolean;
 	useMargins: boolean;
 	useRawFormat: boolean;
+	static viewName = "DepictionMarkdownView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

@@ -9,6 +9,7 @@ export default class DepictionHeaderView extends DepictionBaseView {
 	bold: boolean;
 	textColor?: string;
 	alignment: string;
+	static viewName = "DepictionHeaderView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

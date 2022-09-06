@@ -2,7 +2,7 @@ import { createElement, setStyles } from "../renderable";
 import { Alignment, applyAlignmentMargin, defaultIfNotType, getAlignment, guardIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
-export default class DepictionRatingView extends DepictionBaseView {
+export default class DepictionVideoView extends DepictionBaseView {
 	width: number;
 	height: number;
 	url: string;
@@ -12,6 +12,7 @@ export default class DepictionRatingView extends DepictionBaseView {
 	loopEnabled: boolean = false;
 	alignment: Alignment;
 	cornerRadius: number;
+	static viewName = "DepictionVideoView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

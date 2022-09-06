@@ -3,6 +3,7 @@ import DepictionBaseView from "./base";
 
 export default class DepictionMinVersionForceView extends DepictionBaseView {
 	view: DepictionBaseView;
+	static viewName = "DepictionMinVersionForceView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

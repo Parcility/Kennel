@@ -2,10 +2,11 @@ import { createElement, setStyles } from "../renderable";
 import { buttonLinkHandler, defaultIfNotType, guardIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
-export default class DepictionTableTextView extends DepictionBaseView {
+export default class DepictionTableButtonView extends DepictionBaseView {
 	title: string;
 	action: string;
 	openExternal: boolean;
+	static viewName = "DepictionTableButtonView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

@@ -25,6 +25,7 @@ import DepictionBaseView from "./base";
 
 export type DepictionViewConstructor<T extends DepictionBaseView> = {
 	new (dictionary: any): T;
+	viewName: string;
 	hydrate?(el: HTMLElement): void;
 };
 
@@ -52,5 +53,5 @@ export const views = new Map<string, DepictionViewConstructor<any>>([
 ]);
 
 export const mountable = new Map<string, DepictionViewConstructor<any>>(
-	Array.from(views.values()).map((v) => [v.name, v])
+	Array.from(views.values()).map((v) => [v.viewName, v])
 );

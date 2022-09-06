@@ -2,11 +2,12 @@ import { createElement } from "../renderable";
 import { Alignment, applyAlignmentMargin, defaultIfNotType, getAlignment, guardIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
-export default class DepictionSeparatorView extends DepictionBaseView {
+export default class DepictionWebView extends DepictionBaseView {
 	url: string;
 	width: number;
 	height: number;
 	alignment: Alignment;
+	static viewName = "DepictionWebView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

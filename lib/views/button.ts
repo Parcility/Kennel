@@ -9,6 +9,7 @@ export default class DepictionButtonView extends DepictionBaseView {
 	isLink: boolean;
 	yPadding: number;
 	openExternal: boolean;
+	static viewName = "DepictionButtonView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

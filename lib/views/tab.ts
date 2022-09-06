@@ -8,6 +8,7 @@ class DepictionTabPageView extends DepictionBaseView {
 	isActive: boolean;
 	tabContainerID: string;
 	static tabControlID = 0;
+	static viewName = "DepictionTabPageView";
 
 	constructor(dictionary: any) {
 		super(dictionary);
@@ -42,6 +43,7 @@ class DepictionTabPageView extends DepictionBaseView {
 export default class DepictionTabView extends DepictionBaseView {
 	pages: DepictionTabPageView[];
 	static tabID = 0;
+	static viewName = "DepictionTabView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

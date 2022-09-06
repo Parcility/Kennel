@@ -9,6 +9,7 @@ export default class DepictionImageView extends DepictionBaseView {
 	height: number;
 	xPadding: number;
 	borderRadius: number;
+	static viewName = "DepictionImageView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

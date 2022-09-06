@@ -4,6 +4,7 @@ import DepictionBaseView from "./base";
 
 export default class DepictionLayerView extends DepictionBaseView {
 	views: DepictionBaseView[];
+	static viewName = "DepictionLayerView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

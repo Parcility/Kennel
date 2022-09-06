@@ -15,6 +15,7 @@ export function makeRatingElement(progress: number, alignment: string): Renderab
 export default class DepictionRatingView extends DepictionBaseView {
 	rating: number;
 	alignment: string;
+	static viewName = "DepictionRatingView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

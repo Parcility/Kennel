@@ -4,6 +4,7 @@ import DepictionBaseView from "./base";
 
 export default class DepictionSpacerView extends DepictionBaseView {
 	spacing: number;
+	static viewName = "DepictionSpacerView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

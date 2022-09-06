@@ -1,6 +1,6 @@
 {
 	"name": "@parcility/kennel",
-	"version": "2.0.4",
+	"version": "2.0.5",
 	"description": "A comprehensive, easy-to-use native depiction renderer.",
 	"type": "module",
 	"repository": {

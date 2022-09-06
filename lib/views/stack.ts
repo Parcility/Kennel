@@ -7,6 +7,7 @@ export default class DepictionStackView extends DepictionBaseView {
 	isLandscape: boolean = false;
 	xPadding: number = 0;
 	backgroundColor?: string;
+	static viewName = "DepictionStackView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

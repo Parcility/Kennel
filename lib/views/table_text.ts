@@ -5,6 +5,7 @@ import DepictionBaseView from "./base";
 export default class DepictionTableTextView extends DepictionBaseView {
 	title: string;
 	text: string;
+	static viewName = "DepictionTableTextView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

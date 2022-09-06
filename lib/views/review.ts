@@ -9,6 +9,7 @@ export default class DepictionReviewView extends DepictionBaseView {
 	author: string;
 	rating?: number;
 	markdown: DepictionMarkdownView;
+	static viewName = "DepictionReviewView";
 
 	constructor(dictionary: any) {
 		super(dictionary);

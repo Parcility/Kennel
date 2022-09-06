@@ -2,6 +2,8 @@ import { setClassList } from "../renderable";
 import DepictionHeaderView from "./header";
 
 export default class DepictionSubheaderView extends DepictionHeaderView {
+	static viewName = "DepictionSubheaderView";
+
 	async make() {
 		let el = await super.make();
 		setClassList(el, [

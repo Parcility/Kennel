@@ -11,6 +11,7 @@ export default class DepictionLabelView extends DepictionBaseView {
 	isActionable: any;
 	isHighlighted: any;
 	fontSize: number;
+	static viewName = "DepictionLabelView";
 
 	constructor(dictionary: any) {
 		super(dictionary);
