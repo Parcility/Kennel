@@ -1,5 +1,5 @@
 import { createElement, setStyles } from "../renderable";
-import { buttonLinkHandler, defaultIfNotType, guardIfNotType } from "../util";
+import { buttonLinkHandler, defaultIfNotType, guardIfNotType, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionTableButtonView extends DepictionBaseView {
@@ -11,7 +11,10 @@ export default class DepictionTableButtonView extends DepictionBaseView {
 	constructor(dictionary: any) {
 		super(dictionary);
 		this.title = guardIfNotType(dictionary["title"], "string");
-		this.action = guardIfNotType(dictionary["action"], "string");
+		this.action = undefIfNotType(dictionary["action"], "urlExtended");
+		if(typeof this.action !== "string") {
+			this.action = guardIfNotType(dictionary["backupAction"], "urlExtended");
+		}
 		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 	}
 
