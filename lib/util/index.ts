@@ -145,6 +145,7 @@ export interface ValidTypes {
 	function: Function;
 	color: string;
 	url: string;
+	urlExtended: string;
 }
 
 export function isType<T extends keyof ValidTypes>(value: any, type: T): boolean {
