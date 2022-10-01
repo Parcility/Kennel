@@ -11,9 +11,11 @@ export default class DepictionTableButtonView extends DepictionBaseView {
 	constructor(dictionary: any) {
 		super(dictionary);
 		this.title = guardIfNotType(dictionary["title"], "string");
-		this.action = undefIfNotType(dictionary["action"], "urlExtended");
-		if(typeof this.action !== "string") {
+		let action = undefIfNotType(dictionary["action"], "urlExtended");
+		if(typeof action !== "string") {
 			this.action = guardIfNotType(dictionary["backupAction"], "urlExtended");
+		} else {
+			this.action = action;
 		}
 		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 	}

@@ -15,9 +15,11 @@ export default class DepictionButtonView extends DepictionBaseView {
 		super(dictionary);
 		this.isLink = defaultIfNotType(dictionary["isLink"], "boolean", false);
 		this.yPadding = defaultIfNotType(dictionary["yPadding"], "number", 0);
-		this.action = undefIfNotType(dictionary["action"], "urlExtended");
-		if(typeof this.action !== "string") {
+		let action = undefIfNotType(dictionary["action"], "urlExtended");
+		if(typeof action !== "string") {
 			this.action = guardIfNotType(dictionary["backupAction"], "urlExtended");
+		} else {
+			this.action = action;
 		}
 		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 
