@@ -13,7 +13,7 @@ export default class DepictionImageView extends DepictionBaseView {
 
 	constructor(dictionary: any) {
 		super(dictionary);
-		this.url = guardIfNotType(dictionary["URL"], "string");
+		this.url = guardIfNotType(dictionary["URL"], "url");
 		this.width = defaultIfNotType(dictionary["width"], "number", 0);
 		this.height = defaultIfNotType(dictionary["height"], "number", 0);
 

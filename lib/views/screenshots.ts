@@ -31,11 +31,12 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 	}
 
 	parseScreenshot(dictionary: any): Screenshot | undefined {
+		dictionary["url"] = undefIfNotType(dictionary["url"], "url");
 		if (typeof dictionary["url"] !== "string") return;
 		if (typeof dictionary["accessibilityText"] !== "string") return;
 		return {
-			url: dictionary.url,
-			fullSizeURL: undefIfNotType(dictionary["fullSizeURL"], "string"),
+			url: dictionary["url"],
+			fullSizeURL: undefIfNotType(dictionary["fullSizeURL"], "url"),
 			video: defaultIfNotType(dictionary["video"], "boolean", false),
 			accessibilityText: dictionary.accessibilityText,
 		};

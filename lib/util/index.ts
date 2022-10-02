@@ -1,6 +1,7 @@
 import { RenderableElement, setStyles } from "../renderable";
 import { DepictionBaseView, views } from "../views";
 import { isValidColor } from "./colors";
+import { isValidHttpUrl, isValidHttpUrlExtended } from "./urls";
 
 export class KennelError extends Error {
 	constructor(message: string) {
@@ -143,11 +144,17 @@ export interface ValidTypes {
 	symbol: symbol;
 	function: Function;
 	color: string;
+	url: string;
+	urlExtended: string;
 }
 
 export function isType<T extends keyof ValidTypes>(value: any, type: T): boolean {
 	return (
-		(type === "array" && Array.isArray(value)) || (type === "color" && isValidColor(value)) || typeof value === type
+		(type === "array" && Array.isArray(value)) ||
+		(type === "color" && isValidColor(value)) ||
+		(type === "url" && isValidHttpUrl(value)) ||
+		(type === "urlExtended" && isValidHttpUrlExtended(value)) ||
+		typeof value === type
 	);
 }
 

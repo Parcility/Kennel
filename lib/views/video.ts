@@ -16,7 +16,7 @@ export default class DepictionVideoView extends DepictionBaseView {
 
 	constructor(dictionary: any) {
 		super(dictionary);
-		this.url = guardIfNotType(dictionary["URL"], "string");
+		this.url = guardIfNotType(dictionary["URL"], "url");
 		this.width = guardIfNotType(dictionary["width"], "number");
 		this.height = guardIfNotType(dictionary["height"], "number");
 		this.alignment = getAlignment(dictionary["alignment"]);

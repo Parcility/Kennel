@@ -484,7 +484,8 @@
 							"tabname": "button 2",
 							"class": "DepictionButtonView",
 							"text": "Button!",
-							"action": "https://shuga.co/"
+							"action": "twitter://user?screen_name=HeyItsShuga",
+							"backupAction": "https://twitter.com/HeyItsShuga"
 						}
 					]
 				},

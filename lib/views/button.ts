@@ -1,5 +1,5 @@
 import { createElement, RenderableElement, setClassList, setStyles } from "../renderable";
-import { buttonLinkHandler, constructView, defaultIfNotType, guardIfNotType, makeView } from "../util";
+import { buttonLinkHandler, constructView, defaultIfNotType, guardIfNotType, makeView, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
 export default class DepictionButtonView extends DepictionBaseView {
@@ -15,7 +15,12 @@ export default class DepictionButtonView extends DepictionBaseView {
 		super(dictionary);
 		this.isLink = defaultIfNotType(dictionary["isLink"], "boolean", false);
 		this.yPadding = defaultIfNotType(dictionary["yPadding"], "number", 0);
-		this.action = guardIfNotType(dictionary["action"], "string");
+		let action = undefIfNotType(dictionary["action"], "urlExtended");
+		if(typeof action !== "string") {
+			this.action = guardIfNotType(dictionary["backupAction"], "urlExtended");
+		} else {
+			this.action = action;
+		}
 		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 
 		let dict = dictionary["view"];
