@@ -36,7 +36,7 @@ export default class DepictionButtonView extends DepictionBaseView {
 
 		if (!this.children) {
 			let text = dictionary["text"];
-			if (typeof text === "string") {
+			if (typeof text === "string" && text.length > 0) {
 				this.text = text;
 			}
 		}

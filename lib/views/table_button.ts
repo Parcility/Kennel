@@ -20,7 +20,7 @@ export default class DepictionTableButtonView extends DepictionBaseView {
 		} else {
 			this.action = action;
 		}
-		[this.action, this.text] = buttonLinkHandler(this.action, this.text, options);
+		[this.action, this.title] = buttonLinkHandler(this.action, this.title, options);
 		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 	}
 

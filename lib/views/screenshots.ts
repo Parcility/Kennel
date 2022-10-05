@@ -14,7 +14,6 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 	itemWidth: number;
 	itemHeight: number;
 	itemBorderRadius: number;
-	debugg: string;
 	static viewName = "DepictionScreenshotsView";
 
 	constructor(
@@ -63,7 +62,6 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 			"--screenshot-item-width": `${this.itemWidth}px`,
 			"--screenshot-item-height": `${this.itemHeight}px`,
 			"--screenshot-item-radius": `${this.itemBorderRadius}px`,
-			"--debugg": `${this.debugg}`,
 		});
 		for (let screenshot of this.screenshots) {
 			let attributes = {

@@ -41,22 +41,19 @@ export function fontWeightParse(fontWeight: string): string {
 	}
 }
 
-export function buttonLinkHandler(url: string, label?: string, options?: Partial<RenderOptions>) {
-	let link = url;
+export function buttonLinkHandler(url: string, label?: string, options?: Partial<RenderOptions>): [string, string] {
 	// javascript: links should do nothing.
 	const jsXssIndex = url.indexOf("javascript:");
 	if (jsXssIndex !== -1) {
-		link = url.substring(0, jsXssIndex) + encodeURIComponent(url.substring(jsXssIndex));
+		url = url.substring(0, jsXssIndex) + encodeURIComponent(url.substring(jsXssIndex));
 		// depiction- links should link to a depiction. Use Parcility's API for this.
 	} else if (url.indexOf("depiction-") == 0) {
-		url = url.substring(10);
 		if (!label) label = "Depiction";
-		link = ((options && options.linkHeaderless) ?? 'https://api.parcility.co/render/headerless?url=') + `${encodeURIComponent(url)}&name=${label}`;
+		url = ((options && options.linkHeaderless) ?? 'https://api.parcility.co/render/headerless?url=') + `${encodeURIComponent(url.substring(10))}&name=${label}`;
 	} else if (url.indexOf("form-") == 0) {
-		url = url.substring(5);
-		link = ((options && options.linkForm) ?? 'https://api.parcility.co/render/form?url=') + `${encodeURIComponent(url)}&name=${label}`;
+		url = ((options && options.linkForm) ?? 'https://api.parcility.co/render/form?url=') + `${encodeURIComponent(url.substring(5))}&name=${label}`;
 	}
-	return [link, label];
+	return [url, (label ?? "")];
 }
 
 // Alignment

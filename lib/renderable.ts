@@ -5,7 +5,9 @@ export interface RenderOptions {
 	ssr: boolean;
 	defaultTintColor: string;
 	backgroundColor: string;
-	ignoredViewNames: array;
+	ignoredViewNames: any[];
+	linkForm: string;
+	linkHeaderless: string;
 	proxyUrl: string;
 	proxyIframeUrl: string;
 	proxyImageUrl: string;
