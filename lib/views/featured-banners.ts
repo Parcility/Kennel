@@ -36,7 +36,9 @@ export default class FeaturedBannersView extends DepictionBaseView {
 		options?: Partial<RenderOptions>
 	): FeaturedBanner | undefined {
 		let url = guardIfNotType(dictionary["url"], "url");
-		if (typeof url !== "string") return;
+		if (options?.proxyImageUrl || options?.proxyUrl) {
+			url = (options?.proxyImageUrl ?? options?.proxyUrl) + encodeURIComponent(url);
+		}
 		let title = defaultIfNotType(dictionary["title"], "string", "");
 		let pack = undefIfNotType(dictionary["package"], "string");
 		let hideShadow = defaultIfNotType(dictionary["hideShadow"], "boolean", false);
