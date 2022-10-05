@@ -62,7 +62,7 @@ export default class DepictionButtonView extends DepictionBaseView {
 			child.attributes.pointerEvents = "none";
 			el.children = [child];
 		} else if (this.text) {
-			el.children = [this.text];
+			el.children = [createElement("span", {}, [this.text])];
 		}
 		setStyles(el, styles);
 		return el;

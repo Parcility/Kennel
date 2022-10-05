@@ -49,9 +49,9 @@ export function buttonLinkHandler(url: string, label?: string, options?: Partial
 		// depiction- links should link to a depiction. Use Parcility's API for this.
 	} else if (url.indexOf("depiction-") == 0) {
 		if (!label) label = "Depiction";
-		url = ((options && options.linkHeaderless) ?? 'https://api.parcility.co/render/headerless?url=') + `${encodeURIComponent(url.substring(10))}&name=${label}`;
+		url = (options?.linkHeaderless ?? 'https://api.parcility.co/render/headerless?url=') + `${encodeURIComponent(url.substring(10))}&name=${label}`;
 	} else if (url.indexOf("form-") == 0) {
-		url = ((options && options.linkForm) ?? 'https://api.parcility.co/render/form?url=') + `${encodeURIComponent(url.substring(5))}&name=${label}`;
+		url = (options?.linkForm ?? 'https://api.parcility.co/render/form?url=') + `${encodeURIComponent(url.substring(5))}&name=${label}`;
 	}
 	return [url, (label ?? "")];
 }

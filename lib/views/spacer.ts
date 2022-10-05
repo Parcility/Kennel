@@ -16,9 +16,9 @@ export default class DepictionSpacerView extends DepictionBaseView {
 
 	async make() {
 		const el = createElement("br", { class: "nd-spacer" });
+		// min-height & min-width doesn't seems to be applied on <br> using Firefox for macOS.
 		setStyles(el, {
-			"min-height": `${this.spacing}px`,
-			"min-width": `${this.spacing}px`,
+			"margin": `${(this.spacing / 2)}px`
 		});
 		return el;
 	}

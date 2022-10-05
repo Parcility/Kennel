@@ -48,9 +48,15 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 
 		if (typeof url !== "string") return;
 		if (typeof dictionary["accessibilityText"] !== "string") return;
+
+		let fullSizeURL = undefIfNotType(dictionary["fullSizeURL"], "url");
+		if(fullSizeURL && (options?.proxyImageUrl || options?.proxyUrl)) {
+			fullSizeURL = (options?.proxyImageUrl ?? options?.proxyUrl) + encodeURIComponent(fullSizeURL);
+		}
+
 		return {
 			url: url,
-			fullSizeURL: undefIfNotType(dictionary["fullSizeURL"], "url"),
+			fullSizeURL: fullSizeURL,
 			video: video,
 			accessibilityText: dictionary.accessibilityText,
 		};
