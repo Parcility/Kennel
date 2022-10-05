@@ -18,14 +18,14 @@ export default class DepictionButtonView extends DepictionBaseView {
 		super(dictionary, options);
 		this.isLink = defaultIfNotType(dictionary["isLink"], "boolean", false);
 		this.yPadding = defaultIfNotType(dictionary["yPadding"], "number", 0);
+		let text = undefIfNotType(dictionary["text"], "string");
 		let action = undefIfNotType(dictionary["action"], "urlExtended");
 		if(typeof action !== "string") {
 			this.action = guardIfNotType(dictionary["backupAction"], "urlExtended");
 		} else {
 			this.action = action;
 		}
-
-		[this.action, this.text] = buttonLinkHandler(this.action, this.text, options);
+		[this.action, text] = buttonLinkHandler(this.action, text, options);
 
 		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 
@@ -34,11 +34,8 @@ export default class DepictionButtonView extends DepictionBaseView {
 			this.children = constructView(dict, options);
 		}
 
-		if (!this.children) {
-			let text = dictionary["text"];
-			if (typeof text === "string" && text.length > 0) {
-				this.text = text;
-			}
+		if (!this.children && text.length > 0) {
+			this.text = text;
 		}
 	}
 

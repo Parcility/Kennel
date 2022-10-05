@@ -29,7 +29,7 @@
 					render(depiction),
 					render(depiction, { ssr: true }),
 					render(depiction, { proxyImageUrl: "https://api.ios-repo-updates.com/image.php?url=" }),
-					render(depiction, { ignoredViewNames: ["DepictionImageView", "DepictionVideoView"] })
+					render(depiction, { ignoredViewNames: ["DepictionHeaderView", "DepictionImageView", "DepictionSeparatorView", "DepictionVideoView", "DepictionWebView"] })
 				]);
 				const details = document.createElement("div");
 				const content = document.createElement("div");
