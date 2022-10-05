@@ -1,6 +1,17 @@
 import createDOMPurify, { DOMPurifyI } from "dompurify";
 import { escapeHTML } from "./util";
 
+export interface RenderOptions {
+	ssr: boolean;
+	defaultTintColor: string;
+	backgroundColor: string;
+	ignoredViewNames: array;
+	proxyUrl: string;
+	proxyIframeUrl: string;
+	proxyImageUrl: string;
+	proxyVideoUrl: string;
+}
+
 const PURIFY_OPTIONS: createDOMPurify.Config = {
 	RETURN_DOM_FRAGMENT: false,
 	RETURN_DOM: false,

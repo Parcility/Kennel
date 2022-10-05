@@ -1,4 +1,4 @@
-import { createElement, RenderableElement, setStyles } from "../renderable";
+import { RenderOptions, createElement, RenderableElement, setStyles } from "../renderable";
 import { constructView, guardIfNotType, makeViews, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
@@ -9,15 +9,18 @@ export default class DepictionAutoStackView extends DepictionBaseView {
 	backgroundColor?: string;
 	static viewName = "DepictionAutoStackView";
 
-	constructor(depiction: any) {
-		super(depiction);
+	constructor(
+		depiction: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(depiction, options);
 
 		let views = guardIfNotType(depiction["views"], "array");
 		this.horizontalSpacing = guardIfNotType(depiction["horizontalSpacing"], "number");
 		for (let view of views) {
 			guardIfNotType(view["class"], "string");
 			guardIfNotType(view["preferredWidth"], "number");
-			let v = constructView(view);
+			let v = constructView(view, options);
 			if (!v) throw new Error("Invalid view");
 			this.views.push(v);
 		}

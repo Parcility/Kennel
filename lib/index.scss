@@ -29,6 +29,7 @@
 	.nd-stack {
 		display: flex;
 		flex-direction: column;
+		margin: 0.5rem;
 		&.nd-stack-landscape {
 			gap: 1rem;
 			justify-content: space-between;
@@ -37,6 +38,9 @@
 
 			& > * {
 				flex: 1;
+			}
+			.nd-button.nd-button-not-link {
+				margin: 0;
 			}
 		}
 	}
@@ -97,7 +101,7 @@
 		span {
 			background: linear-gradient(
 				to right,
-				#ff8a00 var(--kennel-rating-progress),
+				rgba(121, 121, 121, 1) var(--kennel-rating-progress),
 				rgba(121, 121, 121, 0.15) var(--kennel-rating-progress)
 			);
 			background-clip: text;
@@ -108,7 +112,7 @@
 
 	.nd-review {
 		padding: 1rem 1rem;
-		background-color: rgba(121, 121, 121, 0.05);
+		background-color: rgba(121, 121, 121, 0.1);
 		margin-bottom: 1rem;
 		border-radius: 0.5rem;
 
@@ -242,10 +246,13 @@
 			cursor: pointer;
 			grid-area: tab;
 			text-align: center;
-			padding: 0.5rem 1rem;
+			padding: 0 1rem;
+		}
+		& > input + label > span {
+			padding: 0.5rem 0;
 		}
 
-		& > input:checked + label {
+		& > input:checked + label > span {
 			color: var(--kennel-tint-color);
 			border-bottom: solid 1px;
 		}

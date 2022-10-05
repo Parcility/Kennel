@@ -1,5 +1,6 @@
 export type { default as DepictionBaseView } from "./base";
 
+import { RenderOptions } from "../renderable";
 import AutoStackView from "./auto_stack";
 import ButtonView from "./button";
 import HeaderView from "./header";
@@ -24,7 +25,10 @@ import WebView from "./web";
 import DepictionBaseView from "./base";
 
 export type DepictionViewConstructor<T extends DepictionBaseView> = {
-	new (dictionary: any): T;
+	new (
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	): T;
 	viewName: string;
 	hydrate?(el: HTMLElement): void;
 };

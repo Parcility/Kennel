@@ -1,4 +1,4 @@
-import { createElement, RenderableElement, setStyles } from "../renderable";
+import { RenderOptions, createElement, RenderableElement, setStyles } from "../renderable";
 import { Alignment, applyAlignmentMargin, defaultIfNotType, getAlignment, guardIfNotType, KennelError } from "../util";
 import DepictionBaseView from "./base";
 
@@ -11,11 +11,18 @@ export default class DepictionImageView extends DepictionBaseView {
 	borderRadius: number;
 	static viewName = "DepictionImageView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		this.url = guardIfNotType(dictionary["URL"], "url");
 		this.width = defaultIfNotType(dictionary["width"], "number", 0);
 		this.height = defaultIfNotType(dictionary["height"], "number", 0);
+
+		if(options?.proxyImageUrl || options?.proxyUrl) {
+			this.url = (options?.proxyImageUrl ?? options?.proxyUrl) + encodeURIComponent(this.url);
+		}
 
 		if (this.width === 0 || this.height === 0) throw new KennelError("Invalid image size");
 

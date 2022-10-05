@@ -73,4 +73,5 @@ code {
 
 a {
 	color: var(--kennel-tint-color);
+	text-decoration: none;
 }

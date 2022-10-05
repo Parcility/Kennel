@@ -1,4 +1,4 @@
-import { createElement } from "../renderable";
+import { RenderOptions, createElement } from "../renderable";
 import { guardIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
@@ -7,8 +7,11 @@ export default class DepictionTableTextView extends DepictionBaseView {
 	text: string;
 	static viewName = "DepictionTableTextView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		this.title = guardIfNotType(dictionary["title"], "string");
 		this.text = guardIfNotType(dictionary["text"], "string");
 	}

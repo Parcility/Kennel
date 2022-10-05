@@ -1,4 +1,4 @@
-import { createElement, RenderableElement, setClassList, setStyles } from "../renderable";
+import { RenderOptions, createElement, RenderableElement, setClassList, setStyles } from "../renderable";
 import { buttonLinkHandler, constructView, defaultIfNotType, guardIfNotType, makeView, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
@@ -11,8 +11,11 @@ export default class DepictionButtonView extends DepictionBaseView {
 	openExternal: boolean;
 	static viewName = "DepictionButtonView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		this.isLink = defaultIfNotType(dictionary["isLink"], "boolean", false);
 		this.yPadding = defaultIfNotType(dictionary["yPadding"], "number", 0);
 		let action = undefIfNotType(dictionary["action"], "urlExtended");
@@ -21,11 +24,14 @@ export default class DepictionButtonView extends DepictionBaseView {
 		} else {
 			this.action = action;
 		}
+
+		[this.action, this.text] = buttonLinkHandler(this.action, this.text, options);
+
 		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 
 		let dict = dictionary["view"];
 		if (typeof dict === "object") {
-			this.children = constructView(dict);
+			this.children = constructView(dict, options);
 		}
 
 		if (!this.children) {
@@ -41,7 +47,6 @@ export default class DepictionButtonView extends DepictionBaseView {
 		setClassList(el, ["nd-button", this.isLink ? "nd-button-link" : "nd-button-not-link"]);
 		let styles: any = {};
 		if (this.tintColor) styles["--kennel-tint-color"] = this.tintColor;
-		buttonLinkHandler(el, this.action, this.text);
 		if (this.isLink) {
 			styles.color = "var(--kennel-tint-color)";
 		} else {
@@ -49,6 +54,7 @@ export default class DepictionButtonView extends DepictionBaseView {
 			styles["color"] = "white";
 		}
 
+		el.attributes.href = this.action;
 		if (this.openExternal) {
 			el.attributes.target = "_blank";
 		}

@@ -1,4 +1,4 @@
-import { createElement, setStyles } from "../renderable";
+import { RenderOptions, createElement, setStyles } from "../renderable";
 import { buttonLinkHandler, defaultIfNotType, guardIfNotType, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
@@ -8,8 +8,11 @@ export default class DepictionTableButtonView extends DepictionBaseView {
 	openExternal: boolean;
 	static viewName = "DepictionTableButtonView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		this.title = guardIfNotType(dictionary["title"], "string");
 		let action = undefIfNotType(dictionary["action"], "urlExtended");
 		if(typeof action !== "string") {
@@ -17,6 +20,7 @@ export default class DepictionTableButtonView extends DepictionBaseView {
 		} else {
 			this.action = action;
 		}
+		[this.action, this.text] = buttonLinkHandler(this.action, this.text, options);
 		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 	}
 
@@ -24,7 +28,7 @@ export default class DepictionTableButtonView extends DepictionBaseView {
 		let titleEl = createElement("p", { class: "nd-table-button-title" }, [this.title]);
 		let chevronEl = createElement("span", { class: "nd-table-button-chevron" });
 		let el = createElement("a", { class: "nd-table-button" }, [titleEl, chevronEl]);
-		buttonLinkHandler(el, this.action, this.title);
+		el.attributes.href = this.action;
 		if (this.openExternal) el.attributes.target = "_blank";
 		if (this.tintColor)
 			setStyles(el, {
