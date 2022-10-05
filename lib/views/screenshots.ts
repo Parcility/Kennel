@@ -26,7 +26,7 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 		let rawItemSize = guardIfNotType(dictionary["itemSize"], "string");
 
 		[this.itemWidth, this.itemHeight] = parseSize(rawItemSize);
-		this.itemBorderRadius = defaultIfNotType(dictionary["itemBorderRadius"], "number", 0);
+		this.itemBorderRadius = defaultIfNotType(dictionary["itemCornerRadius"], "number", 0);
 
 		this.screenshots = guardIfNotType(dictionary["screenshots"], "array")
 			.map((screenshot) => this.parseScreenshot(screenshot, options))

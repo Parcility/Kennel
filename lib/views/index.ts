@@ -3,6 +3,7 @@ export type { default as DepictionBaseView } from "./base";
 import { RenderOptions } from "../renderable";
 import AutoStackView from "./auto_stack";
 import ButtonView from "./button";
+import FeaturedBannersView from "./featured-banners"
 import HeaderView from "./header";
 import ImageView from "./image";
 import LabelView from "./label";
@@ -54,6 +55,7 @@ export const views = new Map<string, DepictionViewConstructor<any>>([
 	["DepictionTableTextView", TableTextView],
 	["DepictionVideoView", VideoView],
 	["DepictionWebView", WebView],
+	["FeaturedBannersView", FeaturedBannersView],
 ]);
 
 export const mountable = new Map<string, DepictionViewConstructor<any>>(

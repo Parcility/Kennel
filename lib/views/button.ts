@@ -40,8 +40,10 @@ export default class DepictionButtonView extends DepictionBaseView {
 	}
 
 	async make(): Promise<RenderableElement> {
+		let div = createElement("div");
+		setClassList(div, ["nd-button"]);
 		let el = createElement("a");
-		setClassList(el, ["nd-button", this.isLink ? "nd-button-link" : "nd-button-not-link"]);
+		setClassList(el, [this.isLink ? "nd-button-link" : "nd-button-not-link"]);
 		let styles: any = {};
 		if (this.tintColor) styles["--kennel-tint-color"] = this.tintColor;
 		if (this.isLink) {
@@ -65,6 +67,7 @@ export default class DepictionButtonView extends DepictionBaseView {
 			el.children = [createElement("span", {}, [this.text])];
 		}
 		setStyles(el, styles);
-		return el;
+		div.children = [el];
+		return div;
 	}
 }

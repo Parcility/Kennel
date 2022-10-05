@@ -140,20 +140,19 @@
 
 	.nd-button {
 		box-sizing: border-box;
-		margin: 0.5rem 0;
-		display: block;
-		text-decoration: none;
+		margin: 0.5rem;
 
-		& > p {
-			margin: 0;
+		& > a {
+			display: block;
+			text-decoration: none;	
 		}
 
-		&.nd-button-link {
+		& > .nd-button-link {
 			color: var(--kennel-tint-color);
 			margin: 0;
 		}
 
-		&.nd-button-not-link {
+		& > .nd-button-not-link {
 			box-sizing: border-box;
 			text-align: center;
 			display: block;
@@ -161,7 +160,6 @@
 			-webkit-appearance: none;
 			-moz-appearance: none;
 			padding: 0.5rem 1rem;
-			margin: 0.5rem 0;
 			font: inherit;
 			border-radius: 0.5rem;
 			appearance: none;
@@ -308,6 +306,57 @@
 			&:last-child {
 				margin-right: 0;
 				scroll-snap-align: start;
+			}
+		}
+	}
+	.nd-featured-banners {
+		overflow: auto hidden;
+		white-space: nowrap;
+		margin: 0.5rem;
+
+		& > .nd-banner-item:first-child {
+			margin-left: 0;
+		}
+
+		& > .nd-banner-item {
+			color: #fff;
+			display: inline-block;
+			margin: 0 0.25rem;
+			position: relative;
+			overflow: hidden;
+			height: var(--banner-item-height);
+			width: var(--banner-item-width);
+			border-radius: var(--banner-item-radius);
+
+			& > img {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%,-50%) scale(1.1);
+				height: 100%;
+				width: 100%;
+				object-fit: cover;
+			}
+
+			& > span {
+				display: block;
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				line-height: 900%;
+				padding: 0.75rem;
+				font-size: 1.5rem;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				
+				&.nd-banner-shadow {
+					text-shadow: 0 0 1.5rem #000, 0 0 1.5rem #000, 0 0 1.5rem #000;
+				}
 			}
 		}
 	}
