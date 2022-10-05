@@ -21,7 +21,7 @@ Kennel was written to be as easy to interact with as possible.
 > `depiction`: An object that stores the native depiction's contents.
 >
 > `options`: The settings used for rendering.
->
+
 > `options.ssr`: Output a string instead of a DOM element.
 >
 > `options.defaultTintColor`: The css color used for the tint.
