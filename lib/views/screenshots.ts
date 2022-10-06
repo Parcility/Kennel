@@ -1,4 +1,4 @@
-import { createElement, setStyles } from "../renderable";
+import { RenderOptions, createElement, setStyles } from "../renderable";
 import { defaultIfNotType, guardIfNotType, parseSize, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
@@ -16,28 +16,48 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 	itemBorderRadius: number;
 	static viewName = "DepictionScreenshotsView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		if (dictionary["iphone"]) dictionary = dictionary["iphone"];
 
 		let rawItemSize = guardIfNotType(dictionary["itemSize"], "string");
 
 		[this.itemWidth, this.itemHeight] = parseSize(rawItemSize);
-		this.itemBorderRadius = defaultIfNotType(dictionary["itemBorderRadius"], "number", 0);
+		this.itemBorderRadius = defaultIfNotType(dictionary["itemCornerRadius"], "number", 0);
 
 		this.screenshots = guardIfNotType(dictionary["screenshots"], "array")
-			.map(this.parseScreenshot)
+			.map((screenshot) => this.parseScreenshot(screenshot, options))
 			.filter(Boolean) as Screenshot[];
 	}
 
-	parseScreenshot(dictionary: any): Screenshot | undefined {
-		dictionary["url"] = undefIfNotType(dictionary["url"], "url");
-		if (typeof dictionary["url"] !== "string") return;
+	parseScreenshot(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	): Screenshot | undefined {
+		let url = guardIfNotType(dictionary["url"], "url");
+		let video = defaultIfNotType(dictionary["video"], "boolean", false);
+
+		if(video && (options?.proxyVideoUrl || options?.proxyUrl)) {
+			url = (options?.proxyVideoUrl ?? options?.proxyUrl) + encodeURIComponent(url);
+		} else if(!video && (options?.proxyImageUrl || options?.proxyUrl)) {
+			url = (options?.proxyImageUrl ?? options?.proxyUrl) + encodeURIComponent(url);
+		}
+
+		if (typeof url !== "string") return;
 		if (typeof dictionary["accessibilityText"] !== "string") return;
+
+		let fullSizeURL = undefIfNotType(dictionary["fullSizeURL"], "url");
+		if(fullSizeURL && (options?.proxyImageUrl || options?.proxyUrl)) {
+			fullSizeURL = (options?.proxyImageUrl ?? options?.proxyUrl) + encodeURIComponent(fullSizeURL);
+		}
+
 		return {
-			url: dictionary["url"],
-			fullSizeURL: undefIfNotType(dictionary["fullSizeURL"], "url"),
-			video: defaultIfNotType(dictionary["video"], "boolean", false),
+			url: url,
+			fullSizeURL: fullSizeURL,
+			video: video,
 			accessibilityText: dictionary.accessibilityText,
 		};
 	}
@@ -51,9 +71,10 @@ export default class DepictionScreenshotsView extends DepictionBaseView {
 		});
 		for (let screenshot of this.screenshots) {
 			let attributes = {
-				class: "nd-screenshot-item",
+				class: "nd-screenshot-item" + (screenshot.video ? " nd-video" : ""),
 				src: screenshot.url,
 				alt: screenshot.accessibilityText,
+				controls: screenshot.video
 			};
 			let mediaEl = screenshot.video ? createElement("video", attributes) : createElement("img", attributes);
 			if (screenshot.fullSizeURL) {

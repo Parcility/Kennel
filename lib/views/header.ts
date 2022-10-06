@@ -1,4 +1,4 @@
-import { createElement, setClassList, setStyles } from "../renderable";
+import { RenderOptions, createElement, setClassList, setStyles } from "../renderable";
 import { defaultIfNotType, textAlignment } from "../util";
 import DepictionBaseView from "./base";
 
@@ -11,8 +11,11 @@ export default class DepictionHeaderView extends DepictionBaseView {
 	alignment: string;
 	static viewName = "DepictionHeaderView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		if (typeof dictionary["title"] === "string") {
 			this.title = dictionary.title;
 		}

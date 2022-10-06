@@ -1,4 +1,4 @@
-import { createElement } from "../renderable";
+import { RenderOptions, createElement } from "../renderable";
 import { constructViews, guardIfNotType, makeViews } from "../util";
 import DepictionBaseView from "./base";
 
@@ -6,10 +6,13 @@ export default class DepictionLayerView extends DepictionBaseView {
 	views: DepictionBaseView[];
 	static viewName = "DepictionLayerView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		let rawViews = guardIfNotType(dictionary["views"], "array");
-		this.views = constructViews(rawViews);
+		this.views = constructViews(rawViews, options);
 	}
 
 	async make() {

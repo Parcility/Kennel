@@ -1,6 +1,6 @@
 import { marked } from "marked";
 import markdownStyles from "../markdown.css?raw";
-import { createElement, createRawNode, createShadowedElement, renderElementString, setStyles } from "../renderable";
+import { RenderOptions, createElement, createRawNode, createShadowedElement, renderElementString, setStyles } from "../renderable";
 import { defaultIfNotType, escapeHTML, guardIfNotType, makeView } from "../util";
 import DepictionBaseView from "./base";
 import DepictionSeparatorView from "./separator";
@@ -21,8 +21,11 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 	useRawFormat: boolean;
 	static viewName = "DepictionMarkdownView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		let md = guardIfNotType(dictionary["markdown"], "string");
 		this.useMargins = defaultIfNotType(dictionary["useMargins"], "boolean", true);
 		this.useSpacing = defaultIfNotType(dictionary["useSpacing"], "boolean", true);
@@ -33,7 +36,7 @@ export default class DepictionMarkdownView extends DepictionBaseView {
 				let xssWarn = `<p style="opacity:0.3">[Warning: This depiction may be trying to maliciously run code in your browser.]</p><br>`;
 				rendered = rendered.replace(
 					/<hr>/gi,
-					await renderElementString(await makeView(new DepictionSeparatorView(undefined)))
+					await renderElementString(await makeView(new DepictionSeparatorView(undefined, undefined)))
 				);
 				if (
 					rendered.toLowerCase().indexOf("<script>") !== -1 ||

@@ -1,13 +1,8 @@
 /// <reference types="vite/client" />
 import "./index.scss";
-import { createElement, renderElement, setStyles } from "./renderable";
-import { constructView, constructViews, defaultIfNotType, KennelError, makeViews } from "./util";
+import { RenderOptions, createElement, renderElement, setStyles } from "./renderable";
+import { constructView, constructViews, defaultIfNotType, undefIfNotType, KennelError, makeViews } from "./util";
 import { DepictionBaseView, mountable } from "./views";
-
-interface RenderOptions {
-	ssr: boolean;
-	defaultTintColor: string;
-}
 
 export async function render<T extends Partial<RenderOptions>, U extends T["ssr"] extends true ? string : HTMLElement>(
 	depiction: any,
@@ -16,26 +11,34 @@ export async function render<T extends Partial<RenderOptions>, U extends T["ssr"
 	let tintColor = defaultIfNotType(depiction["tintColor"], "color", options?.defaultTintColor as string) as
 		| string
 		| undefined;
+	let backgroundColor = undefIfNotType(depiction["backgroundColor"], "color") as
+		| string
+		| undefined;
 
 	// process the depiction
 	let processed: DepictionBaseView[] | undefined;
 	if (Array.isArray(depiction.tabs)) {
 		depiction.className = "DepictionTabView";
-		let view = constructView(depiction);
+		let view = constructView(depiction, options);
 		if (view) {
 			processed = [view];
 		}
 	} else if (Array.isArray(depiction.views)) {
-		processed = constructViews(depiction.views);
+		processed = constructViews(depiction.views, options);
 	}
 	if (!processed) throw new KennelError("Unable to process depiction. No child was found.");
 
 	// build an element to render
 	let el = createElement("form", { class: "nd-root" });
+	let styleOptions: any = {};
 	if (tintColor) {
-		setStyles(el, {
-			"--kennel-tint-color": tintColor,
-		});
+		styleOptions["--kennel-tint-color"] = tintColor;
+	}
+	if (backgroundColor) {
+		styleOptions["background-color"] = backgroundColor;
+	}
+	if (Object.keys(styleOptions).length > 0) {
+		setStyles(el, styleOptions);
 	}
 	el.children = await makeViews(processed);
 

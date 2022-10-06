@@ -1,4 +1,4 @@
-import { RenderableElement, setStyles } from "../renderable";
+import { RenderOptions, RenderableElement, setStyles } from "../renderable";
 import { DepictionBaseView, views } from "../views";
 import { isValidColor } from "./colors";
 import { isValidHttpUrl, isValidHttpUrlExtended } from "./urls";
@@ -41,22 +41,19 @@ export function fontWeightParse(fontWeight: string): string {
 	}
 }
 
-export function buttonLinkHandler(el: RenderableElement, url: string, label?: string) {
-	let link = url;
+export function buttonLinkHandler(url: string, label?: string, options?: Partial<RenderOptions>): [string, string] {
 	// javascript: links should do nothing.
 	const jsXssIndex = url.indexOf("javascript:");
 	if (jsXssIndex !== -1) {
-		link = url.substring(0, jsXssIndex) + encodeURIComponent(url.substring(jsXssIndex));
+		url = url.substring(0, jsXssIndex) + encodeURIComponent(url.substring(jsXssIndex));
 		// depiction- links should link to a depiction. Use Parcility's API for this.
 	} else if (url.indexOf("depiction-") == 0) {
-		url = url.substring(10);
 		if (!label) label = "Depiction";
-		link = `https://api.parcility.co/render/headerless?url=${encodeURIComponent(url)}&name=${label}`;
+		url = (options?.linkHeaderless ?? 'https://api.parcility.co/render/headerless?url=') + `${encodeURIComponent(url.substring(10))}&name=${label}`;
 	} else if (url.indexOf("form-") == 0) {
-		url = url.substring(5);
-		link = `https://api.parcility.co/render/form?url=${encodeURIComponent(url)}`;
+		url = (options?.linkForm ?? 'https://api.parcility.co/render/form?url=') + `${encodeURIComponent(url.substring(5))}&name=${label}`;
 	}
-	el.attributes.href = link;
+	return [url, (label ?? "")];
 }
 
 // Alignment
@@ -107,18 +104,24 @@ export function applyAlignmentMargin(el: RenderableElement, alignment: Alignment
 
 // Processing
 
-export function constructView(view: any): DepictionBaseView | undefined {
+export function constructView(
+	view: any,
+	options?: Partial<RenderOptions>
+): DepictionBaseView | undefined {
 	let v = views.get(view.class);
 	try {
-		if (v) return new v(view);
+		if (v && (!options || !options.ignoredViewNames || !options.ignoredViewNames.includes(view.class))) return new v(view, options);
 	} catch (error) {
 		console.error(error);
 	}
 	return undefined;
 }
 
-export function constructViews(views: any[]): DepictionBaseView[] {
-	return views.map(constructView).filter(Boolean) as DepictionBaseView[];
+export function constructViews (
+	views: any[],
+	options?: Partial<RenderOptions>
+): DepictionBaseView[] {
+	return views.map((view) => constructView(view, options)).filter(Boolean) as DepictionBaseView[];
 }
 
 export async function makeView(view: DepictionBaseView): Promise<RenderableElement> {

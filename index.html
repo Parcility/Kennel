@@ -14,7 +14,7 @@
 			@media screen and (prefers-color-scheme: dark) {
 				body {
 					color: #fff;
-					background-color: #000;
+					background-color: #111;
 				}
 			}
 		</style>
@@ -25,7 +25,12 @@
 
 			async function renderDepiction([name, depictionImport]) {
 				const { default: depiction } = await depictionImport();
-				let [dom, ssr] = await Promise.all([render(depiction), render(depiction, { ssr: true })]);
+				let [dom, ssr, proxy, ignoredViewNames] = await Promise.all([
+					render(depiction),
+					render(depiction, { ssr: true }),
+					render(depiction, { proxyImageUrl: "https://api.ios-repo-updates.com/image.php?url=" }),
+					render(depiction, { ignoredViewNames: ["DepictionHeaderView", "DepictionImageView", "DepictionSeparatorView", "DepictionVideoView", "DepictionWebView"] })
+				]);
 				const details = document.createElement("div");
 				const content = document.createElement("div");
 				const summary = document.createElement("h3");
@@ -52,7 +57,27 @@
 				ssrContent.innerHTML = ssr;
 				ssrDetails.append(ssrSummary, ssrContent);
 
-				content.append(domDetails, ssrDetails);
+				// add proxy el
+				const proxyDetails = document.createElement("details");
+				const proxySummary = document.createElement("summary");
+				proxySummary.innerHTML = "Proxy";
+				const proxyContent = document.createElement("div");
+				proxyContent.style.maxWidth = "32rem";
+				proxyContent.style.margin = "auto";
+				proxyContent.appendChild(proxy);
+				proxyDetails.append(proxySummary, proxyContent);
+
+				// add ignoredViewNames el
+				const ignoredViewNamesDetails = document.createElement("details");
+				const ignoredViewNamesSummary = document.createElement("summary");
+				ignoredViewNamesSummary.innerHTML = "Ignored view names";
+				const ignoredViewNamesContent = document.createElement("div");
+				ignoredViewNamesContent.style.maxWidth = "32rem";
+				ignoredViewNamesContent.style.margin = "auto";
+				ignoredViewNamesContent.appendChild(ignoredViewNames);
+				ignoredViewNamesDetails.append(ignoredViewNamesSummary, ignoredViewNamesContent);
+
+				content.append(domDetails, ssrDetails, proxyDetails, ignoredViewNamesDetails);
 				details.appendChild(content);
 
 				// add to body

@@ -1,7 +1,9 @@
 export type { default as DepictionBaseView } from "./base";
 
+import { RenderOptions } from "../renderable";
 import AutoStackView from "./auto_stack";
 import ButtonView from "./button";
+import FeaturedBannersView from "./featured-banners"
 import HeaderView from "./header";
 import ImageView from "./image";
 import LabelView from "./label";
@@ -24,7 +26,10 @@ import WebView from "./web";
 import DepictionBaseView from "./base";
 
 export type DepictionViewConstructor<T extends DepictionBaseView> = {
-	new (dictionary: any): T;
+	new (
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	): T;
 	viewName: string;
 	hydrate?(el: HTMLElement): void;
 };
@@ -50,6 +55,7 @@ export const views = new Map<string, DepictionViewConstructor<any>>([
 	["DepictionTableTextView", TableTextView],
 	["DepictionVideoView", VideoView],
 	["DepictionWebView", WebView],
+	["FeaturedBannersView", FeaturedBannersView],
 ]);
 
 export const mountable = new Map<string, DepictionViewConstructor<any>>(

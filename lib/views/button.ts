@@ -1,4 +1,4 @@
-import { createElement, RenderableElement, setClassList, setStyles } from "../renderable";
+import { RenderOptions, createElement, RenderableElement, setClassList, setStyles } from "../renderable";
 import { buttonLinkHandler, constructView, defaultIfNotType, guardIfNotType, makeView, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
@@ -11,37 +11,41 @@ export default class DepictionButtonView extends DepictionBaseView {
 	openExternal: boolean;
 	static viewName = "DepictionButtonView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		this.isLink = defaultIfNotType(dictionary["isLink"], "boolean", false);
 		this.yPadding = defaultIfNotType(dictionary["yPadding"], "number", 0);
+		let text = undefIfNotType(dictionary["text"], "string");
 		let action = undefIfNotType(dictionary["action"], "urlExtended");
 		if(typeof action !== "string") {
 			this.action = guardIfNotType(dictionary["backupAction"], "urlExtended");
 		} else {
 			this.action = action;
 		}
+		[this.action, text] = buttonLinkHandler(this.action, text, options);
+
 		this.openExternal = defaultIfNotType(dictionary["openExternal"], "boolean", false);
 
 		let dict = dictionary["view"];
 		if (typeof dict === "object") {
-			this.children = constructView(dict);
+			this.children = constructView(dict, options);
 		}
 
-		if (!this.children) {
-			let text = dictionary["text"];
-			if (typeof text === "string") {
-				this.text = text;
-			}
+		if (!this.children && text.length > 0) {
+			this.text = text;
 		}
 	}
 
 	async make(): Promise<RenderableElement> {
+		let div = createElement("div");
+		setClassList(div, ["nd-button"]);
 		let el = createElement("a");
-		setClassList(el, ["nd-button", this.isLink ? "nd-button-link" : "nd-button-not-link"]);
+		setClassList(el, [this.isLink ? "nd-button-link" : "nd-button-not-link"]);
 		let styles: any = {};
 		if (this.tintColor) styles["--kennel-tint-color"] = this.tintColor;
-		buttonLinkHandler(el, this.action, this.text);
 		if (this.isLink) {
 			styles.color = "var(--kennel-tint-color)";
 		} else {
@@ -49,6 +53,7 @@ export default class DepictionButtonView extends DepictionBaseView {
 			styles["color"] = "white";
 		}
 
+		el.attributes.href = this.action;
 		if (this.openExternal) {
 			el.attributes.target = "_blank";
 		}
@@ -59,9 +64,10 @@ export default class DepictionButtonView extends DepictionBaseView {
 			child.attributes.pointerEvents = "none";
 			el.children = [child];
 		} else if (this.text) {
-			el.children = [this.text];
+			el.children = [createElement("span", {}, [this.text])];
 		}
 		setStyles(el, styles);
-		return el;
+		div.children = [el];
+		return div;
 	}
 }

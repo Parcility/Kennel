@@ -1,4 +1,4 @@
-import { createElement, RenderableElement, setStyles } from "../renderable";
+import { RenderOptions, createElement, RenderableElement, setStyles } from "../renderable";
 import { guardIfNotType, textAlignment } from "../util";
 import DepictionBaseView from "./base";
 
@@ -17,8 +17,11 @@ export default class DepictionRatingView extends DepictionBaseView {
 	alignment: string;
 	static viewName = "DepictionRatingView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		this.rating = guardIfNotType(dictionary["rating"], "number");
 		this.alignment = textAlignment(guardIfNotType(dictionary["alignment"], "number"));
 	}

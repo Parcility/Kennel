@@ -14,15 +14,34 @@ $ npm i @parcility/kennel
 
 Kennel was written to be as easy to interact with as possible.
 
-`render(depiction: any, options?: Parital<RenderOptions>): Promise<HTMLElement | string>`
+`render(depiction: any, options?: Partial<RenderOptions>): Promise<HTMLElement | string>`
 
 > Render a depiction to either a HTMLElement or a string.
 >
 > `depiction`: An object that stores the native depiction's contents.
 >
 > `options`: The settings used for rendering.
+
 > `options.ssr`: Output a string instead of a DOM element.
+>
 > `options.defaultTintColor`: The css color used for the tint.
+>
+> `options.backgroundColor`: The css color used for the background.
+>
+> `options.ignoredViewNames`: An array of view class names to ignore/not render.
+>
+> `options.linkForm`: Link to a webpage to render `form-` links.
+>
+>
+> `options.linkHeaderless`: Link to a webpage to render `depiction-` links.
+>
+> `options.proxyIframeUrl`: The specific proxy url to use for iframe only.
+>
+> `options.proxyImageUrl`: The specific proxy url to use for image only.
+>
+> `options.proxyVideoUrl`: The specific proxy url to use for video only.
+>
+> `options.proxyUrl`: The default proxy url to use for iframe, image or video.
 
 `hydrate(target?: ParentNode): void`
 

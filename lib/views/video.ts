@@ -1,4 +1,4 @@
-import { createElement, setStyles } from "../renderable";
+import { RenderOptions, createElement, setStyles } from "../renderable";
 import { Alignment, applyAlignmentMargin, defaultIfNotType, getAlignment, guardIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
@@ -14,9 +14,17 @@ export default class DepictionVideoView extends DepictionBaseView {
 	cornerRadius: number;
 	static viewName = "DepictionVideoView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		this.url = guardIfNotType(dictionary["URL"], "url");
+
+		if(options?.proxyVideoUrl || options?.proxyUrl) {
+			this.url = (options?.proxyVideoUrl ?? options?.proxyUrl) + encodeURIComponent(this.url);
+		}
+
 		this.width = guardIfNotType(dictionary["width"], "number");
 		this.height = guardIfNotType(dictionary["height"], "number");
 		this.alignment = getAlignment(dictionary["alignment"]);

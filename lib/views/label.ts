@@ -1,4 +1,4 @@
-import { createElement, RenderableElement, setStyles } from "../renderable";
+import { RenderOptions, createElement, RenderableElement, setStyles } from "../renderable";
 import { defaultIfNotType, fontWeightParse, parseSize, textAlignment, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
@@ -13,8 +13,11 @@ export default class DepictionLabelView extends DepictionBaseView {
 	fontSize: number;
 	static viewName = "DepictionLabelView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		if (typeof dictionary["text"] === "string") {
 			this.text = dictionary.text;
 		}

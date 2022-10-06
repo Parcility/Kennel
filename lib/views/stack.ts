@@ -1,4 +1,4 @@
-import { createElement, setClassList, setStyles } from "../renderable";
+import { RenderOptions, createElement, setClassList, setStyles } from "../renderable";
 import { constructViews, defaultIfNotType, guardIfNotType, KennelError, makeViews, undefIfNotType } from "../util";
 import DepictionBaseView from "./base";
 
@@ -9,8 +9,11 @@ export default class DepictionStackView extends DepictionBaseView {
 	backgroundColor?: string;
 	static viewName = "DepictionStackView";
 
-	constructor(dictionary: any) {
-		super(dictionary);
+	constructor(
+		dictionary: any,
+		options?: Partial<RenderOptions>
+	) {
+		super(dictionary, options);
 		let viewObjs = guardIfNotType(dictionary["views"], "array");
 
 		let orientationString = dictionary["orientation"];
@@ -23,7 +26,7 @@ export default class DepictionStackView extends DepictionBaseView {
 			}
 		}
 
-		this.views = constructViews(viewObjs);
+		this.views = constructViews(viewObjs, options);
 		this.backgroundColor = undefIfNotType(dictionary["backgroundColor"], "color");
 		this.xPadding = defaultIfNotType(dictionary["xPadding"], "number", 0);
 	}
